@@ -14,24 +14,24 @@ class TrackWidget extends StatelessWidget {
   }) : super(key: key);
 
   Widget build(BuildContext context) {
+    int count = 0;
     bool isPlaying = false;
     return Padding(
       padding: const EdgeInsets.all(15.0),
       child: InkWell(
         onTap: () {
-          if ((track.player.playing == false ) ||
-              (track.player.playing == true)) { //works when I remove processing state?
-            
+          if (count == 0) {
+            count++;
+            if ((track.player.playing == false &&
+                    track.player.processingState == ProcessingState.ready) ||
+                (track.player.playing == true)) {
+              // && ProcessingState.completed???
               isPlaying = true;
-              print("poha");
-              track.player.pause();
-              track.player.seek(Duration.zero);
               track.player.play();
-
-            // && ProcessingState.completed???
-          } else {
-            isPlaying = false;
-            track.player.pause();
+            } else {
+              isPlaying = false;
+              track.player.pause();
+            }
           }
           // print("the count is $count");
           // var snackBar = SnackBar(content: Text('Now Playing ' + track.trackName));
@@ -46,7 +46,7 @@ class TrackWidget extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    NowPlayingContent(playedTrack: faketrackdata.fakeTrack)),
+                    NowPlayingContent(playedTrack: track)),
           );
         },
         child: Container(

@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:just_audio/just_audio.dart';
 
 class Track {
-  String author;
+  String author; // should be a user object?
   final String trackName;
   int plays;
   final String surah;

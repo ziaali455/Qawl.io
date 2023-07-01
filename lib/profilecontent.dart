@@ -17,7 +17,10 @@ class _ProfileContentState extends State<ProfileContent> {
   @override
   Widget build(BuildContext context) {
     const user = fakeuserdata.fakeUser;
-    var track = faketrackdata.fakeTrack; //pass in data here 
+    var track1 = faketrackdata.fakeTrack1; //pass in data here
+    var track2 = faketrackdata.fakeTrack2;
+    var track3 = faketrackdata.fakeTrack3;
+    var track4 = faketrackdata.fakeTrack4;
     return Container(
         padding: EdgeInsets.only(top: 50),
         child: Scaffold(
@@ -44,7 +47,18 @@ class _ProfileContentState extends State<ProfileContent> {
               Padding(
                 padding: const EdgeInsets.all(16.0),
               ),
-              TrackWidget(track: track,),
+              TrackWidget(
+                track: track1,
+              ),
+              TrackWidget(
+                track: track2,
+              ),
+              TrackWidget(
+                track: track3,
+              ),
+              TrackWidget(
+                track: track4,
+              ),
             ],
           ),
         ));
