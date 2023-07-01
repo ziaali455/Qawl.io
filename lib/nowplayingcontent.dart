@@ -4,7 +4,7 @@ import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:first_project/model/track.dart';
 import 'package:first_project/model/faketrackdata.dart';
 import 'package:just_audio/just_audio.dart';
-
+import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 class NowPlayingContent extends StatefulWidget {
   final Track playedTrack;
   const NowPlayingContent({Key? key, required this.playedTrack})
@@ -23,8 +23,11 @@ class _NowPlayingContentState extends State<NowPlayingContent> {
 
   @override
   Widget build(BuildContext context) {
-    bool toggle = myTrack.player.playing == true &&
-        myTrack.player.processingState == ProcessingState.ready;
+    bool toggle = myTrack.player.playing == true;
+    setState(() {
+      // Here we changing the icon.
+      toggle = myTrack.player.playing == true;
+    });
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
@@ -106,23 +109,27 @@ class _NowPlayingContentState extends State<NowPlayingContent> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: const [
-                  Text('0:00'),
+                  Text('0:00'), //updated duration
                   Icon(Icons.shuffle),
                   Icon(Icons.repeat),
-                  Text('4:22')
+                  Text('4:22') //track length
                 ],
               ),
 
               const SizedBox(height: 30),
 
               // linear bar
-              NeuBox(
-                child: LinearPercentIndicator(
-                  lineHeight: 10,
-                  percent: 0.8,
-                  progressColor: Colors.green,
-                  backgroundColor: Colors.transparent,
-                ),
+              // NeuBox(
+              //   child: LinearPercentIndicator(
+              //     lineHeight: 10,
+              //     percent: 0.8,
+              //     progressColor: Colors.green,
+              //     backgroundColor: Colors.transparent,
+              //   ),
+              // ),
+              const ProgressBar(
+                progress: Duration.zero,
+                total: Duration.zero,
               ),
 
               const SizedBox(height: 30),
@@ -144,16 +151,16 @@ class _NowPlayingContentState extends State<NowPlayingContent> {
                       child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 20.0),
                         child: IconButton(
-                          
-                              icon: Icon(
-                                toggle ? Icons.pause : Icons.play_arrow,
-                                size: 32,
-                              ),
-                            
+                            icon: Icon(
+                              toggle ? Icons.pause : Icons.play_arrow,
+                              size: 32,
+                            ),
                             onPressed: () {
                               setState(() {
                                 // Here we changing the icon.
-                                toggle = myTrack.player.playing == true && myTrack.player.processingState == ProcessingState.ready;
+                                toggle = myTrack.player.playing == true &&
+                                    myTrack.player.processingState ==
+                                        ProcessingState.ready;
                               });
                               if (myTrack.player.playing == false &&
                                   myTrack.player.processingState ==
@@ -182,3 +189,5 @@ class _NowPlayingContentState extends State<NowPlayingContent> {
     );
   }
 }
+
+
