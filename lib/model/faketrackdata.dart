@@ -1,14 +1,14 @@
 import 'package:first_project/model/track.dart';
 
 class faketrackdata {
-  static var fakeTrack1 = Track(author: "Musa", 
+  static var fakeTrack1 = Track(author: "User 1", 
   trackName: "Surah Fatihah", 
   plays: 2000000, 
   surah: "fatihah",
   audioFile: "https://server8.mp3quran.net/ahmad_huth/001.mp3",
   coverImagePath: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/MahmoudKhalilHusairi.jpg/1241px-MahmoudKhalilHusairi.jpg?20230212095016",
   );
-    static var fakeTrack2 = Track(author: "Ali", 
+    static var fakeTrack2 = Track(author: "User 2", 
   trackName: "Surah Baqarah", 
   plays: 309444, 
   surah: "baqarah",
@@ -16,7 +16,7 @@ class faketrackdata {
   coverImagePath: "https://static.qurancdn.com/images/reciters/7/mohamed-siddiq-el-minshawi-profile.jpeg?v=1",
   );
 
-  static var fakeTrack3 = Track(author: "Moses", 
+  static var fakeTrack3 = Track(author: "User 3", 
   trackName: "Surah Aali Imran", 
   plays: 654243, 
   surah: "Aali imran",
@@ -24,7 +24,7 @@ class faketrackdata {
   coverImagePath: "https://upload.wikimedia.org/wikipedia/commons/1/18/Abdul-Rahman_Al-Sudais_%28Cropped%2C_2011%29.jpg?20210429184005",
   );
 
-   static var fakeTrack4 = Track(author: "Bobby", 
+   static var fakeTrack4 = Track(author: "Noreen Siddig", 
   trackName: "Surah Nisaa", 
   plays: 3543, 
   surah: "Nisaa",

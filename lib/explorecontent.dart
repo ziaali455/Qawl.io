@@ -1,4 +1,17 @@
+import 'package:first_project/constants.dart';
+import 'package:first_project/search_field.dart';
+import 'package:first_project/exploretrackwidget.dart';
 import 'package:flutter/material.dart';
+import 'package:first_project/model/fakeuserdata.dart';
+import 'package:first_project/profilewidget.dart';
+import 'package:first_project/trackwidget.dart';
+import 'package:flutter/material.dart';
+import 'package:first_project/model/user.dart';
+import 'package:first_project/numberswidget.dart';
+import 'package:first_project/model/track.dart';
+import 'package:first_project/model/faketrackdata.dart';
+import 'package:first_project/size_config.dart';
+import 'package:first_project/categories.dart';
 
 class ExploreContent extends StatefulWidget {
   const ExploreContent({Key? key}) : super(key: key);
@@ -9,33 +22,14 @@ class ExploreContent extends StatefulWidget {
 class _ExploreContentState extends State<ExploreContent> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-          child: Container(
-        child: ListView(
-          physics: BouncingScrollPhysics(),
-          children: <Widget>[
-            Container(
-              height: 57.6,
-              margin: EdgeInsets.only(top: 28.8, left: 28.8, right: 28.8),
-              child: Row(
-                children: <Widget>[
-                  Container(
-                    height: 57.6,
-                    width: 57.6,
-                    padding: EdgeInsets.all(18),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(9.6),
-                      color: Color(0x080a0928),
-                    ),
-                    child: Icon(Icons.search),
-                  )
-                ]
-                ),
-            )
-          ],
-        ),
-      )),
-    );
+    SizeConfig().init(context);
+    double width = SizeConfig.screenWidth;
+    return SafeArea(
+        child: SingleChildScrollView(
+            child: Column(children: [
+      SearchField(),
+      Categories(),
+      ExploreTrackWidget(),
+    ])));
   }
 }
