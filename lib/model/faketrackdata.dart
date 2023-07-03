@@ -1,23 +1,23 @@
 import 'package:first_project/model/track.dart';
 
 class faketrackdata {
-  static var fakeTrack1 = Track(author: "User 1", 
-  trackName: "Surah Fatihah", 
+  static var fakeTrack1 = Track(author: "Mahmoud Husairi", 
+  trackName: "Al-Fatihah", 
   plays: 2000000, 
   surah: "fatihah",
   audioFile: "https://server8.mp3quran.net/ahmad_huth/001.mp3",
   coverImagePath: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/MahmoudKhalilHusairi.jpg/1241px-MahmoudKhalilHusairi.jpg?20230212095016",
   );
-    static var fakeTrack2 = Track(author: "User 2", 
-  trackName: "Surah Baqarah", 
+    static var fakeTrack2 = Track(author: "Mohamed Minshawi", 
+  trackName: "Al-Baqarah", 
   plays: 309444, 
   surah: "baqarah",
   audioFile: "https://server8.mp3quran.net/ahmad_huth/002.mp3",
   coverImagePath: "https://static.qurancdn.com/images/reciters/7/mohamed-siddiq-el-minshawi-profile.jpeg?v=1",
   );
 
-  static var fakeTrack3 = Track(author: "User 3", 
-  trackName: "Surah Aali Imran", 
+  static var fakeTrack3 = Track(author: "Abdul Al-Sudais", 
+  trackName: "Al-e-Imran", 
   plays: 654243, 
   surah: "Aali imran",
   audioFile: "https://server8.mp3quran.net/ahmad_huth/003.mp3",
@@ -25,7 +25,7 @@ class faketrackdata {
   );
 
    static var fakeTrack4 = Track(author: "Noreen Siddig", 
-  trackName: "Surah Nisaa", 
+  trackName: "An-Nisaa", 
   plays: 3543, 
   surah: "Nisaa",
   audioFile: "https://server8.mp3quran.net/ahmad_huth/004.mp3",

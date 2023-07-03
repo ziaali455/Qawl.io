@@ -1,5 +1,7 @@
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import './homepage.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -13,9 +15,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Qawl',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark(),
-      home: HomePage(),  
+      themeMode: ThemeMode.dark,
+      darkTheme: FlexThemeData.dark(
+        scheme: FlexScheme.hippieBlue,
+        darkIsTrueBlack: true,
+      ),
+      home: HomePage(),
     );
   }
 }
-

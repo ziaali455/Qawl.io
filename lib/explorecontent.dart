@@ -29,7 +29,9 @@ class _ExploreContentState extends State<ExploreContent> {
             child: Column(children: [
       SearchField(),
       Categories(),
-      ExploreTrackWidget(),
+      ExploreTrackWidget(title: "Top 100"),
+      ExploreTrackWidget(title: "New Releases"),
+      ExploreTrackWidget(title: "For You"),
     ])));
   }
 }

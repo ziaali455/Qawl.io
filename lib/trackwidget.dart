@@ -27,6 +27,7 @@ class TrackWidget extends StatelessWidget {
                 (track.player.playing == true)) {
               // && ProcessingState.completed???
               isPlaying = true;
+              track.player.setUrl(track.audioFile);
               track.player.play();
             } else {
               isPlaying = false;
@@ -45,8 +46,7 @@ class TrackWidget extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                    NowPlayingContent(playedTrack: track)),
+                builder: (context) => NowPlayingContent(playedTrack: track)),
           );
         },
         child: Container(
