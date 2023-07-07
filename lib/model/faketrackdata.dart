@@ -1,7 +1,7 @@
 import 'package:first_project/model/track.dart';
 
 class faketrackdata {
-  static var fakeTrack1 = Track(author: "Mahmoud Husairi", 
+  static var fakeTrack1 = Track(author: "Mahmoud Hussary", 
   trackName: "Al-Fatihah", 
   plays: 2000000, 
   surah: "fatihah",
