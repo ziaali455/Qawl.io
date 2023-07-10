@@ -86,3 +86,16 @@ class TrackWidget extends StatelessWidget {
 
   //boolean input not count
 }
+
+//potentially a better track widget visually?
+// Card(
+//         child: Column(
+//       mainAxisSize: MainAxisSize.min,
+//       children: [
+//         const ListTile(
+//           leading: Icon(Icons.album),
+//           title: Text('The Enchanted Nightingale'),
+//           subtitle: Text('Music by Julie Gable. Lyrics by Sidney Stein.'),
+//         ),
+//       ],
+//     ));

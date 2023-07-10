@@ -1,6 +1,14 @@
 import 'package:first_project/model/track.dart';
 
 class faketrackdata {
+  static var defaultTrack = Track(author: "none", 
+  trackName: "none", 
+  plays: 0, 
+  surah: "none",
+  audioFile: "https://server8.mp3quran.net/ahmad_huth/001.mp3",
+  coverImagePath: "https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg",
+  );
+
   static var fakeTrack1 = Track(author: "Mahmoud Hussary", 
   trackName: "Al-Fatihah", 
   plays: 2000000, 
@@ -24,9 +32,17 @@ class faketrackdata {
   coverImagePath: "https://upload.wikimedia.org/wikipedia/commons/1/18/Abdul-Rahman_Al-Sudais_%28Cropped%2C_2011%29.jpg?20210429184005",
   );
 
-   static var fakeTrack4 = Track(author: "Noreen Siddig", 
+  static var fakeTrack4 = Track(author: "Noreen Siddig", 
   trackName: "An-Nisaa", 
   plays: 3543, 
+  surah: "Nisaa",
+  audioFile: "https://server8.mp3quran.net/ahmad_huth/004.mp3",
+  coverImagePath: "https://assets.audiomack.com/mnissara321/40a82a3d67f838f992a195e6a90e81b82ab5bead4925639acb4581846273d60c.jpeg?width=1500&height=1500&max=true",
+  );
+  
+  static var fakeTrack5 = Track(author: "Noreen Siddig", 
+  trackName: "An-Nisaa", 
+  plays: 1234, 
   surah: "Nisaa",
   audioFile: "https://server8.mp3quran.net/ahmad_huth/004.mp3",
   coverImagePath: "https://assets.audiomack.com/mnissara321/40a82a3d67f838f992a195e6a90e81b82ab5bead4925639acb4581846273d60c.jpeg?width=1500&height=1500&max=true",

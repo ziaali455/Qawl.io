@@ -16,7 +16,7 @@ class ProfileContent extends StatefulWidget {
 class _ProfileContentState extends State<ProfileContent> {
   @override
   Widget build(BuildContext context) {
-    const user = fakeuserdata.fakeUser;
+    const user = fakeuserdata.user0;
     var track1 = faketrackdata.fakeTrack1; //pass in data here
     var track2 = faketrackdata.fakeTrack2;
     var track3 = faketrackdata.fakeTrack3;
