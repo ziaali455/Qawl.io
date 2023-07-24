@@ -1,8 +1,8 @@
+import 'package:first_project/model/player.dart';
 import 'package:flutter/material.dart';
 import 'package:first_project/neu_box.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:first_project/model/track.dart';
-import 'package:first_project/model/faketrackdata.dart';
 import 'package:just_audio/just_audio.dart';
 
 class NowPlayingContent extends StatefulWidget {
@@ -12,7 +12,7 @@ class NowPlayingContent extends StatefulWidget {
 
   @override
   State<NowPlayingContent> createState() =>
-      new _NowPlayingContentState(playedTrack);
+      _NowPlayingContentState(playedTrack);
 }
 
 class _NowPlayingContentState extends State<NowPlayingContent> {
@@ -20,10 +20,9 @@ class _NowPlayingContentState extends State<NowPlayingContent> {
   _NowPlayingContentState(Track playedTrack) {
     myTrack = playedTrack;
   }
-
+  bool toggle = trackIsPlaying();
   @override
   Widget build(BuildContext context) {
-    bool toggle = myTrack.player.playing == true;
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
@@ -80,7 +79,7 @@ class _NowPlayingContentState extends State<NowPlayingContent> {
                               Text(
                                 //weird idk why it cant be const
                                 myTrack.author,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 22,
                                 ),
@@ -102,13 +101,13 @@ class _NowPlayingContentState extends State<NowPlayingContent> {
               const SizedBox(height: 30),
 
               // start time, shuffle button, repeat button, end time
-              Row(
+              const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: const [
+                children: [
                   Text('0:00'), // current duration
                   Icon(Icons.shuffle),
                   Icon(Icons.repeat),
-                  Text('4:22') // total length 
+                  Text('4:22') // total length
                 ],
               ),
 
@@ -131,7 +130,7 @@ class _NowPlayingContentState extends State<NowPlayingContent> {
                 height: 80,
                 child: Row(
                   children: [
-                    Expanded(
+                    const Expanded(
                       child: NeuBox(
                           child: Icon(
                         Icons.skip_previous,
@@ -141,7 +140,7 @@ class _NowPlayingContentState extends State<NowPlayingContent> {
                     Expanded(
                       flex: 2,
                       child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
                         child: IconButton(
                             icon: Icon(
                               toggle ? Icons.pause : Icons.play_arrow,
@@ -150,21 +149,17 @@ class _NowPlayingContentState extends State<NowPlayingContent> {
                             onPressed: () {
                               setState(() {
                                 // Here we changing the icon.
-                                toggle = myTrack.player.playing == true &&
-                                    myTrack.player.processingState ==
-                                        ProcessingState.ready;
+                                toggle = trackIsPlaying();
                               });
-                              if (myTrack.player.playing == false &&
-                                  myTrack.player.processingState ==
-                                      ProcessingState.ready) {
-                                myTrack.player.play();
+                              if (trackIsPlaying()) {
+                                pauseTrack();
                               } else {
-                                myTrack.player.pause();
+                                unpauseTrack();
                               }
                             }),
                       ),
                     ),
-                    Expanded(
+                    const Expanded(
                       child: NeuBox(
                           child: Icon(
                         Icons.skip_next,

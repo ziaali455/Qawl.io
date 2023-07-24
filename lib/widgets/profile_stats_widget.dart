@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class NumbersWidget extends StatelessWidget {
+  const NumbersWidget({super.key});
+
   @override
   Widget build(BuildContext context) => Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -19,10 +21,10 @@ class NumbersWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Text(value,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
-          SizedBox(height: 2),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
+          const SizedBox(height: 2),
           Text(text,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10)),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 10)),
         ],
       ),
     );

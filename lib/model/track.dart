@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:just_audio/just_audio.dart';
 
@@ -23,7 +22,7 @@ class Track {
         initPlayer();
       }
   Future<void> initPlayer() async {
-    await player.setUrl(this.audioFile);
+    await player.setUrl(audioFile);
   }
 
   String getAuthor() {
@@ -52,11 +51,11 @@ class Track {
 
   void playTrack(int count) async {
     this.count = count;
-    await player.setUrl(this.audioFile);
+    await player.setUrl(audioFile);
     if (count % 2 != 0) {
       player.play();
-      this.plays++;
-    } else {
+      plays++;
+    } else  {
       await player.pause();
     }
   }

@@ -1,10 +1,10 @@
 
-import 'package:first_project/model/faketrackdata.dart';
-import 'package:first_project/model/fakeuserdata.dart';
+import 'package:first_project/model/fake_track_data.dart';
 import 'package:flutter/material.dart';
 
-import '../../../size_config.dart';
-import 'section_title.dart';
+import '../../../../size_config.dart';
+import '../screens/now_playing_content.dart';
+import 'section_title_widget.dart';
 
 class ExploreTrackWidget extends StatelessWidget {
   const ExploreTrackWidget({
@@ -92,7 +92,11 @@ class TrackCard extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.all(getProportionateScreenWidth(10)),
       child: GestureDetector(
-        onTap: press,
+        onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => NowPlayingContent(playedTrack: faketrackdata.defaultTrack)),
+          ),
         child: SizedBox(
           width: getProportionateScreenWidth(150),
           height: getProportionateScreenWidth(150),
@@ -104,7 +108,7 @@ class TrackCard extends StatelessWidget {
                   height: 150,
                   width: 150,
                   foregroundDecoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                    borderRadius: const BorderRadius.all(Radius.circular(12.0)),
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
@@ -115,7 +119,7 @@ class TrackCard extends StatelessWidget {
                     ),
                   ),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                    borderRadius: const BorderRadius.all(Radius.circular(12.0)),
                     image: DecorationImage(
                       image: NetworkImage(image),
                       fit: BoxFit.cover,
@@ -131,7 +135,7 @@ class TrackCard extends StatelessWidget {
                     ),
                     child: Text.rich(
                       TextSpan(
-                        style: TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Colors.white),
                         children: [
                           TextSpan(
                             text: "$title\n",

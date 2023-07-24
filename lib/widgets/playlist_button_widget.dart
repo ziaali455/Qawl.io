@@ -1,5 +1,6 @@
-import 'package:first_project/nowplayingcontent.dart';
 import 'package:flutter/material.dart';
+
+import '../screens/playlist_screen_content.dart';
 
 class PlaylistButtonWidget extends StatelessWidget {
   final String title;
@@ -12,9 +13,14 @@ class PlaylistButtonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        var snackBar = SnackBar(content: Text('Add the now playing content'));
-
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        
+        Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => PlaylistScreenContent(
+                        playlistTitle: title,
+                      )),
+            );
       },
       child: Container(
         width: 10,
@@ -25,8 +31,9 @@ class PlaylistButtonWidget extends StatelessWidget {
         ),
         child: Center(
             child: Text(title,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24))),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24))),
       ),
     );
   }
+
 }

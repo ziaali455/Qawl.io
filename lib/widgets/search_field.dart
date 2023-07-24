@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../constants.dart';
-import '../../../size_config.dart';
+import '../../../../constants.dart';
+import '../../../../size_config.dart';
 
 class SearchField extends StatelessWidget {
   const SearchField({
@@ -28,7 +28,7 @@ class SearchField extends StatelessWidget {
               focusedBorder: InputBorder.none,
               enabledBorder: InputBorder.none,
               hintText: "Search",
-              prefixIcon: Icon(Icons.search)),
+              prefixIcon: const Icon(Icons.search)),
         ),
       ),
     );

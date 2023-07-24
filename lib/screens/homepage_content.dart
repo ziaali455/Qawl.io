@@ -1,10 +1,9 @@
-import 'package:first_project/model/tracklistview.dart';
-import 'package:first_project/playlistbuttoncontent.dart';
-import 'package:first_project/search_field.dart';
-import 'package:first_project/section_title.dart';
-import 'package:first_project/constants.dart';
+import 'package:first_project/widgets/tracklist_preview_widget.dart';
+import 'package:first_project/widgets/playlist_button_widget.dart';
+import 'package:first_project/widgets/search_field.dart';
+import 'package:first_project/widgets/section_title_widget.dart';
 import 'package:flutter/material.dart';
-import '../../../size_config.dart';
+import '../../../../size_config.dart';
 
 class HomePageContent extends StatefulWidget {
   const HomePageContent({Key? key}) : super(key: key);
@@ -44,7 +43,7 @@ class _HomePageContentState extends State<HomePageContent> {
         padding: const EdgeInsets.only(top: 50.0),
         child: Column(
           children: [
-            SearchField(),
+            const SearchField(),
              GridView.count(
                 shrinkWrap: true,
                 primary: false,
@@ -52,7 +51,7 @@ class _HomePageContentState extends State<HomePageContent> {
                 crossAxisSpacing: 20,
                 mainAxisSpacing: 20,
                 crossAxisCount: 2,
-                children: <Widget>[
+                children: const <Widget>[
                   PlaylistButtonWidget(title: 'Favorites'),
                   PlaylistButtonWidget(title: 'Recents'),
                   PlaylistButtonWidget(title: 'Quran 1'),
@@ -61,7 +60,7 @@ class _HomePageContentState extends State<HomePageContent> {
               ),
       
             SectionTitle(title: "Playlists", press: () {}),
-            TrackList(),
+            const TrackList(),
             
           ],
         ),

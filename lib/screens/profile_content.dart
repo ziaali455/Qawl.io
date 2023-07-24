@@ -1,14 +1,15 @@
-import 'package:first_project/model/fakeuserdata.dart';
-import 'package:first_project/profilewidget.dart';
-import 'package:first_project/trackwidget.dart';
+import 'package:first_project/model/fake_user_data.dart';
+import 'package:first_project/widgets/tracklist_preview_widget.dart';
+import 'package:first_project/widgets/profile_picture_widget.dart';
+import 'package:first_project/widgets/section_title_widget.dart';
+import 'package:first_project/widgets/track_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:first_project/model/user.dart';
-import 'package:first_project/numberswidget.dart';
-import 'package:first_project/model/track.dart';
-import 'package:first_project/model/faketrackdata.dart';
+import 'package:first_project/widgets/profile_stats_widget.dart';
+import 'package:first_project/model/fake_track_data.dart';
 
 class ProfileContent extends StatefulWidget {
-  const ProfileContent({Key? key}) : super(key: key);
+  const ProfileContent({Key? key, }) : super(key: key);
   @override
   State<ProfileContent> createState() => _ProfileContentState();
 }
@@ -22,13 +23,17 @@ class _ProfileContentState extends State<ProfileContent> {
     var track3 = faketrackdata.fakeTrack3;
     var track4 = faketrackdata.fakeTrack4;
     return Container(
-        padding: EdgeInsets.only(top: 50),
+        padding: const EdgeInsets.only(top: 50),
         child: Scaffold(
           body: ListView(
-            physics: BouncingScrollPhysics(),
+            physics: const BouncingScrollPhysics(),
             children: [
+              // Align(
+              //     alignment: Alignment.topRight,
+              //     child: Icon(Icons.mic_none_outlined)),
               ProfileWidget(
                 imagePath: user.imagePath,
+                country: "🇺🇸",
                 onClicked: () async {},
               ),
               const SizedBox(height: 24),
@@ -36,17 +41,18 @@ class _ProfileContentState extends State<ProfileContent> {
                 padding: const EdgeInsets.all(8.0),
                 child: buildName(user),
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
+              const Padding(
+                padding: EdgeInsets.all(8.0),
                 child: NumbersWidget(),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: buildAbout(user),
               ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
+              const Padding(
+                padding: EdgeInsets.all(8.0),
               ),
+              SectionTitle(title: "Uploads", press: () {}),
               TrackWidget(
                 track: track1,
               ),
@@ -59,6 +65,8 @@ class _ProfileContentState extends State<ProfileContent> {
               TrackWidget(
                 track: track4,
               ),
+              SectionTitle(title: "Playlists", press: () {}),
+              const TrackList(),
             ],
           ),
         ));
@@ -67,13 +75,13 @@ class _ProfileContentState extends State<ProfileContent> {
   Widget buildName(User user) => Column(
         children: [
           Text(user.name,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24))
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24))
         ],
       );
   Widget buildAbout(User user) => Column(
         children: [
           Text(user.about,
-              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12))
+              style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 12))
         ],
       );
 }

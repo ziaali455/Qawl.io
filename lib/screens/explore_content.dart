@@ -1,18 +1,13 @@
 import 'package:first_project/constants.dart';
-import 'package:first_project/search_field.dart';
-import 'package:first_project/exploretrackwidget.dart';
-import 'package:first_project/section_title.dart';
+import 'package:first_project/screens/profile_content.dart';
+import 'package:first_project/widgets/search_field.dart';
+import 'package:first_project/widgets/explore_track_widget.dart';
+import 'package:first_project/widgets/section_title_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:first_project/model/fakeuserdata.dart';
-import 'package:first_project/profilewidget.dart';
-import 'package:first_project/trackwidget.dart';
-import 'package:flutter/material.dart';
+import 'package:first_project/model/fake_user_data.dart';
 import 'package:first_project/model/user.dart';
-import 'package:first_project/numberswidget.dart';
-import 'package:first_project/model/track.dart';
-import 'package:first_project/model/faketrackdata.dart';
 import 'package:first_project/size_config.dart';
-import 'package:first_project/categories.dart';
+import 'package:first_project/widgets/categories_widget.dart';
 
 class ExploreContent extends StatefulWidget {
   const ExploreContent({Key? key}) : super(key: key);
@@ -28,12 +23,12 @@ class _ExploreContentState extends State<ExploreContent> {
     return SafeArea(
         child: SingleChildScrollView(
             child: Column(children: [
-      SearchField(),
-      Categories(),
-      ExploreTrackWidget(title: "Top 100"),
-      ExploreTrackWidget(title: "New Releases"),
+      const SearchField(),
+      const Categories(),
+      const ExploreTrackWidget(title: "Top 100"),
+      const ExploreTrackWidget(title: "New Releases"),
       SectionTitle(title: "Popular Qaris", press: () {}),
-      QariCardRow(
+      const QariCardRow(
         user: fakeuserdata.user0,
       ),
     ])));
@@ -86,6 +81,11 @@ class QariCard extends StatelessWidget {
       child: SizedBox(
         width: getProportionateScreenWidth(width),
         child: GestureDetector(
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const ProfileContent()),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

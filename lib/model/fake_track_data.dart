@@ -1,7 +1,7 @@
 import 'package:first_project/model/track.dart';
 
 class faketrackdata {
-  static var defaultTrack = Track(author: "none", 
+  static var defaultTrack = Track(author: "no author", 
   trackName: "none", 
   plays: 0, 
   surah: "none",
@@ -14,7 +14,7 @@ class faketrackdata {
   plays: 2000000, 
   surah: "fatihah",
   audioFile: "https://server8.mp3quran.net/ahmad_huth/001.mp3",
-  coverImagePath: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/MahmoudKhalilHusairi.jpg/1241px-MahmoudKhalilHusairi.jpg?20230212095016",
+  coverImagePath: "https://quran.com.kw/en/wp-content/uploads/alhusarey.jpg",
   );
     static var fakeTrack2 = Track(author: "Mohamed Minshawi", 
   trackName: "Al-Baqarah", 
