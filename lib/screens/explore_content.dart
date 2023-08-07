@@ -1,4 +1,5 @@
 import 'package:first_project/constants.dart';
+import 'package:first_project/model/playlist.dart';
 import 'package:first_project/screens/profile_content.dart';
 import 'package:first_project/widgets/search_field.dart';
 import 'package:first_project/widgets/explore_track_widget.dart';
@@ -10,6 +11,7 @@ import 'package:first_project/size_config.dart';
 import 'package:first_project/widgets/categories_widget.dart';
 
 class ExploreContent extends StatefulWidget {
+    //  final Playlist playlist;
   const ExploreContent({Key? key}) : super(key: key);
   @override
   State<ExploreContent> createState() => _ExploreContentState();
@@ -24,7 +26,7 @@ class _ExploreContentState extends State<ExploreContent> {
         child: SingleChildScrollView(
             child: Column(children: [
       const SearchField(),
-      const Categories(),
+     //  Categories(playlist: playlist),
       const ExploreTrackWidget(title: "Top 100"),
       const ExploreTrackWidget(title: "New Releases"),
       SectionTitle(title: "Popular Qaris", press: () {}),

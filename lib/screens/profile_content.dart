@@ -1,5 +1,6 @@
 import 'package:first_project/model/fake_user_data.dart';
-import 'package:first_project/widgets/tracklist_preview_widget.dart';
+import 'package:first_project/model/playlist.dart';
+import 'package:first_project/widgets/playlist_list_widget.dart';
 import 'package:first_project/widgets/profile_picture_widget.dart';
 import 'package:first_project/widgets/section_title_widget.dart';
 import 'package:first_project/widgets/track_widget.dart';
@@ -17,6 +18,7 @@ class ProfileContent extends StatefulWidget {
 class _ProfileContentState extends State<ProfileContent> {
   @override
   Widget build(BuildContext context) {
+    final Playlist playlist;
     const user = fakeuserdata.user0;
     var track1 = faketrackdata.fakeTrack1; //pass in data here
     var track2 = faketrackdata.fakeTrack2;
@@ -65,8 +67,7 @@ class _ProfileContentState extends State<ProfileContent> {
               TrackWidget(
                 track: track4,
               ),
-              SectionTitle(title: "Playlists", press: () {}),
-              const TrackList(),
+   
             ],
           ),
         ));

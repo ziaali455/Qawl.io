@@ -1,10 +1,16 @@
+import 'package:first_project/model/fake_playlists_data.dart';
 import 'package:first_project/screens/playlist_screen_content.dart';
 import 'package:first_project/size_config.dart';
 import 'package:flutter/material.dart';
 
-class TrackList extends StatelessWidget {
-  const TrackList({
+import '../model/playlist.dart';
+
+class PlaylistListWidget extends StatelessWidget {
+  final List<Playlist> playlists_List;
+
+  const PlaylistListWidget({
     Key? key,
+    required this.playlists_List,
     //required EdgeInsets padding, required List<Widget> children,
   }) : super(key: key);
 
@@ -15,26 +21,35 @@ class TrackList extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       children: <Widget>[
-        PlaylistItem(title: "Post-Taraweeh Drive"),
-        PlaylistItem(title: "Classics"),
-        PlaylistItem(title: "Tajweed Practice"),
+        PlaylistItem(title: fake_playlist_data.defaultPlaylist.name, playlist: fake_playlist_data.defaultPlaylist,
+        ),
+         PlaylistItem(title: fake_playlist_data.defaultPlaylist.name, playlist: fake_playlist_data.defaultPlaylist,
+        ),
+         PlaylistItem(title: fake_playlist_data.defaultPlaylist.name, playlist: fake_playlist_data.defaultPlaylist,
+        ),
+         PlaylistItem(title: fake_playlist_data.defaultPlaylist.name, playlist: fake_playlist_data.defaultPlaylist,
+        ),
+       //PlaylistItem(title: "Classics"),
+      //  PlaylistItem(title: "Tajweed Practice"),
       ],
     );
   }
 }
 
 class PlaylistItem extends StatelessWidget {
-  PlaylistItem({
-    Key? key,
-    required this.title,
-    this.image = "",
-    //required this.playlistObject
-  }) : super(key: key);
   final String title;
+  final Playlist playlist;
   String image;
   String noimage =
       "https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg";
-  //final Playlist playlist;
+
+  PlaylistItem({
+    Key? key,
+    required this.title,
+    required this.playlist,
+    this.image = "",
+  }) 
+  : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +60,10 @@ class PlaylistItem extends StatelessWidget {
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => PlaylistScreenContent(playlistTitle: title,)),
+                builder: (context) => PlaylistScreenContent(
+                     // Playlist: playlist,
+                      playlist: playlist,
+                    )),
           ),
           child: Stack(children: [
             Card(
@@ -57,7 +75,7 @@ class PlaylistItem extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                       child: Image.network(noimage)),
                   selectedTileColor: Colors.green,
-                  title: Text(title),
+                  title: Text(playlist.getName()),
                   subtitle: const Text("Number of plays here"),
                 ),
               ],
@@ -65,8 +83,7 @@ class PlaylistItem extends StatelessWidget {
             Align(
                 alignment: Alignment.centerRight,
                 child: Padding(
-                  padding:
-                       EdgeInsets.all(getProportionateScreenWidth(27)),
+                  padding: EdgeInsets.all(getProportionateScreenWidth(27)),
                   child: const Icon(Icons.arrow_forward_ios),
                 ))
           ]),

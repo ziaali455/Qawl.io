@@ -1,12 +1,15 @@
+import 'package:first_project/model/playlist.dart';
 import 'package:first_project/screens/country_explore_content.dart';
 import 'package:first_project/screens/playlist_screen_content.dart';
 import 'package:flutter/material.dart';
+
 
 import '../../../../size_config.dart';
 import '../constants.dart';
 
 class Categories extends StatelessWidget {
-  const Categories({super.key});
+  const Categories({super.key, required this.playlist});
+  final Playlist playlist;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +45,7 @@ class Categories extends StatelessWidget {
           (index) => CategoryCard(
             icon: categories[index]["icon"],
             text: categories[index]["text"],
-            press: () {},
+            press: () {}, playlist: playlist,
           ),
         ),
       ),
@@ -51,11 +54,13 @@ class Categories extends StatelessWidget {
 }
 
 class CategoryCard extends StatelessWidget {
+  final Playlist playlist;
   const CategoryCard({
     Key? key,
     required this.icon,
     required this.text,
     required this.press,
+    required this.playlist,
   }) : super(key: key);
 
   final Icon? icon;
@@ -74,7 +79,7 @@ class CategoryCard extends StatelessWidget {
         }else{
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => PlaylistScreenContent(playlistTitle: text!,)),
+            MaterialPageRoute(builder: (context) => PlaylistScreenContent(playlist: playlist,)),
           );
         }
       },

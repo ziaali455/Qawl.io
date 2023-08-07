@@ -6,15 +6,17 @@ class Playlist {
   final String author;
   final String name;
   int trackCount;
-  final String surah;
+//  final String surah;
   final List<Track> list;
   String coverImagePath = "https://www.linkpicture.com/q/no_cover_1.jpg";
+
   Playlist(
       {required this.author,
       required this.name,
       this.trackCount = 0,
-      required this.surah,
+    //  required this.surah,
       required this.list});
+
   void addTrack(Track track) {
     list.add(track);
     trackCount++;
@@ -28,6 +30,18 @@ class Playlist {
       print("you can't remove from an empty list!");
     }
   }
+
+  String getAuthor() {
+    return author;
+  }
+
+   String getName() {
+    return name;
+  }
+ //String getSurah() {
+    //return surah;
+ // }
+
 
   int getCount() {
     return list.length;
