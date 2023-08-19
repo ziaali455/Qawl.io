@@ -1,5 +1,6 @@
 
 import 'package:first_project/model/fake_track_data.dart';
+import 'package:first_project/model/player.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../size_config.dart';
@@ -23,6 +24,7 @@ class ExploreTrackWidget extends StatelessWidget {
           child: SectionTitle(
             title: title,
             press: () {},
+            isPlaylist: true,
           ),
         ),
         SingleChildScrollView(
@@ -75,28 +77,18 @@ class TrackCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // return Row(children: <Widget>[
-    //   Container(
-    //       width: 75,
-    //       height: 50,
-    //       decoration: BoxDecoration(
-    //           image: DecorationImage(image: NetworkImage(image), fit: BoxFit.fill),
-    //           borderRadius: BorderRadius.all(Radius.circular(20))
-    //       )
-    //   ),
-    //   Padding(
-    //     padding: const EdgeInsets.only(left: 3.0),
-    //     child: Text(title),
-    //   ),
-    // ]);
+
     return Padding(
       padding: EdgeInsets.all(getProportionateScreenWidth(10)),
       child: GestureDetector(
-        onTap: () => Navigator.push(
+        onTap: () {
+        playTrack(faketrackdata.defaultTrack);
+        Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => NowPlayingContent(playedTrack: faketrackdata.defaultTrack)),
-          ),
+          );
+        },
         child: SizedBox(
           width: getProportionateScreenWidth(150),
           height: getProportionateScreenWidth(150),

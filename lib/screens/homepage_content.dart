@@ -80,7 +80,7 @@ class _HomePageContentState extends State<HomePageContent> {
               ],
             ),
 
-            SectionTitle(title: "Playlists", press: () {}),
+            SectionTitle(title: "Playlists", press: () {}, isPlaylist: true,),
             
            PlaylistListWidget(playlists_List: [fake_playlist_data.defaultPlaylist, fake_playlist_data.defaultPlaylist, fake_playlist_data.defaultPlaylist]),
 

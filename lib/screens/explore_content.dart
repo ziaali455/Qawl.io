@@ -29,7 +29,7 @@ class _ExploreContentState extends State<ExploreContent> {
      //  Categories(playlist: playlist),
       const ExploreTrackWidget(title: "Top 100"),
       const ExploreTrackWidget(title: "New Releases"),
-      SectionTitle(title: "Popular Qaris", press: () {}),
+      SectionTitle(title: "Popular Qaris", press: () {}, isPlaylist: true,),
       const QariCardRow(
         user: fakeuserdata.user0,
       ),

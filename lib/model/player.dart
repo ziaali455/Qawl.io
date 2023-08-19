@@ -24,23 +24,28 @@ import 'package:just_audio/just_audio.dart';
 
 AudioPlayer main_player = AudioPlayer();
 List<Track> current_list = [];
+late Track currentTrack;
 bool isNext = true;
 bool autoplay = true;
 
 void playTracks(Playlist playlist) async {}
 
 void playTrack(Track playedTrack) async {
+  currentTrack = playedTrack;
   await main_player.setUrl(playedTrack.audioFile);
   if (main_player.playing == true &&
       main_player.processingState == ProcessingState.ready) {
     main_player.pause();
-    closePlayer();
   }
   main_player.play();
 }
 
 bool trackIsPlaying() {
   return main_player.playing == true;
+}
+
+Track getCurrentTrack() {
+  return currentTrack;
 }
 
 void pauseTrack() {
@@ -53,6 +58,5 @@ void unpauseTrack() {
 
 void closePlayer() {
   main_player.dispose();
-
   ///notifyListeners();
 }

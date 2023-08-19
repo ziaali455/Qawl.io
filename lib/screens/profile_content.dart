@@ -54,7 +54,7 @@ class _ProfileContentState extends State<ProfileContent> {
               const Padding(
                 padding: EdgeInsets.all(8.0),
               ),
-              SectionTitle(title: "Uploads", press: () {}),
+              SectionTitle(title: "Uploads", press: () {}, isPlaylist: true,),
               TrackWidget(
                 track: track1,
               ),
