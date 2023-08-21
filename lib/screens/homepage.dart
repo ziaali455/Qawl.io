@@ -1,14 +1,9 @@
-import 'package:first_project/model/fake_playlists_data.dart';
-import 'package:first_project/model/fake_track_data.dart';
-import 'package:first_project/model/playlist.dart';
 import 'package:first_project/screens/homepage_content.dart';
 import 'package:first_project/screens/explore_content.dart';
 import 'package:first_project/screens/profile_content.dart';
-import 'package:first_project/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import '../../../../size_config.dart';
-import '../widgets/nowplayingbar.dart';
+import '../widgets/now_playing_bar.dart';
 
 class HomePage extends StatefulWidget {
   //final List<Playlist> playlists;
@@ -23,7 +18,7 @@ class _HomePageState extends State<HomePage> {
   final screens = [
     const HomePageContent(),
     const ExploreContent(),
-    const ProfileContent(),
+    const PersonalProfileContent(),
   ];
 
   @override
@@ -33,7 +28,7 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          NowPlayingBarWidget(),
+          const NowPlayingBarWidget(),
           GNav(
               backgroundColor: Colors.black,
               color: Colors.white,

@@ -2,6 +2,7 @@ import 'package:first_project/model/track.dart';
 
 class faketrackdata {
   static var defaultTrack = Track(author: "no author", 
+  id: "0",
   trackName: "none", 
   plays: 0, 
   surah: "none",
@@ -10,6 +11,7 @@ class faketrackdata {
   );
 
   static var fakeTrack1 = Track(author: "Mahmoud Hussary", 
+  id: "1",
   trackName: "Al-Fatihah", 
   plays: 2000000, 
   surah: "fatihah",
@@ -17,6 +19,7 @@ class faketrackdata {
   coverImagePath: "https://quran.com.kw/en/wp-content/uploads/alhusarey.jpg",
   );
     static var fakeTrack2 = Track(author: "Mohamed Minshawi", 
+  id: "2",
   trackName: "Al-Baqarah", 
   plays: 309444, 
   surah: "baqarah",
@@ -25,6 +28,7 @@ class faketrackdata {
   );
 
   static var fakeTrack3 = Track(author: "Abdul Al-Sudais", 
+  id: "3",
   trackName: "Al-e-Imran", 
   plays: 654243, 
   surah: "Aali imran",
@@ -33,6 +37,7 @@ class faketrackdata {
   );
 
   static var fakeTrack4 = Track(author: "Noreen Siddig", 
+  id: "4",
   trackName: "An-Nisaa", 
   plays: 3543, 
   surah: "Nisaa",
@@ -41,6 +46,7 @@ class faketrackdata {
   );
   
   static var fakeTrack5 = Track(author: "Noreen Siddig", 
+  id: "5",
   trackName: "An-Nisaa", 
   plays: 1234, 
   surah: "Nisaa",

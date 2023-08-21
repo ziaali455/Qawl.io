@@ -2,7 +2,6 @@ import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:first_project/model/player.dart';
 import 'package:flutter/material.dart';
 import 'package:first_project/neu_box.dart';
-import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:first_project/model/track.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:rxdart/rxdart.dart';
@@ -27,6 +26,7 @@ class PositionData {
 class _NowPlayingContentState extends State<NowPlayingContent> {
   late Track myTrack;
   late AudioPlayer _audioPlayer;
+  @override
   void initState() {
     _audioPlayer = main_player;
   }
@@ -49,7 +49,7 @@ class _NowPlayingContentState extends State<NowPlayingContent> {
     return Material(
       child: Column(
         children: [
-          BackButton(),
+          const QawlBackButton(),
           const SizedBox(height: 40),
           CoverContent(myTrack: myTrack),
           Padding(
@@ -216,8 +216,8 @@ class _NowPlayingContentState extends State<NowPlayingContent> {
   //   );
 }
 
-class BackButton extends StatelessWidget {
-  const BackButton({
+class QawlBackButton extends StatelessWidget {
+  const QawlBackButton({
     super.key,
   });
 
@@ -296,7 +296,9 @@ class CoverContent extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: Image.network(myTrack.coverImagePath),
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: Image.network(myTrack.coverImagePath, fit: BoxFit.cover),),
             ),
           ),
           Padding(
@@ -377,7 +379,7 @@ class Controls extends StatelessWidget {
                   color: Colors.white,
                   icon: const Icon(Icons.pause_rounded));
             }
-            return Icon(
+            return const Icon(
               Icons.play_arrow_rounded,
               size: 80,
               color: Colors.white,

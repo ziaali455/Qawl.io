@@ -60,6 +60,8 @@
 	</array>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Explanation here</string>
+	<key>NSMicrophoneUsageDescription</key>
+      <string>Microphone permission is required.</string>
 </dict>
 
 </plist>

@@ -1,7 +1,5 @@
 import 'package:first_project/model/playlist.dart';
-import 'package:first_project/model/track.dart';
 import 'package:flutter/material.dart';
-import 'package:first_project/model/user.dart';
 import '../screens/playlist_screen_content.dart';
 
 class PlaylistButtonWidget extends StatelessWidget {

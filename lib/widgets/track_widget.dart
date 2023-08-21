@@ -2,7 +2,6 @@ import 'package:first_project/model/player.dart';
 import 'package:first_project/screens/now_playing_content.dart';
 import 'package:flutter/material.dart';
 import 'package:first_project/model/track.dart';
-import 'package:just_audio/just_audio.dart';
 
 //FIX THE TEXT UPDATING TO GREEN WHEN U TAP IT
 class TrackWidget extends StatelessWidget {

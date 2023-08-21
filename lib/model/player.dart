@@ -1,12 +1,8 @@
-import 'dart:io';
 
 import 'package:first_project/model/playlist.dart';
 import 'package:just_audio/just_audio.dart';
-import 'dart:async';
-import 'package:flutter/material.dart';
 import 'package:first_project/model/track.dart';
 
-import 'package:just_audio/just_audio.dart';
 
 //OBI: NOTE THIS CLASS NO LONGER FUNCTIONS AS A PROVIDER
 //all of the methods were moved outside of the class
@@ -27,8 +23,18 @@ List<Track> current_list = [];
 late Track currentTrack;
 bool isNext = true;
 bool autoplay = true;
+var currentPlaylist;
 
 void playTracks(Playlist playlist) async {}
+
+void updateCurrentPlaylist(Playlist playlist) {
+  List<AudioSource> tracks = [];
+  for (var track in playlist.list) {
+    tracks.add(
+        AudioSource.uri(Uri.parse(track.audioFile), tag: track.toMediaItem()));
+  }
+  currentPlaylist = ConcatenatingAudioSource(children: tracks);
+}
 
 void playTrack(Track playedTrack) async {
   currentTrack = playedTrack;
@@ -58,5 +64,10 @@ void unpauseTrack() {
 
 void closePlayer() {
   main_player.dispose();
+
   ///notifyListeners();
 }
+
+// I click on surah nas by musa -> surah nas by musa ends -> I need to find the previous tracks -> 
+//I need to know what playlist surah nas by musa in -> 
+// I need to find surah nas' location in this list -> I go to the track before it

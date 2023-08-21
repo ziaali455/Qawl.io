@@ -1,12 +1,10 @@
 import 'package:first_project/model/fake_playlists_data.dart';
-import 'package:first_project/model/playlist.dart';
 import 'package:first_project/widgets/playlist_list_widget.dart';
 import 'package:first_project/widgets/playlist_button_widget.dart';
 import 'package:first_project/widgets/search_field.dart';
 import 'package:first_project/widgets/section_title_widget.dart';
 import 'package:flutter/material.dart';
 import '../../../../size_config.dart';
-import '../model/track.dart';
 
 class HomePageContent extends StatefulWidget {
   //final Playlist playlist;

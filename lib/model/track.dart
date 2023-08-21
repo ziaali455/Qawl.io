@@ -1,9 +1,11 @@
-
 import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 
 class Track {
   String author; // should be a user object?
   final String trackName;
+  final String id;
+  //String inPlaylist HashMap<String, List<Playlist>>???
   int plays;
   final String surah;
   final String audioFile;
@@ -12,15 +14,14 @@ class Track {
   int count = 0;
   Track(
       {required this.author,
+      required this.id,
       required this.trackName,
       required this.plays,
       required this.surah,
       required this.audioFile,
-      required this.coverImagePath}
-      
-      ){
-        initPlayer();
-      }
+      required this.coverImagePath}) {
+    initPlayer();
+  }
   Future<void> initPlayer() async {
     await player.setUrl(audioFile);
   }
@@ -55,7 +56,7 @@ class Track {
     if (count % 2 != 0) {
       player.play();
       plays++;
-    } else  {
+    } else {
       await player.pause();
     }
   }
@@ -63,4 +64,18 @@ class Track {
   bool isTrackPlaying() {
     return (count % 2 != 0);
   }
+
+  // factory Track.fromMediaItem(MediaItem mediaItem) {
+  //   String trackPath, trackURL;
+  //   return Track(author: fakeuserdata.user0.name, id: mediaItem.id, trackName: mediaItem.title, plays: 0, surah: surah, audioFile: trackURL, coverImagePath: coverImagePath)
+  // }
+  MediaItem toMediaItem() => MediaItem(
+      id: id,
+      title: trackName,
+      artist: author,
+      artUri: Uri.parse(coverImagePath),
+      extras: <String, dynamic>{
+        'surah':surah,
+        "plays": plays,
+      });
 }
