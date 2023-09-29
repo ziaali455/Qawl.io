@@ -28,7 +28,7 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const NowPlayingBarWidget(),
+          NowPlayingBarWidget(),
           GNav(
               backgroundColor: Colors.black,
               color: Colors.white,

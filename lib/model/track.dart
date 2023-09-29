@@ -7,17 +7,19 @@ class Track {
   final String id;
   //String inPlaylist HashMap<String, List<Playlist>>???
   int plays;
-  final String surah;
+  int surahNumber;
   final String audioFile;
+  final Set<String> inPlaylists;
   String coverImagePath = "https://www.linkpicture.com/q/no_cover_1.jpg";
   final player = AudioPlayer();
   int count = 0;
   Track(
       {required this.author,
       required this.id,
+      required this.inPlaylists,
       required this.trackName,
       required this.plays,
-      required this.surah,
+      required this.surahNumber,
       required this.audioFile,
       required this.coverImagePath}) {
     initPlayer();
@@ -42,8 +44,8 @@ class Track {
     return plays;
   }
 
-  String getSurah() {
-    return surah;
+  int getSurah() {
+    return surahNumber;
   }
 
   String getAudioFile() {
@@ -70,12 +72,12 @@ class Track {
   //   return Track(author: fakeuserdata.user0.name, id: mediaItem.id, trackName: mediaItem.title, plays: 0, surah: surah, audioFile: trackURL, coverImagePath: coverImagePath)
   // }
   MediaItem toMediaItem() => MediaItem(
-      id: id,
-      title: trackName,
-      artist: author,
-      artUri: Uri.parse(coverImagePath),
-      extras: <String, dynamic>{
-        'surah':surah,
-        "plays": plays,
-      });
+          id: id,
+          title: trackName,
+          artist: author,
+          artUri: Uri.parse(coverImagePath),
+          extras: <String, dynamic>{
+            'surah': surahNumber,
+            "plays": plays,
+          });
 }

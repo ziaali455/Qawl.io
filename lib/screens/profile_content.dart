@@ -1,3 +1,4 @@
+import 'package:first_project/model/fake_playlists_data.dart';
 import 'package:first_project/model/fake_user_data.dart';
 import 'package:first_project/model/playlist.dart';
 import 'package:first_project/screens/record_audio_content.dart';
@@ -38,7 +39,7 @@ class _PersonalProfileContentState extends State<PersonalProfileContent> {
                 // Align(
                 //     alignment: Alignment.topRight,
                 //     child: Icon(Icons.mic_none_outlined)),
-                ProfileWidget(
+                ProfilePictureWidget(
                   imagePath: user.imagePath,
                   country: "🇺🇸",
                   onClicked: () async {},
@@ -59,10 +60,11 @@ class _PersonalProfileContentState extends State<PersonalProfileContent> {
                 const Padding(
                   padding: EdgeInsets.all(8.0),
                 ),
-                SectionTitle(
+                PlaylistSectionTitle(
                   title: "Uploads",
                   press: () {},
                   isPlaylist: true,
+                  playlist: fake_playlist_data.defaultPlaylist,
                 ),
                 TrackWidget(
                   track: track1,
@@ -78,18 +80,32 @@ class _PersonalProfileContentState extends State<PersonalProfileContent> {
                 ),
               ],
             ),
-          ),
-          GestureDetector(
-              child: const Padding(
-                padding: EdgeInsets.all(12.0),
-                child: Align(alignment: Alignment.topRight,child: Icon(Icons.mic_none_sharp)),
+            floatingActionButton: Padding(
+              padding: const EdgeInsets.all(3.0),
+              child: Container(
+                width: 60,
+                height: 60,
+                child: FloatingActionButton(
+                  backgroundColor: Colors.green,
+                  splashColor: Colors.white,
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RecordAudioContent(),
+                        ));
+                  },
+                  tooltip: 'Enter the record page',
+                  child: Icon(
+                    Icons.mic_none_rounded,
+                    size: 35,
+                  ),
+                ),
               ),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const RecordAudioContent()));
-              })
+            ),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.endFloat,
+          ),
         ]));
   }
 
@@ -137,11 +153,7 @@ class _ProfileContentState extends State<ProfileContent> {
         physics: const BouncingScrollPhysics(),
         children: [
           const QawlBackButton(),
-
-          // Align(
-          //     alignment: Alignment.topRight,
-          //     child: Icon(Icons.mic_none_outlined)),
-          ProfileWidget(
+          ProfilePictureWidget(
             imagePath: myUser.imagePath,
             country: myUser.country,
             onClicked: () async {},
@@ -162,9 +174,10 @@ class _ProfileContentState extends State<ProfileContent> {
           const Padding(
             padding: EdgeInsets.all(8.0),
           ),
-          SectionTitle(
+          PlaylistSectionTitle(
             title: "Uploads",
             press: () {},
+            playlist: fake_playlist_data.defaultPlaylist,
             isPlaylist: true,
           ),
           TrackWidget(

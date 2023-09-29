@@ -1,4 +1,5 @@
 import 'package:first_project/model/playlist.dart';
+import 'package:first_project/screens/now_playing_content.dart';
 import 'package:first_project/size_config.dart';
 import 'package:first_project/widgets/track_widget.dart';
 import 'package:flutter/material.dart';
@@ -33,21 +34,9 @@ class _PlaylistScreenContentState extends State<PlaylistScreenContent> {
       body: SingleChildScrollView(
         child: Container(
           child: Column(children: [
-            const SizedBox(height: 50),
             // back button and menu button
 
-            GestureDetector(
-              child: const Align(
-                alignment: Alignment.topLeft,
-                child: SizedBox(
-                    height: 60,
-                    width: 60,
-                    child: NeuBox(child: Icon(Icons.arrow_back))),
-              ),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
+            QawlBackButton(),
             Container(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),

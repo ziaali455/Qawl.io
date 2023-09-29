@@ -1,62 +1,81 @@
-
 import 'package:first_project/model/fake_track_data.dart';
 import 'package:first_project/model/player.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../size_config.dart';
+import '../model/playlist.dart';
+import '../model/track.dart';
 import '../screens/now_playing_content.dart';
 import 'section_title_widget.dart';
 
-class ExploreTrackWidget extends StatelessWidget {
-  const ExploreTrackWidget({
+class ExploreTrackWidgetSection extends StatelessWidget {
+  const ExploreTrackWidgetSection({
     Key? key,
-    required this.title
+    required this.title,
+    required this.playlist,
   }) : super(key: key);
   final String title;
+  final Playlist playlist;
 
   @override
   Widget build(BuildContext context) {
+    List<TrackCard> tracks = new List.empty(growable: true);
+    for (var track in playlist.list) {
+      tracks.add(new TrackCard(
+        image: track.coverImagePath,
+        title: track.trackName,
+        author: track.author,
+        press: () {},
+      ));
+    }
+    for (var track in playlist.list) {
+      TrackCard(
+        image: track.coverImagePath,
+        title: track.trackName,
+        author: track.author,
+        press: () {},
+      );
+    }
     return Column(
       children: [
         Padding(
           padding:
               EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(5)),
-          child: SectionTitle(
+          child: PlaylistSectionTitle(
             title: title,
-            press: () {},
             isPlaylist: true,
+            playlist: playlist,
+            press: () {},
           ),
         ),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
-          child: Row(
-            children: [
-              TrackCard(
-                image: faketrackdata.fakeTrack1.coverImagePath,
-                title: faketrackdata.fakeTrack1.trackName,
-                author: faketrackdata.fakeTrack1.author,
-                press: () {},
+          child: Row(children: tracks
+              // TrackCard(
+              //   image: faketrackdata.fakeTrack1.coverImagePath,
+              //   title: faketrackdata.fakeTrack1.trackName,
+              //   author: faketrackdata.fakeTrack1.author,
+              //   press: () {},
+              // ),
+              // TrackCard(
+              //   image: faketrackdata.fakeTrack2.coverImagePath,
+              //   title: faketrackdata.fakeTrack2.trackName,
+              //   author: faketrackdata.fakeTrack2.author,
+              //   press: () {},
+              // ),
+              // TrackCard(
+              //   image: faketrackdata.fakeTrack3.coverImagePath,
+              //   title: faketrackdata.fakeTrack3.trackName,
+              //   author: faketrackdata.fakeTrack3.author,
+              //   press: () {},
+              // ),
+              // TrackCard(
+              //   image: faketrackdata.fakeTrack4.coverImagePath,
+              //   title: faketrackdata.fakeTrack4.trackName,
+              //   author: faketrackdata.fakeTrack4.author,
+              //   press: () {},
+              // ),
               ),
-              TrackCard(
-                image: faketrackdata.fakeTrack2.coverImagePath,
-                title: faketrackdata.fakeTrack2.trackName,
-                author: faketrackdata.fakeTrack2.author,
-                press: () {},
-              ),
-              TrackCard(
-                image: faketrackdata.fakeTrack3.coverImagePath,
-                title: faketrackdata.fakeTrack3.trackName,
-                author: faketrackdata.fakeTrack3.author,
-                press: () {},
-              ),
-              TrackCard(
-                image: faketrackdata.fakeTrack4.coverImagePath,
-                title: faketrackdata.fakeTrack4.trackName,
-                author: faketrackdata.fakeTrack4.author,
-                press: () {},
-              ),
-            ],
-          ),
         ),
       ],
     );
@@ -77,16 +96,16 @@ class TrackCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Padding(
       padding: EdgeInsets.all(getProportionateScreenWidth(10)),
       child: GestureDetector(
         onTap: () {
-        playTrack(faketrackdata.defaultTrack);
-        Navigator.push(
+          playTrack(faketrackdata.defaultTrack);
+          Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => NowPlayingContent(playedTrack: faketrackdata.defaultTrack)),
+                builder: (context) =>
+                    NowPlayingContent(playedTrack: faketrackdata.defaultTrack)),
           );
         },
         child: SizedBox(

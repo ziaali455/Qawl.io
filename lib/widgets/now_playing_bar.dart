@@ -11,10 +11,8 @@ class NowPlayingBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('building X Widget');
-    if (main_player.processingState == ProcessingState.ready ||
- main_player.processingState == ProcessingState.completed ||  
- main_player.processingState == ProcessingState.buffering) {
+    bool loaded = main_player.processingState == ProcessingState.ready || main_player.processingState == ProcessingState.completed ||  main_player.processingState == ProcessingState.buffering;
+    if (loaded) {
       return GestureDetector(
         onTap: () {
           Navigator.push(
@@ -58,6 +56,7 @@ class NowPlayingBarWidget extends StatelessWidget {
         ),
       );
     } else {
+
       return Container(
         height: 0,
       );

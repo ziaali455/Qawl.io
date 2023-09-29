@@ -1,5 +1,12 @@
+import 'dart:io';
+
+import 'package:first_project/model/player.dart';
 import 'package:first_project/model/sound_recorder.dart';
+import 'package:first_project/screens/now_playing_content.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_sound_lite/public/flutter_sound_recorder.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:record/record.dart';
 
 class RecordAudioContent extends StatefulWidget {
   const RecordAudioContent({Key? key}) //required this.playlist
@@ -10,59 +17,92 @@ class RecordAudioContent extends StatefulWidget {
 }
 
 class _RecordAudioContentState extends State<RecordAudioContent> {
-  final recorder = SoundRecorder();
-  @override
-  void initState() {
-    super.initState();
-    recorder.init();
+  // final recorder = FlutterSoundRecorder();
+  // Future record() async {
+  //   await recorder.startRecorder(toFile: 'audio');
+  // }
+
+  // Future stop() async {
+  //   await recorder.stopRecorder();
+  // }
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   initRecorder();
+  // }
+
+  // @override
+  // void dispose() {
+  //   recorder.closeAudioSession();
+  //   super.dispose();
+  // }
+
+  // _RecordAudioContentState();
+
+  final record = Record();
+  Future start() async {
+    if (await record.hasPermission()) {
+      // Start recording
+      await record.start(
+        path: '/Users/alizia/first_project/lib/assets/test_recording.m4a',
+        encoder: AudioEncoder.aacLc, // by default
+        bitRate: 128000, // by default
+      );
+      debugPrint("it worked");
+    }
+  }
+// Check and request permission
+
+// Get the state of the recorder
+  Future isRecording() async {
+    bool isRecording = await record.isRecording();
+    return isRecording;
   }
 
-  @override
-  void dispose() {
-    recorder.dispose();
-    super.dispose();
+  void stopRecording() {
+    record.stop();
   }
-
-  _RecordAudioContentState();
 
   @override
   Widget build(BuildContext context) {
-    final isRecording = recorder.isRecording;
-    final icon = isRecording ? Icons.stop : Icons.mic;
-    final text = isRecording ? "STOP" : "START";
-    final color = isRecording ? Colors.red : Colors.white;
-    return Material(
-      child: Container(
-        child: Column(
+    return Scaffold(
+        backgroundColor: Colors.black,
+        body: Column(
           children: [
-            const SizedBox(
-              height: 20,
-            ),
-            const Padding(
-              padding: EdgeInsets.all(80.0),
-              child: Text("RECORD"),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ElevatedButton.icon(
-                  label: Text(text),
-                  icon: Icon(icon),
-                  style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(175, 50),
-                      backgroundColor: color,
-                      foregroundColor: Colors.black),
-                  onPressed: () async {
-                    final isRecording = await recorder.toggleRecording();
-                    print("tapped");
-                    setState(() {});
-                  }),
-            ),
+            QawlBackButton(),
+            Center(
+                child: ElevatedButton(
+              child: Icon(Icons.mic),
+              onPressed: () async {
+                if (await isRecording()) {
+                  stopRecording();
+                } else {
+                  await start();
+                }
+              },
+            )),
+            Center(
+                child: ElevatedButton(
+              child: Icon(Icons.play_arrow),
+              onPressed: () async {
+                if (await isRecording()) {
+                } else {
+                  main_player.setUrl(
+                      '/Users/alizia/first_project/lib/assets/test_recording.m4a');
+                  main_player.play();
+                }
+              },
+            )),
           ],
-        ),
-      ),
-    );
+        ));
   }
+
+  // Future initRecorder() async {
+  //   final status = await Permission.microphone.request();
+  //   if (status != PermissionStatus.granted) {
+  //     throw 'Mic permission not granted';
+  //   }
+  //   await recorder.openAudioSession();
+  // }
 }

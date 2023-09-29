@@ -57,7 +57,9 @@ class TrackWidget extends StatelessWidget {
               leading: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                    
-                  child: Image.network(track.coverImagePath, fit: BoxFit.cover,)
+                  child: AspectRatio(
+                aspectRatio: 1,
+                child: Image.network(track.coverImagePath, fit: BoxFit.cover),),
                   ),
               selectedTileColor: Colors.green,
               title: Text(track.trackName),

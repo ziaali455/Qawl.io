@@ -1,4 +1,5 @@
 import 'package:first_project/model/countries_data.dart';
+import 'package:first_project/screens/now_playing_content.dart';
 import 'package:first_project/size_config.dart';
 import 'package:flutter/material.dart';
 
@@ -26,18 +27,7 @@ class _CountryExploreContentState extends State<CountryExploreContent> {
         const SizedBox(height: 50),
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: GestureDetector(
-            
-              child: const Align(
-                alignment: Alignment.topLeft,
-                child: SizedBox(
-                    height: 60,
-                    width: 60,
-                    child: NeuBox(child: Icon(Icons.arrow_back))),
-              ),
-              onTap: () {
-                Navigator.pop(context);
-              }),
+          child: QawlBackButton()
         ),
         Expanded(
           child: GridView.count(
