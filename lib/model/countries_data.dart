@@ -9,5 +9,6 @@ class allcountries{
       {"emoji": "🇸🇴", "countryName": "Somalia"},
       {"emoji": "🇸🇩", "countryName": "Sudan"},
       {"emoji": "🇸🇦", "countryName": "Saudi Arabia"},
+      {"emoji": "🇬🇳", "countryName": "Guinea"},
     ];
 }

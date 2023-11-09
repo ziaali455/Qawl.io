@@ -55,15 +55,15 @@ class TrackWidget extends StatelessWidget {
           children: [
             ListTile(
               leading: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                   
-                  child: AspectRatio(
-                aspectRatio: 1,
-                child: Image.network(track.coverImagePath, fit: BoxFit.cover),),
-                  ),
+                borderRadius: BorderRadius.circular(10),
+                child: AspectRatio(
+                  aspectRatio: 1,
+                  child: Image.network(track.coverImagePath, fit: BoxFit.cover),
+                ),
+              ),
               selectedTileColor: Colors.green,
               title: Text(track.trackName),
-              subtitle: Text(track.author),
+              subtitle: Text(track.userId),
             ),
           ],
         )),
@@ -79,7 +79,7 @@ class TrackWidget extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(10), // Image border
       child: SizedBox.fromSize(
-         // Image radius
+        // Image radius
         child: Image.network(track.coverImagePath, fit: BoxFit.cover),
       ),
     );

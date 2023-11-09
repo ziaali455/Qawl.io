@@ -1,8 +1,6 @@
-
 import 'package:first_project/model/playlist.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:first_project/model/track.dart';
-
 
 //OBI: NOTE THIS CLASS NO LONGER FUNCTIONS AS A PROVIDER
 //all of the methods were moved outside of the class
@@ -31,14 +29,14 @@ void updateCurrentPlaylist(Playlist playlist) {
   List<AudioSource> tracks = [];
   for (var track in playlist.list) {
     tracks.add(
-        AudioSource.uri(Uri.parse(track.audioFile), tag: track.toMediaItem()));
+        AudioSource.uri(Uri.parse(track.audioPath), tag: track.toMediaItem()));
   }
   currentPlaylist = ConcatenatingAudioSource(children: tracks);
 }
 
 void playTrack(Track playedTrack) async {
   currentTrack = playedTrack;
-  await main_player.setUrl(playedTrack.audioFile);
+  await main_player.setUrl(playedTrack.audioPath);
   if (main_player.playing == true &&
       main_player.processingState == ProcessingState.ready) {
     main_player.pause();

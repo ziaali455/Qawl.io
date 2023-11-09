@@ -11,7 +11,9 @@ class NowPlayingBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool loaded = main_player.processingState == ProcessingState.ready || main_player.processingState == ProcessingState.completed ||  main_player.processingState == ProcessingState.buffering;
+    bool loaded = main_player.processingState == ProcessingState.ready ||
+        main_player.processingState == ProcessingState.completed ||
+        main_player.processingState == ProcessingState.buffering;
     if (loaded) {
       return GestureDetector(
         onTap: () {
@@ -46,7 +48,7 @@ class NowPlayingBarWidget extends StatelessWidget {
               ),
               Center(
                 child: Text(
-                  getCurrentTrack().author,
+                  getCurrentTrack().userId,
                   style: const TextStyle(fontSize: 10),
                   textAlign: TextAlign.center,
                 ),
@@ -56,7 +58,6 @@ class NowPlayingBarWidget extends StatelessWidget {
         ),
       );
     } else {
-
       return Container(
         height: 0,
       );

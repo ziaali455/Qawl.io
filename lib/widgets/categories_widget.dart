@@ -1,3 +1,4 @@
+import 'package:first_project/model/fake_playlists_data.dart';
 import 'package:first_project/model/playlist.dart';
 import 'package:first_project/screens/country_explore_content.dart';
 import 'package:first_project/screens/playlist_screen_content.dart';
@@ -76,10 +77,27 @@ class CategoryCard extends StatelessWidget {
             context,
             MaterialPageRoute(builder: (context) => const CountryExploreContent()),
           );
-        }else{
+        }else if (text == "Trending"){
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => PlaylistScreenContent(playlist: playlist,)),
+            MaterialPageRoute(builder: (context) => PlaylistScreenContent(playlist: fake_playlist_data.trending,)),
+          );
+        }else if (text == "New"){
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => PlaylistScreenContent(playlist: fake_playlist_data.newReleases,)),
+          );
+        }
+        else if (text == "Following"){
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => PlaylistScreenContent(playlist: fake_playlist_data.following,)),
+          );
+        }
+        else if (text == "Following"){
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => PlaylistScreenContent(playlist: fake_playlist_data.following,)),
           );
         }
       },

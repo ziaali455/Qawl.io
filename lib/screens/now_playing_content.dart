@@ -91,7 +91,6 @@ class QawlBackButton extends StatelessWidget {
             ),
             onTap: () {
               Navigator.pop(context);
-              
             },
           ),
         ),
@@ -155,7 +154,8 @@ class CoverContent extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
               child: AspectRatio(
                 aspectRatio: 1,
-                child: Image.network(myTrack.coverImagePath, fit: BoxFit.cover),),
+                child: Image.network(myTrack.coverImagePath, fit: BoxFit.cover),
+              ),
             ),
           ),
           Padding(
@@ -177,7 +177,7 @@ class CoverContent extends StatelessWidget {
                         const SizedBox(height: 6),
                         Text(
                           //weird idk why it cant be const
-                          myTrack.author,
+                          myTrack.userId,
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 22,
@@ -204,13 +204,13 @@ class Controls extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton(
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  hoverColor: Colors.transparent,
-                  onPressed: audioPlayer.seekToPrevious,
-                  iconSize: 60,
-                  color: Colors.white,
-                  icon: const Icon(Icons.skip_previous_rounded)),
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            hoverColor: Colors.transparent,
+            onPressed: audioPlayer.seekToPrevious,
+            iconSize: 60,
+            color: Colors.white,
+            icon: const Icon(Icons.skip_previous_rounded)),
         StreamBuilder<PlayerState>(
           stream: audioPlayer.playerStateStream,
           builder: (context, snapshot) {
@@ -244,13 +244,13 @@ class Controls extends StatelessWidget {
           },
         ),
         IconButton(
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  hoverColor: Colors.transparent,
-                  onPressed: audioPlayer.seekToNext,
-                  iconSize: 60,
-                  color: Colors.white,
-                  icon: const Icon(Icons.skip_next_rounded)),
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            hoverColor: Colors.transparent,
+            onPressed: audioPlayer.seekToNext,
+            iconSize: 60,
+            color: Colors.white,
+            icon: const Icon(Icons.skip_next_rounded)),
       ],
     );
   }

@@ -1,35 +1,31 @@
+import 'package:first_project/model/playlist.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 
 class Track {
-  String author; // should be a user object?
+  final String userId; 
   final String trackName;
   final String id;
-  //String inPlaylist HashMap<String, List<Playlist>>???
+  
   int plays;
-  int surahNumber;
-  final String audioFile;
-  final Set<String> inPlaylists;
+  final int surahNumber;
+  final String audioPath;
+  final Set<Playlist> inPlaylists;
   String coverImagePath = "https://www.linkpicture.com/q/no_cover_1.jpg";
-  final player = AudioPlayer();
-  int count = 0;
   Track(
-      {required this.author,
+      {required this.userId,
       required this.id,
       required this.inPlaylists,
       required this.trackName,
       required this.plays,
       required this.surahNumber,
-      required this.audioFile,
+      required this.audioPath,
       required this.coverImagePath}) {
-    initPlayer();
-  }
-  Future<void> initPlayer() async {
-    await player.setUrl(audioFile);
   }
 
+
   String getAuthor() {
-    return author;
+    return userId;
   }
 
   String getTrackName() {
@@ -49,23 +45,9 @@ class Track {
   }
 
   String getAudioFile() {
-    return audioFile;
+    return audioPath;
   }
 
-  void playTrack(int count) async {
-    this.count = count;
-    await player.setUrl(audioFile);
-    if (count % 2 != 0) {
-      player.play();
-      plays++;
-    } else {
-      await player.pause();
-    }
-  }
-
-  bool isTrackPlaying() {
-    return (count % 2 != 0);
-  }
 
   // factory Track.fromMediaItem(MediaItem mediaItem) {
   //   String trackPath, trackURL;
@@ -74,7 +56,7 @@ class Track {
   MediaItem toMediaItem() => MediaItem(
           id: id,
           title: trackName,
-          artist: author,
+          artist: userId,
           artUri: Uri.parse(coverImagePath),
           extras: <String, dynamic>{
             'surah': surahNumber,

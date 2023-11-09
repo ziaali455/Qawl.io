@@ -8,8 +8,8 @@ import '../model/track.dart';
 import '../screens/now_playing_content.dart';
 import 'section_title_widget.dart';
 
-class ExploreTrackWidgetSection extends StatelessWidget {
-  const ExploreTrackWidgetSection({
+class ExploreTrackWidgetRow extends StatelessWidget {
+  const ExploreTrackWidgetRow({
     Key? key,
     required this.title,
     required this.playlist,
@@ -24,7 +24,7 @@ class ExploreTrackWidgetSection extends StatelessWidget {
       tracks.add(new TrackCard(
         image: track.coverImagePath,
         title: track.trackName,
-        author: track.author,
+        author: track.userId,
         press: () {},
       ));
     }
@@ -32,7 +32,7 @@ class ExploreTrackWidgetSection extends StatelessWidget {
       TrackCard(
         image: track.coverImagePath,
         title: track.trackName,
-        author: track.author,
+        author: track.userId,
         press: () {},
       );
     }

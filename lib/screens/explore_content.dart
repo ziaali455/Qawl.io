@@ -30,11 +30,11 @@ class _ExploreContentState extends State<ExploreContent> {
       Categories(
         playlist: Playlist(author: "ali", name: "ali", list: []),
       ),
-      ExploreTrackWidgetSection(
+      ExploreTrackWidgetRow(
         title: "Top 100",
         playlist: fake_playlist_data.top100,
       ),
-      ExploreTrackWidgetSection(
+      ExploreTrackWidgetRow(
         title: "New Releases",
         playlist: fake_playlist_data.defaultPlaylist,
       ),
@@ -42,7 +42,7 @@ class _ExploreContentState extends State<ExploreContent> {
         title: "Popular Qaris",
         press: () {},
       ),
-      const QariCardRow(
+      QariCardRow(
         user: fakeuserdata.user0,
       ),
     ])));

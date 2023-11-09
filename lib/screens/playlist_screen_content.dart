@@ -1,4 +1,5 @@
 import 'package:first_project/model/playlist.dart';
+import 'package:first_project/model/track.dart';
 import 'package:first_project/screens/now_playing_content.dart';
 import 'package:first_project/size_config.dart';
 import 'package:first_project/widgets/track_widget.dart';
@@ -49,11 +50,11 @@ class _PlaylistScreenContentState extends State<PlaylistScreenContent> {
             ),
             const SizedBox(height: 20),
             //insert for loop that goes through playlist parameter and populates track widgets HERE.
-            for (var i = 0; i < 10; i++)
+            for (Track track in playlist.list)
               Material(
                 child: Padding(
                   padding: const EdgeInsets.all(1.0),
-                  child: TrackWidget(track: faketrackdata.defaultTrack),
+                  child: TrackWidget(track: track),
                 ),
               ),
           ]),

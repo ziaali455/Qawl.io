@@ -15,4 +15,22 @@ class fake_playlist_data {
     faketrackdata.fakeTrack8,
     faketrackdata.fakeTrack9,
   ]);
+  static var newReleases = Playlist(author: "qawl", name: "New", list: [
+    faketrackdata.fakeTrack6,
+    faketrackdata.fakeTrack7,
+    faketrackdata.fakeTrack8,
+    faketrackdata.fakeTrack9,
+  ]);
+   static var trending = Playlist(author: "qawl", name: "Trending", list: [
+    faketrackdata.fakeTrack6,
+    faketrackdata.fakeTrack7,
+    faketrackdata.fakeTrack8,
+    faketrackdata.fakeTrack9,
+  ]);
+  static var following = Playlist(author: "qawl", name: "Following", list: [
+    faketrackdata.fakeTrack6,
+    faketrackdata.fakeTrack7,
+    faketrackdata.fakeTrack8,
+    faketrackdata.fakeTrack9,
+  ]);
 }

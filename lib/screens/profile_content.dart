@@ -24,7 +24,7 @@ class _PersonalProfileContentState extends State<PersonalProfileContent> {
   @override
   Widget build(BuildContext context) {
     final Playlist playlist;
-    const user = fakeuserdata.user0;
+    User user = fakeuserdata.user0;
     var track1 = faketrackdata.fakeTrack1; //pass in data here
     var track2 = faketrackdata.fakeTrack2;
     var track3 = faketrackdata.fakeTrack3;
@@ -49,9 +49,11 @@ class _PersonalProfileContentState extends State<PersonalProfileContent> {
                   padding: const EdgeInsets.all(8.0),
                   child: buildName(user),
                 ),
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: NumbersWidget(),
+                Padding(
+                  padding: EdgeInsets.all(10.0),
+                  child: NumbersWidget(
+                    user: user,
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -103,8 +105,7 @@ class _PersonalProfileContentState extends State<PersonalProfileContent> {
                 ),
               ),
             ),
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.endFloat,
+            floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
           ),
         ]));
   }
@@ -163,13 +164,21 @@ class _ProfileContentState extends State<ProfileContent> {
             padding: const EdgeInsets.all(8.0),
             child: buildName(myUser),
           ),
-          const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: NumbersWidget(),
+          Padding(
+            padding: EdgeInsets.all(10.0),
+            child: NumbersWidget(
+              user: myUser,
+            ),
           ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(10.0),
             child: buildAbout(myUser),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 11.0),
+            child: FollowButton(
+              user: myUser,
+            ),
           ),
           const Padding(
             padding: EdgeInsets.all(8.0),
@@ -210,4 +219,62 @@ class _ProfileContentState extends State<ProfileContent> {
                   const TextStyle(fontWeight: FontWeight.normal, fontSize: 12))
         ],
       );
+}
+
+class FollowButton extends StatefulWidget {
+  const FollowButton({
+    super.key,
+    required this.user,
+  });
+  final User user;
+
+  @override
+  State<FollowButton> createState() => _FollowButtonState();
+}
+
+class _FollowButtonState extends State<FollowButton> {
+  bool following = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 120.0, right: 120.0),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(4),
+        child: Stack(
+          children: <Widget>[
+            Positioned.fill(
+              child: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: <Color>[
+                      Color.fromARGB(255, 13, 161, 99),
+                      Color.fromARGB(255, 22, 181, 93),
+                      Color.fromARGB(255, 32, 220, 85),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.all(2.0),
+                textStyle: const TextStyle(fontSize: 15),
+              ),
+              onPressed: () {
+                setState(() {
+                  following = !following;
+                  widget.user.followers++;
+                });
+              },
+              child: Align(
+                  alignment: Alignment.center,
+                  child: following ? Text("Unfollow") : Text("Follow")),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
