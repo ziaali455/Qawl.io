@@ -2,7 +2,6 @@ import 'package:first_project/model/player.dart';
 import 'package:first_project/screens/now_playing_content.dart';
 import 'package:flutter/material.dart';
 import 'package:first_project/model/track.dart';
-import 'package:just_audio/just_audio.dart';
 
 //FIX THE TEXT UPDATING TO GREEN WHEN U TAP IT
 class TrackWidget extends StatelessWidget {
@@ -56,13 +55,15 @@ class TrackWidget extends StatelessWidget {
           children: [
             ListTile(
               leading: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                   
-                  child: Image.network(track.coverImagePath, fit: BoxFit.cover,)
-                  ),
+                borderRadius: BorderRadius.circular(10),
+                child: AspectRatio(
+                  aspectRatio: 1,
+                  child: Image.network(track.coverImagePath, fit: BoxFit.cover),
+                ),
+              ),
               selectedTileColor: Colors.green,
               title: Text(track.trackName),
-              subtitle: Text(track.author),
+              subtitle: Text(track.userId),
             ),
           ],
         )),
@@ -78,7 +79,7 @@ class TrackWidget extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(10), // Image border
       child: SizedBox.fromSize(
-         // Image radius
+        // Image radius
         child: Image.network(track.coverImagePath, fit: BoxFit.cover),
       ),
     );

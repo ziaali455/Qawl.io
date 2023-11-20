@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class ProfileWidget extends StatelessWidget {
+class ProfilePictureWidget extends StatelessWidget {
   final String imagePath;
   final VoidCallback onClicked;
   final String country;
 
-  const ProfileWidget({
+  const ProfilePictureWidget({
     Key? key,
     required this.imagePath,
     required this.country,

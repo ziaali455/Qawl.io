@@ -1,12 +1,10 @@
 import 'package:first_project/model/fake_playlists_data.dart';
-import 'package:first_project/model/playlist.dart';
 import 'package:first_project/widgets/playlist_list_widget.dart';
-import 'package:first_project/widgets/playlist_button_widget.dart';
+import 'package:first_project/widgets/playlist_button_widget_block.dart';
 import 'package:first_project/widgets/search_field.dart';
 import 'package:first_project/widgets/section_title_widget.dart';
 import 'package:flutter/material.dart';
 import '../../../../size_config.dart';
-import '../model/track.dart';
 
 class HomePageContent extends StatefulWidget {
   //final Playlist playlist;
@@ -18,8 +16,8 @@ class HomePageContent extends StatefulWidget {
 }
 
 class _HomePageContentState extends State<HomePageContent> {
-   // late List<Playlist> playlists;
- 
+  // late List<Playlist> playlists;
+
   // _HomePageContentState(List<Playlist> playlists) {
   //   this.playlists = playlists;
   // }
@@ -69,21 +67,26 @@ class _HomePageContentState extends State<HomePageContent> {
               crossAxisSpacing: 20,
               mainAxisSpacing: 20,
               crossAxisCount: 2,
-              children:  <Widget>[
-             
-              
-              PlaylistButtonWidget(playlist: fake_playlist_data.defaultPlaylist),
-              PlaylistButtonWidget(playlist: fake_playlist_data.defaultPlaylist),
-              PlaylistButtonWidget(playlist: fake_playlist_data.defaultPlaylist),
-              PlaylistButtonWidget(playlist: fake_playlist_data.defaultPlaylist),
-
+              children: <Widget>[
+                PlaylistButtonWidget(
+                    playlist: fake_playlist_data.defaultPlaylist),
+                PlaylistButtonWidget(
+                    playlist: fake_playlist_data.defaultPlaylist),
+                PlaylistButtonWidget(
+                    playlist: fake_playlist_data.defaultPlaylist),
+                PlaylistButtonWidget(
+                    playlist: fake_playlist_data.defaultPlaylist),
               ],
             ),
-
-            SectionTitle(title: "Playlists", press: () {}),
-            
-           PlaylistListWidget(playlists_List: [fake_playlist_data.defaultPlaylist, fake_playlist_data.defaultPlaylist, fake_playlist_data.defaultPlaylist]),
-
+            SectionTitle(
+              title: "Playlists",
+              press: () {},
+            ),
+            PlaylistListWidget(playlists_List: [
+              fake_playlist_data.defaultPlaylist,
+              fake_playlist_data.defaultPlaylist,
+              fake_playlist_data.defaultPlaylist
+            ]),
           ],
         ),
       ),

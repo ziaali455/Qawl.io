@@ -365,8 +365,37 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"sqlite3\"",
+					"-framework",
+					"\"AVFoundation\"",
+					"-framework",
+					"\"FMDB\"",
+					"-framework",
+					"\"MediaPlayer\"",
+					"-framework",
+					"\"audio_service\"",
+					"-framework",
+					"\"audio_session\"",
+					"-framework",
+					"\"flutter_sound_core\"",
+					"-framework",
+					"\"flutter_sound_lite\"",
+					"-framework",
+					"\"just_audio\"",
+					"-framework",
+					"\"path_provider_foundation\"",
+					"-framework",
+					"\"permission_handler_apple\"",
+					"-framework",
+					"\"sqflite\"",
+					"-lc++",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.testing.qawl;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -494,6 +523,34 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"sqlite3\"",
+					"-framework",
+					"\"AVFoundation\"",
+					"-framework",
+					"\"FMDB\"",
+					"-framework",
+					"\"MediaPlayer\"",
+					"-framework",
+					"\"audio_service\"",
+					"-framework",
+					"\"audio_session\"",
+					"-framework",
+					"\"flutter_sound_core\"",
+					"-framework",
+					"\"flutter_sound_lite\"",
+					"-framework",
+					"\"just_audio\"",
+					"-framework",
+					"\"path_provider_foundation\"",
+					"-framework",
+					"\"permission_handler_apple\"",
+					"-framework",
+					"\"sqflite\"",
+					"-lc++",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.testing.qawl;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -517,8 +574,37 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"sqlite3\"",
+					"-framework",
+					"\"AVFoundation\"",
+					"-framework",
+					"\"FMDB\"",
+					"-framework",
+					"\"MediaPlayer\"",
+					"-framework",
+					"\"audio_service\"",
+					"-framework",
+					"\"audio_session\"",
+					"-framework",
+					"\"flutter_sound_core\"",
+					"-framework",
+					"\"flutter_sound_lite\"",
+					"-framework",
+					"\"just_audio\"",
+					"-framework",
+					"\"path_provider_foundation\"",
+					"-framework",
+					"\"permission_handler_apple\"",
+					"-framework",
+					"\"sqflite\"",
+					"-lc++",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.testing.qawl;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";

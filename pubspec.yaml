@@ -31,6 +31,9 @@ dependencies:
   flutter:
     sdk: flutter
   just_audio: ^0.9.33
+  just_audio_background: ^0.0.1-beta.7
+  rxdart: ^0.27.5
+  audio_video_progress_bar: ^1.0.1
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -40,6 +43,10 @@ dependencies:
   percent_indicator: ^4.2.3
   flex_color_scheme: ^7.1.2
   countries_flag: ^1.0.0
+  flutter_sound_lite: ^8.5.0
+  permission_handler: ^10.4.3
+  firebase_auth: ^4.8.0
+  record: ^4.4.4
   #audioplayers: ^0.15.1
 
 dev_dependencies:
@@ -48,7 +55,7 @@ dev_dependencies:
   flutter_svg: ^2.0.6
   google_fonts: ^5.0.0
   smooth_page_indicator: ^1.1.0
-  audio_video_progress_bar: ^0.9.0
+  audio_video_progress_bar: ^1.0.1
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'screens/homepage.dart';
 
 void main() {
+
   runApp(const MyApp());
 }
 
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
         scheme: FlexScheme.hippieBlue,
         darkIsTrueBlack: true,
       ),
-      home: const  HomePage(),
+      home: const HomePage(),
     );
   }
 }
