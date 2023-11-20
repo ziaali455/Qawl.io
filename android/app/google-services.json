@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "888589068309",
+    "project_id": "qawl-io",
+    "storage_bucket": "qawl-io.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:888589068309:android:2f2083f1141ad72c4c461c",
+        "android_client_info": {
+          "package_name": "com.example.first_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWbiyzhKstUschpXHx7SxrdUxhsIjmho8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

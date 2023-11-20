@@ -48,6 +48,10 @@ class Track {
     return audioPath;
   }
 
+  Set<Playlist> getInPlayLists() {
+    return inPlaylists;
+  }
+
 
   // factory Track.fromMediaItem(MediaItem mediaItem) {
   //   String trackPath, trackURL;

@@ -1,100 +1,113 @@
 import 'package:first_project/model/user.dart';
 
 class temp_user_data {
-  static const user5 = User(
+  static var user5 = User(
       imagePath:
           'https://netstorage-tuko.akamaized.net/images/f6b3d8e16d60277b.jpg?imwidth=900',
+      id: "5",
       name: "Muhammad Khan",
       email: 'muhammad.khan@gmail.com',
       about: 'Salam, my name is Muhammad. I\'m a reciter on Qawl!',
-      country: 'India');
+      country: 'India',
+      followers: 53);
 
-  static const user6 = User(
+  static var user6 = User(
       imagePath:
           'https://netstorage-tuko.akamaized.net/images/f6b3d8e16d60277b.jpg?imwidth=900',
+      id: "6",
       name: "Abdullah Mahmoud",
       email: 'abdullah.mahmoud@gmail.com',
       about: 'Salam, my name is Abdullah. I\'m a reciter on Qawl!',
-      country: 'Lebanon');
+      country: 'Lebanon',
+      followers: 29);
 
-  static const user7 = User(
+  static var user7 = User(
       imagePath:
           'https://netstorage-tuko.akamaized.net/images/f6b3d8e16d60277b.jpg?imwidth=900',
+      id: "7",
       name: "Hamza Rahman",
       email: 'hamza.rahman@gmail.com',
       about: 'Salam, my name is Hamza. I\'m a reciter on Qawl!',
-      country: 'USA');
+      country: 'USA',
+      followers: 31);
 
-  static const user8 = User(
+  static var user8 = User(
       imagePath:
           'https://netstorage-tuko.akamaized.net/images/f6b3d8e16d60277b.jpg?imwidth=900',
+      id: "8",
       name: "Abulrahman Muhammad",
       email: 'abulrahman.muhammad@gmail.com',
       about: 'Salam, my name is Abulrahman. I\'m a reciter on Qawl!',
-      country: 'Algeria');
+      country: 'Algeria',
+      followers: 82);
 
-  static const user9 = User(
+  static var user9 = User(
       imagePath:
           'https://netstorage-tuko.akamaized.net/images/f6b3d8e16d60277b.jpg?imwidth=900',
+      id: "9",
       name: "Zainab Khan",
       email: 'zainab.khan@gmail.com',
       about: 'Salam, my name is Zainab. I\'m a reciter on Qawl!',
-      country: 'Pakistan');
+      country: 'Pakistan',
+      followers: 93);
 
-  static const user10 = User(
+  static var user10 = User(
       imagePath:
           'https://netstorage-tuko.akamaized.net/images/f6b3d8e16d60277b.jpg?imwidth=900',
+      id: "10",
       name: "Yunus Amir",
       email: 'Yunus.Amir@gmail.com',
       about: 'Salam, my name is Yunus. I\'m a reciter on Qawl!',
-      country: 'Morrocco');
+      country: 'Morrocco',
+      followers: 59);
 
-  static const user11 = User(
+  static var user11 = User(
       imagePath:
           'https://netstorage-tuko.akamaized.net/images/f6b3d8e16d60277b.jpg?imwidth=900',
+      id: "11",
       name: "Yusuf Al-Ansaari",
       email: 'yusuf.al-ansaari@gmail.com',
       about: 'Salam, my name is Yusuf. I\'m a reciter on Qawl!',
-      country: 'Palestine');
+      country: 'Palestine',
+      followers: 27);
 
-
-       static const user12 = User(
+  static var user12 = User(
       imagePath:
           'https://netstorage-tuko.akamaized.net/images/f6b3d8e16d60277b.jpg?imwidth=900',
+      id: "12",
       name: "Aisha Malik",
       email: 'aisha.malik@gmail.com',
       about: 'Salam, my name is Aisha. I\'m a reciter on Qawl!',
-      country: 'Jordan');
+      country: 'Jordan',
+      followers: 39);
 
-
- static const user13 = User(
+  static var user13 = User(
       imagePath:
           'https://netstorage-tuko.akamaized.net/images/f6b3d8e16d60277b.jpg?imwidth=900',
+      id: "13",
       name: "Ahmed Muhammad",
       email: 'ahmed.muhammad@gmail.com',
       about: 'Salam, my name is Ahmed. I\'m a reciter on Qawl!',
-      country: 'Somalia');
+      country: 'Somalia',
+      followers: 12);
 
-
-
- static const user14 = User(
+  static var user14 = User(
       imagePath:
           'https://netstorage-tuko.akamaized.net/images/f6b3d8e16d60277b.jpg?imwidth=900',
+      id: "4",
       name: "Fatima Omar",
       email: 'fatima.omar@gmail.com',
       about: 'Salam, my name is fatima. I\'m a reciter on Qawl!',
-      country: 'Niger');
+      country: 'Niger',
+      followers: 34);
 
-
-
- static const user15 = User(
+  static var user15 = User(
       imagePath:
           'https://netstorage-tuko.akamaized.net/images/f6b3d8e16d60277b.jpg?imwidth=900',
+      id: "15",
       name: "Ibrahim Jamal",
       email: 'ibrahim.jamal@gmail.com',
       about: 'Salam, my name is ibrahim. I\'m a reciter on Qawl!',
-      country: 'Saudi Arabia');
-
-
-      
+      country: 'Saudi Arabia',
+      followers: 15);
 }
