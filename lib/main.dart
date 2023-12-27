@@ -3,15 +3,16 @@ import 'package:flutter/material.dart';
 import 'screens/homepage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 Future<void>main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await Firebase.initializeApp(
-    name: 'qawl-io',
-    options: DefaultFirebaseOptions.currentPlatform,
+   // name: 'qawl-io',
+    //options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+  
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -29,6 +30,10 @@ class MyApp extends StatelessWidget {
         darkIsTrueBlack: true,
       ),
       home: const HomePage(),
+      
     );
   }
+  
 }
+
+

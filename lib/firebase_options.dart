@@ -44,37 +44,38 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyAAD3fnfz-w5rT_irKqI8X30W7PhEd3Rvo',
-    appId: '1:888589068309:web:34ab0ec1f2e2cfd04c461c',
-    messagingSenderId: '888589068309',
-    projectId: 'qawl-io',
-    authDomain: 'qawl-io.firebaseapp.com',
-    storageBucket: 'qawl-io.appspot.com',
+    apiKey: 'AIzaSyDj9lpsIfAxOc9D6OCCsFfvifaVeSnHmCY',
+    appId: '1:757975886517:web:e6b25f28c1c97520e5ecfc',
+    messagingSenderId: '757975886517',
+    projectId: 'qawl-io-8c4ff',
+    authDomain: 'qawl-io-8c4ff.firebaseapp.com',
+    storageBucket: 'qawl-io-8c4ff.appspot.com',
+    measurementId: 'G-HXV6BZ7Q2J',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDWbiyzhKstUschpXHx7SxrdUxhsIjmho8',
-    appId: '1:888589068309:android:2f2083f1141ad72c4c461c',
-    messagingSenderId: '888589068309',
-    projectId: 'qawl-io',
-    storageBucket: 'qawl-io.appspot.com',
+    apiKey: 'AIzaSyB5F-pGaFugjp-gqEde1zVAg-8l7Jabbfs',
+    appId: '1:757975886517:android:9c8d7145c262bccbe5ecfc',
+    messagingSenderId: '757975886517',
+    projectId: 'qawl-io-8c4ff',
+    storageBucket: 'qawl-io-8c4ff.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCtG7PMk8v2D_53FoznPvyQEeu3dwmvZ9U',
-    appId: '1:888589068309:ios:e29d15360d0c1a474c461c',
-    messagingSenderId: '888589068309',
-    projectId: 'qawl-io',
-    storageBucket: 'qawl-io.appspot.com',
+    apiKey: 'AIzaSyAEp19apz6tDNQiMR84XbONtJCZq0wvEqo',
+    appId: '1:757975886517:ios:474cc9719bc0ba78e5ecfc',
+    messagingSenderId: '757975886517',
+    projectId: 'qawl-io-8c4ff',
+    storageBucket: 'qawl-io-8c4ff.appspot.com',
     iosBundleId: 'com.testing.qawl',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyCtG7PMk8v2D_53FoznPvyQEeu3dwmvZ9U',
-    appId: '1:888589068309:ios:c504dc5917b7fd474c461c',
-    messagingSenderId: '888589068309',
-    projectId: 'qawl-io',
-    storageBucket: 'qawl-io.appspot.com',
+    apiKey: 'AIzaSyAEp19apz6tDNQiMR84XbONtJCZq0wvEqo',
+    appId: '1:757975886517:ios:690ae37b43d5e3a4e5ecfc',
+    messagingSenderId: '757975886517',
+    projectId: 'qawl-io-8c4ff',
+    storageBucket: 'qawl-io-8c4ff.appspot.com',
     iosBundleId: 'com.example.firstProject',
   );
 }
