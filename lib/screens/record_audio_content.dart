@@ -134,65 +134,106 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
 //   }
   @override
   Widget build(BuildContext context) {
+    bool isPlaying = false;
     return Scaffold(
         backgroundColor: Colors.black,
         body: Column(
           children: [
-            QawlBackButton(),
-            Center(
-                child: ElevatedButton(
-              child: Icon(Icons.mic),
-              onPressed: () async {
-                if (await isRecording()) {
-                  // popup for surah name,
+            Padding(
+              padding: const EdgeInsets.only(bottom: 300.0),
+              child: QawlBackButton(),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 30.0, right: 22.0),
+              child: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
+                      child: ElevatedButton(
+                          child: Icon(
+                            Icons.mic,
+                            size: 50.0,
+                          ),
+                          onPressed: () async {
+                            if (await isRecording()) {
+                              // popup for surah name,
 
-                  stopRecording();
-                } else {
-                  await start();
-                }
-              },
-            )),
-            Center(
-                child: ElevatedButton(
-              child: Icon(Icons.play_arrow),
-              onPressed: () async {
-                if (await isRecording()) {
-                } else {
-                  main_player.setUrl(
-                      '/Users/alizia/first_project/lib/assets/test_recording.m4a');
-                  main_player.play();
-                }
-              },
-            )),
-            Center(
-                child: ElevatedButton(
-              child: Icon(Icons.upload_file),
-              onPressed: () async {
-                debugPrint("clicked upload");
+                              stopRecording();
+                            } else {
+                              await start();
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 30, vertical: 30),
+                          )),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
+                        child: ElevatedButton(
+                            child: isPlaying
+                                ? Icon(Icons.pause, size: 50.0)
+                                : Icon(Icons.play_arrow, size: 50.0),
+                            onPressed: () async {
+                              if (await isRecording()) {
+                                setState(() {
+                                  isPlaying = !isPlaying;
+                                });
+                              } else {
+                                main_player.stop();
+                                main_player.setUrl(
+                                    '/Users/alizia/first_project/lib/assets/test_recording.m4a');
+                                main_player.play();
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 30, vertical: 30),
+                            ))),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
+                        child: ElevatedButton(
+                      child: Icon(Icons.upload_file, size: 50.0),
+                      onPressed: () async {
+                        debugPrint("clicked upload");
 
-                FilePickerResult? result =
-                    await FilePicker.platform.pickFiles();
+                        FilePickerResult? result =
+                            await FilePicker.platform.pickFiles();
 
-                if (result != null) {
-                  File file = File(result.files.single.path!);
-                  Uint8List? fileBytes =
-                      result.files.first.bytes; // fileBytes is nullable
-                  String fileName = result.files.first.name;
+                        if (result != null) {
+                          File file = File(result.files.single.path!);
+                          Uint8List? fileBytes =
+                              result.files.first.bytes; // fileBytes is nullable
+                          String fileName = result.files.first.name;
 
-                  if (fileBytes != null) {
-                    //upload to firebase storage
-                    //await FirebaseStorage.instance
-                     //   .ref('uploads/$fileName')
-                      //  .putData(fileBytes);
-                  }
-                    //upload 
-
-
-                } else {
-                  // User canceled the picker
-                }
-              },
-            )),
+                          if (fileBytes != null) {
+                            //upload to firebase storage
+                            //await FirebaseStorage.instance
+                            //   .ref('uploads/$fileName')
+                            //  .putData(fileBytes);
+                          }
+                          //upload
+                        } else {
+                          // User canceled the picker
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+                      ),
+                    )),
+                  ),
+                ],
+              ),
+            ),
           ],
         ));
   }
