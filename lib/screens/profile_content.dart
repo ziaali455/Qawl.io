@@ -270,7 +270,7 @@ class _FollowButtonState extends State<FollowButton> {
               },
               child: Align(
                   alignment: Alignment.center,
-                  child: following ? Text("Unfollow") : Text("Follow")),
+                  child: following ? Text("Unfollow", style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),) : Text("Follow", style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),)),
             ),
           ],
         ),
