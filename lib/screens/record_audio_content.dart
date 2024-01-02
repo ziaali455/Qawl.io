@@ -34,7 +34,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
       debugPrint("Recording started");
     }
   }
-
+// user id plus milliseconds
   Future<String> getTemporaryFilePath() async {
     Directory tempDir = await getTemporaryDirectory();
     String tempPath = tempDir.path;
@@ -113,6 +113,8 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
     }
   }
 
+
+
   Future initRecorder() async {
     final status = await Permission.microphone.request();
     if (status != PermissionStatus.granted) {
@@ -144,7 +146,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
               child: QawlBackButton(),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 30.0, right: 22.0),
+              padding: const EdgeInsets.only(left: 10.0, right: 2.0),
               child: Row(
                 children: [
                   Padding(
@@ -158,8 +160,9 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
                           onPressed: () async {
                             if (await isRecording()) {
                               // popup for surah name,
-
                               stopRecording();
+
+                              //uploadRecording();
                             } else {
                               await start();
                             }
@@ -184,6 +187,8 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
                                   isPlaying = !isPlaying;
                                 });
                               } else {
+
+                                //retrieve the track and play it
                                 main_player.stop();
                                 main_player.setUrl(
                                     '/Users/alizia/first_project/lib/assets/test_recording.m4a');
@@ -210,16 +215,31 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
                         if (result != null) {
                           File file = File(result.files.single.path!);
                           Uint8List? fileBytes =
-                              result.files.first.bytes; // fileBytes is nullable
+                             result.files.first.bytes; // fileBytes is nullable
                           String fileName = result.files.first.name;
 
                           if (fileBytes != null) {
                             //upload to firebase storage
-                            //await FirebaseStorage.instance
-                            //   .ref('uploads/$fileName')
-                            //  .putData(fileBytes);
+                   //         await FirebaseStorage.instance
+                     //           .ref('recordings/$fileName')
+                       //         .putFile(file);
                           }
-                          //upload
+
+                          TaskSnapshot uploadTask = await FirebaseStorage
+                              .instance
+                              .ref('recordings/$fileName')
+                              .putFile(file);
+                          String downloadUrl =
+                              await uploadTask.ref.getDownloadURL();
+
+                          //upload to cloud firestore
+                          await FirebaseFirestore.instance
+                              .collection('tracks')
+                              .add({
+                            'fileUrl': downloadUrl,
+                            'timestamp': FieldValue.serverTimestamp(),
+                            //'surah' : surah
+                          });
                         } else {
                           // User canceled the picker
                         }
