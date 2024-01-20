@@ -40,9 +40,10 @@ class _HomePageState extends State<HomePage> {
                 print(currentIndex);
               },
               tabs: const [
-                GButton(icon: Icons.home),
+                GButton(icon: Icons.home,),
                 GButton(icon: Icons.search),
-                GButton(icon: Icons.person)
+                GButton(icon: Icons.person),
+                
               ]),
         ],
       ),

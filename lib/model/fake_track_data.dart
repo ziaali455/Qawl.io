@@ -14,16 +14,16 @@ inPlaylists: {new Playlist(author: "authorName" , name: "new playlist", list: ne
   );
 
   static var fakeTrack1 = Track(
-    userId: "Mahmoud Hussary",
+    userId: "Talha Muhib",
     id: "1",
     trackName: "Al-Fatihah",
 inPlaylists: {new Playlist(author: "authorName" , name: "new playlist", list: new List.empty())},    plays: 2000000,
     surahNumber: 1,
     audioPath: "https://server8.mp3quran.net/ahmad_huth/001.mp3",
-    coverImagePath: "https://quran.com.kw/en/wp-content/uploads/alhusarey.jpg",
+    coverImagePath: "https://lh3.googleusercontent.com/u/1/drive-viewer/AEYmBYRiQyzHhjVSvIrXMYgUvzq7KtDHMIJfAwbhH_-d63dqMmT3wyaMmzFDye_2nd2stQf7yDziZz7Anun5yk-Hr89nfLwBMg=w3374-h1682",
   );
   static var fakeTrack2 = Track(
-    userId: "Mohamed Minshawi",
+    userId: "Sheikh Omar Jabbie",
     id: "2",
     trackName: "Al-Baqarah",
     inPlaylists: {new Playlist(author: "authorName" , name: "new playlist", list: new List.empty())},
@@ -31,7 +31,7 @@ inPlaylists: {new Playlist(author: "authorName" , name: "new playlist", list: ne
     surahNumber: 1,
     audioPath: "https://server8.mp3quran.net/ahmad_huth/002.mp3",
     coverImagePath:
-        "https://static.qurancdn.com/images/reciters/7/mohamed-siddiq-el-minshawi-profile.jpeg?v=1",
+        "https://i1.sndcdn.com/avatars-000434170545-2mu8x0-t500x500.jpg",
   );
 
   static var fakeTrack3 = Track(
@@ -64,7 +64,7 @@ inPlaylists: {new Playlist(author: "authorName" , name: "new playlist", list: ne
     coverImagePath:
         "https://i1.sndcdn.com/artworks-000180669830-vjgjbm-t500x500.jpg",
   );
-  static var fakeTrack6 = Track(
+  static var fakeTrack8 = Track(
     userId: "Abdul Rashid Ali",
     id: "6",
     inPlaylists: {new Playlist(author: "authorName" , name: "new playlist", list: new List.empty())},
@@ -75,8 +75,8 @@ inPlaylists: {new Playlist(author: "authorName" , name: "new playlist", list: ne
     coverImagePath:
         "http://www.assajda.com/media/person/square/abdul-rashid-ali-sufi.jpg",
   );
-  static var fakeTrack7 = Track(
-    userId: "Maher Al-Mu'aiqly",
+  static var fakeTrack6 = Track(
+    userId: "Abdullah M",
     id: "8",
     trackName: "An-Nisaa",
     inPlaylists: {new Playlist(author: "authorName" , name: "new playlist", list: new List.empty())},
@@ -84,19 +84,9 @@ inPlaylists: {new Playlist(author: "authorName" , name: "new playlist", list: ne
     surahNumber: 1,
     audioPath: "https://server8.mp3quran.net/ahmad_huth/004.mp3",
     coverImagePath:
-        "https://upload.wikimedia.org/wikipedia/commons/9/90/Maher_Al_Mueaqly.png",
+        "https://yt3.googleusercontent.com/DcXh9E3PGXDKteAu-66JGiAt2I78lA80IsDVZWRT_VCk3YOSz093KUl3u1wM6INy3AK_geC_nTQ=s176-c-k-c0x00ffffff-no-rj",
   );
-  static var fakeTrack8 = Track(
-    userId: "Raad Al-Kurdi",
-    id: "9",
-    trackName: "Al-Ikhlas",
-    inPlaylists: {new Playlist(author: "authorName" , name: "new playlist", list: new List.empty())},
-    plays: 1234,
-    surahNumber: 1,
-    audioPath: "https://server8.mp3quran.net/ahmad_huth/004.mp3",
-    coverImagePath:
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Raad_Mohammad_Al_Kurdi.png/220px-Raad_Mohammad_Al_Kurdi.png",
-  );
+  
   static var fakeTrack9 = Track(
     userId: "Saud Al-Shuraim",
     id: "9",
@@ -107,5 +97,16 @@ inPlaylists: {new Playlist(author: "authorName" , name: "new playlist", list: ne
     audioPath: "https://server8.mp3quran.net/ahmad_huth/004.mp3",
     coverImagePath:
         "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcS3K1uE6ZsiKtszKFoB9o78OXdWKh_lzXDJoaSb1cKx7SZUP_0s",
+  );
+  static var fakeTrack7 = Track(
+    userId: "Muhammad Al-Amawi",
+    id: "10",
+    trackName: "Al-Ahzab",
+    inPlaylists: {new Playlist(author: "authorName" , name: "new playlist", list: new List.empty())},
+    plays: 1234,
+    surahNumber: 1,
+    audioPath: "https://drive.google.com/open?id=1UeoOhgosMuZFdjlH9ah412ZEXDI4bIHw",
+    coverImagePath:
+        "https://i.ibb.co/jgd4r23/e2755576-9009-4dc1-9568-0c69c32ef780.jpg",
   );
 }

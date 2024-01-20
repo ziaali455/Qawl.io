@@ -2,6 +2,7 @@ import 'package:first_project/model/fake_playlists_data.dart';
 import 'package:first_project/model/fake_user_data.dart';
 import 'package:first_project/model/playlist.dart';
 import 'package:first_project/screens/record_audio_content.dart';
+import 'package:first_project/screens/upload_options_content.dart';
 import 'package:first_project/widgets/profile_picture_widget.dart';
 import 'package:first_project/widgets/section_title_widget.dart';
 import 'package:first_project/widgets/track_widget.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:first_project/model/user.dart';
 import 'package:first_project/widgets/profile_stats_widget.dart';
 import 'package:first_project/model/fake_track_data.dart';
+import 'package:flutter/cupertino.dart';
 
 import 'now_playing_content.dart';
 
@@ -82,29 +84,7 @@ class _PersonalProfileContentState extends State<PersonalProfileContent> {
                 ),
               ],
             ),
-            floatingActionButton: Padding(
-              padding: const EdgeInsets.all(3.0),
-              child: Container(
-                width: 60,
-                height: 60,
-                child: FloatingActionButton(
-                  backgroundColor: Colors.green,
-                  splashColor: Colors.white,
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => RecordAudioContent(),
-                        ));
-                  },
-                  tooltip: 'Enter the record page',
-                  child: Icon(
-                    Icons.mic_none_rounded,
-                    size: 35,
-                  ),
-                ),
-              ),
-            ),
+            floatingActionButton: QawlRecordButton(),
             floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
           ),
         ]));
@@ -123,6 +103,51 @@ class _PersonalProfileContentState extends State<PersonalProfileContent> {
                   const TextStyle(fontWeight: FontWeight.normal, fontSize: 12))
         ],
       );
+}
+
+class QawlRecordButton extends StatelessWidget {
+  const QawlRecordButton({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(3.0),
+      child: Container(
+        width: 60,
+        height: 60,
+        child: Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: LinearGradient(
+              colors: <Color>[
+                Color.fromARGB(255, 13, 161, 99),
+                Color.fromARGB(255, 22, 181, 93),
+                Color.fromARGB(255, 32, 220, 85),
+              ],
+            ),
+          ),
+          child: FloatingActionButton(
+            backgroundColor: Colors.transparent,
+            splashColor: Colors.white,
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => UploadOptionsContent(),
+                  ));
+            },
+            tooltip: 'Enter the record page',
+            child: Icon(
+              Icons.mic,
+              size: 35,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class ProfileContent extends StatefulWidget {
@@ -270,7 +295,17 @@ class _FollowButtonState extends State<FollowButton> {
               },
               child: Align(
                   alignment: Alignment.center,
-                  child: following ? Text("Unfollow", style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),) : Text("Follow", style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),)),
+                  child: following
+                      ? Text(
+                          "Unfollow",
+                          style: TextStyle(
+                              fontSize: 20.0, fontWeight: FontWeight.bold),
+                        )
+                      : Text(
+                          "Follow",
+                          style: TextStyle(
+                              fontSize: 20.0, fontWeight: FontWeight.bold),
+                        )),
             ),
           ],
         ),

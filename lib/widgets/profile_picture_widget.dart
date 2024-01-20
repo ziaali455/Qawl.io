@@ -59,7 +59,15 @@ class ProfilePictureWidget extends StatelessWidget {
       ClipOval(
         child: Container(
           padding: EdgeInsets.all(all),
-          color: color,
+          decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: <Color>[
+                    Color.fromARGB(255, 13, 161, 99),
+                    Color.fromARGB(255, 22, 181, 93),
+                    Color.fromARGB(255, 32, 220, 85),
+                  ],
+                ),
+              ),
           child: child,
         ),
       );

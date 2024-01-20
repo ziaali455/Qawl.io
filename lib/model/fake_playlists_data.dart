@@ -33,4 +33,46 @@ class fake_playlist_data {
     faketrackdata.fakeTrack8,
     faketrackdata.fakeTrack9,
   ]);
+  static var homeExample1 = Playlist(author: "Mishary", name: "Late Night", list: [
+    faketrackdata.fakeTrack1,
+    faketrackdata.fakeTrack2,
+    faketrackdata.fakeTrack3,
+    faketrackdata.fakeTrack4,
+    faketrackdata.fakeTrack5,
+  ]);
+  static var homeExample2 = Playlist(author: "Mishary", name: "Soninke", list: [
+    faketrackdata.fakeTrack1,
+    faketrackdata.fakeTrack2,
+    faketrackdata.fakeTrack3,
+    faketrackdata.fakeTrack4,
+    faketrackdata.fakeTrack5,
+  ]);
+  static var homeExample3 = Playlist(author: "Mishary", name: "Favorites", list: [
+    faketrackdata.fakeTrack1,
+    faketrackdata.fakeTrack2,
+    faketrackdata.fakeTrack3,
+    faketrackdata.fakeTrack4,
+    faketrackdata.fakeTrack5,
+  ]);
+  static var homeExample4 = Playlist(author: "Mishary", name: "Taraweeh", list: [
+    faketrackdata.fakeTrack1,
+    faketrackdata.fakeTrack2,
+    faketrackdata.fakeTrack3,
+    faketrackdata.fakeTrack4,
+    faketrackdata.fakeTrack5,
+  ]);
+  static var recents = Playlist(author: "Mishary", name: "Recently Played", list: [
+    faketrackdata.fakeTrack4,
+    faketrackdata.fakeTrack5,
+  ]);
+  static var homeExample5 = Playlist(author: "Mishary", name: "Studying", list: [
+    faketrackdata.fakeTrack1,
+    faketrackdata.fakeTrack5,
+  ]);
+  static var homeExample6 = Playlist(author: "Mishary", name: "Car Ride", list: [
+    faketrackdata.fakeTrack2,
+    faketrackdata.fakeTrack3,
+    faketrackdata.fakeTrack4,
+    faketrackdata.fakeTrack5,
+  ]);
 }

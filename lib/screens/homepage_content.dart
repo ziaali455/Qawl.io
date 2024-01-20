@@ -56,7 +56,7 @@ class _HomePageContentState extends State<HomePageContent> {
     // OG implementation
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.only(top: 50.0),
+        padding: const EdgeInsets.only(top: 60.0),
         child: Column(
           children: [
             const SearchField(),
@@ -69,23 +69,24 @@ class _HomePageContentState extends State<HomePageContent> {
               crossAxisCount: 2,
               children: <Widget>[
                 PlaylistButtonWidget(
-                    playlist: fake_playlist_data.defaultPlaylist),
+                    playlist: fake_playlist_data.homeExample1),
                 PlaylistButtonWidget(
-                    playlist: fake_playlist_data.defaultPlaylist),
+                    playlist: fake_playlist_data.homeExample2),
                 PlaylistButtonWidget(
-                    playlist: fake_playlist_data.defaultPlaylist),
+                    playlist: fake_playlist_data.homeExample3),
                 PlaylistButtonWidget(
-                    playlist: fake_playlist_data.defaultPlaylist),
+                    playlist: fake_playlist_data.homeExample4),
+                
               ],
             ),
             SectionTitle(
-              title: "Playlists",
+              title: "More Playlists",
               press: () {},
             ),
             PlaylistListWidget(playlists_List: [
-              fake_playlist_data.defaultPlaylist,
-              fake_playlist_data.defaultPlaylist,
-              fake_playlist_data.defaultPlaylist
+              fake_playlist_data.recents,
+              fake_playlist_data.homeExample5,
+              fake_playlist_data.homeExample6
             ]),
           ],
         ),

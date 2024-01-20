@@ -20,17 +20,9 @@ class PlaylistListWidget extends StatelessWidget {
       padding: const EdgeInsets.only(top: 5.0),
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      children: <Widget>[
-        PlaylistItem(title: fake_playlist_data.defaultPlaylist.name, playlist: fake_playlist_data.defaultPlaylist,
-        ),
-         PlaylistItem(title: fake_playlist_data.defaultPlaylist.name, playlist: fake_playlist_data.defaultPlaylist,
-        ),
-         PlaylistItem(title: fake_playlist_data.defaultPlaylist.name, playlist: fake_playlist_data.defaultPlaylist,
-        ),
-         PlaylistItem(title: fake_playlist_data.defaultPlaylist.name, playlist: fake_playlist_data.defaultPlaylist,
-        ),
-       //PlaylistItem(title: "Classics"),
-      //  PlaylistItem(title: "Tajweed Practice"),
+      children: [
+        for(Playlist item in playlists_List)
+          PlaylistItem(title: item.name, playlist: item),
       ],
     );
   }
@@ -71,9 +63,12 @@ class PlaylistItem extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 ListTile(
-                  leading: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Image.network(noimage)),
+                  leading: AspectRatio(
+                    aspectRatio: 1.0,
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.network(playlist.list.elementAt(0).coverImagePath, fit: BoxFit.cover,)),
+                  ),
                   selectedTileColor: Colors.green,
                   title: Text(playlist.getName()),
                   subtitle: const Text("Number of plays here"),

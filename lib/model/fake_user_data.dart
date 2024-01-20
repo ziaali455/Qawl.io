@@ -3,7 +3,7 @@ import 'package:first_project/model/user.dart';
 class fakeuserdata {
   static var user0 = User(
       id: "0",
-      imagePath: 'https://media.licdn.com/dms/image/D4E03AQG21KWUaw77Tg/profile-displayphoto-shrink_400_400/0/1667399939381?e=1704931200&v=beta&t=4jRMxOFD3V9MsyMSQslDfVhvSIajmqXFl_k1G2f-0X0',
+      imagePath: 'https://media.licdn.com/dms/image/D4E03AQG21KWUaw77Tg/profile-displayphoto-shrink_400_400/0/1667399939381?e=1710979200&v=beta&t=1POsLqD2rl5Z5HXPuNuIWCs58NXwehI14QjRp6Tg1Wg',
       name: "Musa Waseem",
       email: 'musastinks@gmail.com',
       about: 'Salam, my name is Musa. I\'m a reciter on Qawl!',
@@ -19,10 +19,12 @@ class fakeuserdata {
       followers: 100);
   static var user2 = User(
       id: "2",
-      imagePath: 'https://netstorage-tuko.akamaized.net/images/f6b3d8e16d60277b.jpg?imwidth=900',
-      name: "Mishary Rashid",
+      imagePath: 'https://i.ibb.co/jgd4r23/e2755576-9009-4dc1-9568-0c69c32ef780.jpg',
+      name: "Muhammad Al-Amawi",
       email: 'musastinks@gmail.com',
-      about: 'Salam, my name is Mishary. I\'m a reciter on Qawl!',
-      country: '🇸🇦',
-      followers: 134);    
+      about: 'Salam, my name is Muhammad. I\'m a reciter on Qawl!',
+      country: '🇺🇸',
+      followers: 0);    
+  
 }
+

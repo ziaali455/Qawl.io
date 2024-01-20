@@ -44,7 +44,7 @@ class QariCard extends StatelessWidget {
                         tag: "hi",
                         child: ClipRRect(
                             borderRadius: BorderRadius.circular(15),
-                            child: Image.network(user.imagePath)),
+                            child: AspectRatio(aspectRatio: 1, child: Image.network(user.imagePath, fit: BoxFit.cover))),
                       ),
                       const SizedBox(
                         height: 10,

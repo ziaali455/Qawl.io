@@ -20,7 +20,7 @@ class Track {
       required this.plays,
       required this.surahNumber,
       required this.audioPath,
-      required this.coverImagePath}) {
+      this.coverImagePath = "https://www.linkpicture.com/q/no_cover_1.jpg"}) {
   }
 
 

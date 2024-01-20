@@ -25,6 +25,7 @@ class ExploreTrackWidgetRow extends StatelessWidget {
         image: track.coverImagePath,
         title: track.trackName,
         author: track.userId,
+        track:track,
         press: () {},
       ));
     }
@@ -33,6 +34,7 @@ class ExploreTrackWidgetRow extends StatelessWidget {
         image: track.coverImagePath,
         title: track.trackName,
         author: track.userId,
+        track: track,
         press: () {},
       );
     }
@@ -51,30 +53,7 @@ class ExploreTrackWidgetRow extends StatelessWidget {
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(children: tracks
-              // TrackCard(
-              //   image: faketrackdata.fakeTrack1.coverImagePath,
-              //   title: faketrackdata.fakeTrack1.trackName,
-              //   author: faketrackdata.fakeTrack1.author,
-              //   press: () {},
-              // ),
-              // TrackCard(
-              //   image: faketrackdata.fakeTrack2.coverImagePath,
-              //   title: faketrackdata.fakeTrack2.trackName,
-              //   author: faketrackdata.fakeTrack2.author,
-              //   press: () {},
-              // ),
-              // TrackCard(
-              //   image: faketrackdata.fakeTrack3.coverImagePath,
-              //   title: faketrackdata.fakeTrack3.trackName,
-              //   author: faketrackdata.fakeTrack3.author,
-              //   press: () {},
-              // ),
-              // TrackCard(
-              //   image: faketrackdata.fakeTrack4.coverImagePath,
-              //   title: faketrackdata.fakeTrack4.trackName,
-              //   author: faketrackdata.fakeTrack4.author,
-              //   press: () {},
-              // ),
+        
               ),
         ),
       ],
@@ -85,6 +64,7 @@ class ExploreTrackWidgetRow extends StatelessWidget {
 class TrackCard extends StatelessWidget {
   const TrackCard({
     Key? key,
+    required this.track, 
     required this.title,
     required this.image,
     required this.press,
@@ -92,6 +72,7 @@ class TrackCard extends StatelessWidget {
   }) : super(key: key);
 
   final String title, image, author;
+  final Track track;
   final GestureTapCallback press;
 
   @override
@@ -105,7 +86,7 @@ class TrackCard extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    NowPlayingContent(playedTrack: faketrackdata.defaultTrack)),
+                    NowPlayingContent(playedTrack: track)),
           );
         },
         child: SizedBox(
