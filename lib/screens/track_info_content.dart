@@ -89,58 +89,131 @@ class _TrackInfoContentState extends State<TrackInfoContent> {
                   }).toList(),
                 ),
               ),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(4),
-                child: Stack(
-                  children: <Widget>[
-                    Positioned.fill(
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: <Color>[
-                              Color.fromARGB(255, 13, 161, 99),
-                              Color.fromARGB(255, 22, 181, 93),
-                              Color.fromARGB(255, 32, 220, 85),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    TextButton(
-                      style: TextButton.styleFrom(
-                        fixedSize: Size(250, 70),
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.only(left: 20, right: 20),
-                        textStyle: const TextStyle(fontSize: 50),
-                      ),
-                      onPressed: () async {
-                        debugPrint(
-                            "you should post the track and send us back to the profile page");
-                        Navigator.pop(
-                          context
-                        );
-                        Navigator.pop(
-                          context
-                        );
-                        Navigator.pop(
-                          context
-                        );
-                        Alert( image: Icon(Icons.check, size: 100.0,), style: alertStyle, context: context, title: "Posted! ").show();
-                      },
-                      child: Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            "Post",
-                            style: TextStyle(
-                                fontSize: 20.0, fontWeight: FontWeight.bold),
-                          )),
-                    ),
-                  ],
-                ),
-              )
+              ConfirmPostButton(alertStyle: alertStyle),
+              CancelPostButton(),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class CancelPostButton extends StatelessWidget {
+  const CancelPostButton({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(4),
+      child: Stack(
+        children: <Widget>[
+          Positioned.fill(
+            child: Container(
+    decoration: const BoxDecoration(
+      gradient: LinearGradient(
+        colors: <Color>[
+          Color.fromARGB(255, 13, 161, 99),
+          Color.fromARGB(255, 22, 181, 93),
+          Color.fromARGB(255, 32, 220, 85),
+        ],
+      ),
+    ),
+            ),
+          ),
+          TextButton(
+            style: TextButton.styleFrom(
+    fixedSize: Size(250, 70),
+    foregroundColor: Colors.white,
+    padding: const EdgeInsets.only(left: 20, right: 20),
+    textStyle: const TextStyle(fontSize: 50),
+            ),
+            onPressed: () async {
+    debugPrint(
+        "DELETE LOCAL FILE");
+    Navigator.pop(
+      context
+    );
+    Navigator.pop(
+      context
+    );
+    Navigator.pop(
+      context
+    );
+            },
+            child: Align(
+      alignment: Alignment.center,
+      child: Text(
+        "Cancel",
+        style: TextStyle(
+            fontSize: 20.0, fontWeight: FontWeight.bold),
+      )),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ConfirmPostButton extends StatelessWidget {
+  const ConfirmPostButton({
+    super.key,
+    required this.alertStyle,
+  });
+
+  final AlertStyle alertStyle;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(4),
+      child: Stack(
+        children: <Widget>[
+          Positioned.fill(
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: <Color>[
+                    Color.fromARGB(255, 13, 161, 99),
+                    Color.fromARGB(255, 22, 181, 93),
+                    Color.fromARGB(255, 32, 220, 85),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          TextButton(
+            style: TextButton.styleFrom(
+              fixedSize: Size(250, 70),
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              textStyle: const TextStyle(fontSize: 50),
+            ),
+            onPressed: () async {
+              debugPrint(
+                  "you should post the track and send us back to the profile page");
+              Navigator.pop(
+                context
+              );
+              Navigator.pop(
+                context
+              );
+              Navigator.pop(
+                context
+              );
+              Alert( image: Icon(Icons.check, size: 100.0,), style: alertStyle, context: context, title: "Posted! ").show();
+            },
+            child: Align(
+                alignment: Alignment.center,
+                child: Text(
+                  "Post",
+                  style: TextStyle(
+                      fontSize: 20.0, fontWeight: FontWeight.bold),
+                )),
+          ),
+        ],
       ),
     );
   }
