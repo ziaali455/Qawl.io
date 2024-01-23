@@ -347,6 +347,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
           child: isCapturing
               ? Icon(Icons.stop, size: 50.0)
               : Icon(Icons.mic, size: 50.0),
+          
           // Icon(
           //   Icons.mic,
           //   size: 50.0,
@@ -368,7 +369,9 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
               Icons.stop;
             }
           },
+          
           style: ElevatedButton.styleFrom(
+             shadowColor: Colors.transparent,
             backgroundColor: Colors.transparent,
             padding: EdgeInsets.symmetric(horizontal: 30, vertical: 30),
           ))]);
@@ -410,6 +413,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,
+              shadowColor: Colors.transparent,
               padding: EdgeInsets.symmetric(horizontal: 30, vertical: 30),
             ))])
         : Container(
