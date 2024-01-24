@@ -11,6 +11,9 @@ import 'package:first_project/model/user.dart';
 import 'package:first_project/widgets/profile_stats_widget.dart';
 import 'package:first_project/model/fake_track_data.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:first_project/widgets/modal_fit.dart';
+import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
 
 import 'now_playing_content.dart';
 
@@ -132,15 +135,22 @@ class QawlRecordButton extends StatelessWidget {
             backgroundColor: Colors.transparent,
             splashColor: Colors.white,
             onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => UploadOptionsContent(),
-                  ));
+              showMaterialModalBottomSheet(
+                context: context,
+                builder: (context) => SingleChildScrollView(
+                  controller: ModalScrollController.of(context),
+                  child: ModalFit(),
+                ),
+              );
+              // Navigator.push(
+              //     context,
+              //     MaterialPageRoute(
+              //       builder: (context) => UploadOptionsContent(),
+              //     ));
             },
             tooltip: 'Enter the record page',
             child: Icon(
-              Icons.mic,
+              Icons.add,
               size: 35,
             ),
           ),
