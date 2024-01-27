@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_audio_waveforms/flutter_audio_waveforms.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:first_project/model/track.dart';
+import 'package:first_project/screens/record_audio_content.dart';
 
 var qawl_green_gradient = const BoxDecoration(
   gradient: LinearGradient(
@@ -160,36 +161,36 @@ class UploadPageButton extends StatelessWidget {
               textStyle: const TextStyle(fontSize: 50),
             ),
             onPressed: () async {
-              debugPrint("clicked upload");
-
+              //here we need to navigate to track info content and select the surah etc
+                         debugPrint("picked file");
               FilePickerResult? result = await FilePicker.platform.pickFiles();
-
               if (result != null) {
-                File file = File(result.files.single.path!);
-                Uint8List? fileBytes =
-                    result.files.first.bytes; // fileBytes is nullable
-                String fileName = result.files.first.name;
+                String? pickedFilePath = result.files.single.path;
+                
+                debugPrint(pickedFilePath);
+                 Navigator.push(
+                     context,
+                     MaterialPageRoute(
+                       builder: (context) => TrackInfoContent(
+                         trackPath: pickedFilePath!,
+                       ),
+                     ));
 
-                if (fileBytes != null) {
-                  //upload to firebase storage
-                  //         await FirebaseStorage.instance
-                  //           .ref('recordings/$fileName')
-                  //         .putFile(file);
-                }
+                // TaskSnapshot uploadTask = await FirebaseStorage.instance
+                //     .ref('recordings/$fileName')
+                //     .putFile(file);
+                // String downloadUrl = await uploadTask.ref.getDownloadURL();
 
-                TaskSnapshot uploadTask = await FirebaseStorage.instance
-                    .ref('recordings/$fileName')
-                    .putFile(file);
-                String downloadUrl = await uploadTask.ref.getDownloadURL();
+                //storeUrlInFirestore(downloadUrl);
 
                 //upload to cloud firestore
-                await FirebaseFirestore.instance.collection('tracks').add({
-                  'fileUrl': downloadUrl,
-                  'timestamp': FieldValue.serverTimestamp(),
-                  //'surah' : surah
-                });
+                // await FirebaseFirestore.instance.collection('tracks').add({
+                //   'fileUrl': downloadUrl,
+                //   'timestamp': FieldValue.serverTimestamp(),
+                //   //'surah' : surah
+                // });
               } else {
-                // User canceled the picker
+                debugPrint("User canceled the picker");
               }
             },
             child: Align(

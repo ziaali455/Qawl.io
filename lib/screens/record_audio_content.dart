@@ -91,53 +91,53 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
 
     //popup for surah name and then call upload storeUrlInFirestore to add with surah name
     if (_recordedFilePath != null) {
-      debugPrint("here");
-      File audioFile = File(_recordedFilePath!);
-      String? fileUrl = await uploadRecording(_recordedFilePath);
-      if (fileUrl != null) {
-        await storeUrlInFirestore(fileUrl);
+     // debugPrint("here");
+     // File audioFile = File(_recordedFilePath!);
+     // String? fileUrl = await uploadRecording(_recordedFilePath);
+     // if (fileUrl != null) {
+   //     await storeUrlInFirestore(fileUrl);
         // await deleteLocalFile(audioFile); // Delete the local file
-      }
+   //   }
       // _recordedFilePath = null; // Reset the file path?
     }
   }
 
   //takes in the url and uploads it to cloud firestore
-  Future<void> storeUrlInFirestore(String fileUrl) async {
-    try {
-      await FirebaseFirestore.instance.collection('tracks').add({
-        'fileUrl': fileUrl,
-        'timestamp': FieldValue.serverTimestamp(),
-        //'surah' : surah
-      });
-      debugPrint('File URL stored in Firestore successfully.');
-    } catch (e) {
-      debugPrint('Error storing file URL in Firestore: $e');
-    }
-  }
+  // Future<void> storeUrlInFirestore(String fileUrl) async {
+  //   try {
+  //     await FirebaseFirestore.instance.collection('tracks').add({
+  //       'fileUrl': fileUrl,
+  //       'timestamp': FieldValue.serverTimestamp(),
+  //       //'surah' : surah
+  //     });
+  //     debugPrint('File URL stored in Firestore successfully.');
+  //   } catch (e) {
+  //     debugPrint('Error storing file URL in Firestore: $e');
+  //   }
+  // }
 
   //upload the recording file itself to firebase storage
-  Future<String?> uploadRecording(String? filePath) async {
-    debugPrint("Uploading recording...");
-    File file;
-    if (filePath != null) {
-      file = File(filePath);
+  // Future<String?> uploadRecording(String? filePath) async {
+  //   debugPrint("Uploading recording...");
+  //   File file;
+  //   if (filePath != null) {
+  //     file = File(filePath);
 
-      try {
-        String fileName =
-            'recordings/${DateTime.now().millisecondsSinceEpoch}.m4a';
-        TaskSnapshot uploadTask =
-            await FirebaseStorage.instance.ref(fileName).putFile(file);
-        String downloadUrl = await uploadTask.ref.getDownloadURL();
-        return downloadUrl;
-      } catch (e) {
-        debugPrint("Error uploading audio file: $e");
-        return null;
-      }
-    } else {
-      debugPrint("null filepath parameter ");
-    }
-  }
+  //     try {
+  //       String fileName =
+  //           'recordings/${DateTime.now().millisecondsSinceEpoch}.m4a';
+  //       TaskSnapshot uploadTask =
+  //           await FirebaseStorage.instance.ref(fileName).putFile(file);
+  //       String downloadUrl = await uploadTask.ref.getDownloadURL();
+  //       return downloadUrl;
+  //     } catch (e) {
+  //       debugPrint("Error uploading audio file: $e");
+  //       return null;
+  //     }
+  //   } else {
+  //     debugPrint("null filepath parameter ");
+  //   }
+  // }
 
   Future initRecorder() async {
     final status = await Permission.microphone.request();
@@ -259,7 +259,11 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
                 textStyle: const TextStyle(fontSize: 50),
               ),
               onPressed: () {
-                deleteLocalFile(_recordedFilePath as File);
+                 //should go back one step to recording main screen
+                Navigator.pop(context);
+                File file = File(_recordedFilePath!);
+                deleteLocalFile(file);
+                debugPrint(_recordedFilePath);
               },
               child: Align(
                   alignment: Alignment.center,

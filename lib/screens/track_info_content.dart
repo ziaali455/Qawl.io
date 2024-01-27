@@ -1,16 +1,25 @@
 import 'dart:collection';
-
+import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:first_project/screens/profile_content.dart';
 import 'package:first_project/screens/upload_options_content.dart';
 import 'package:flutter/material.dart';
 import 'package:first_project/model/track.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:record/record.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:first_project/screens/record_audio_content.dart';
+import 'package:firebase_core/firebase_core.dart';
+
 
 // DropdownMenuEntry labels and values for the first dropdown menu.
 
 class TrackInfoContent extends StatefulWidget {
-  final String trackPath;
+    FirebaseFirestore db = FirebaseFirestore.instance;
 
+  final String trackPath;
+  final record = Record();
   TrackInfoContent({Key? key, required this.trackPath}) : super(key: key);
 
   @override
@@ -26,25 +35,24 @@ class _TrackInfoContentState extends State<TrackInfoContent> {
 
   String? selectedSurah;
   var alertStyle = AlertStyle(
-      animationType: AnimationType.fromTop,
-      overlayColor: Colors.green,
-      isCloseButton: false,
-      isButtonVisible: false,
-      isOverlayTapDismiss: true,
-      descStyle: TextStyle(fontWeight: FontWeight.bold),
-      descTextAlign: TextAlign.start,
-      animationDuration: Duration(milliseconds: 400),
-      alertBorder: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8.0),
-        side: BorderSide(
-          color: Colors.green,
-        ),
-      ),
-      titleStyle: TextStyle(
+    animationType: AnimationType.fromTop,
+    overlayColor: Colors.green,
+    isCloseButton: false,
+    isButtonVisible: false,
+    isOverlayTapDismiss: true,
+    descStyle: TextStyle(fontWeight: FontWeight.bold),
+    descTextAlign: TextAlign.start,
+    animationDuration: Duration(milliseconds: 400),
+    alertBorder: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(8.0),
+      side: BorderSide(
         color: Colors.green,
       ),
-      
-    );
+    ),
+    titleStyle: TextStyle(
+      color: Colors.green,
+    ),
+  );
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -89,8 +97,16 @@ class _TrackInfoContentState extends State<TrackInfoContent> {
                   }).toList(),
                 ),
               ),
-              ConfirmPostButton(alertStyle: alertStyle),
-              CancelPostButton(),
+              ConfirmPostButton(
+                  alertStyle: alertStyle,
+                  trackPath: trackPath,
+                  surah: selectedSurah ?? ""),
+
+              SizedBox(height: 10), // added for some space, adjust as needed
+
+              CancelPostButton(
+                trackPath: trackPath,
+              ),
             ],
           ),
         ),
@@ -100,7 +116,10 @@ class _TrackInfoContentState extends State<TrackInfoContent> {
 }
 
 class CancelPostButton extends StatelessWidget {
+  final String trackPath;
+
   const CancelPostButton({
+    required this.trackPath,
     super.key,
   });
 
@@ -112,44 +131,41 @@ class CancelPostButton extends StatelessWidget {
         children: <Widget>[
           Positioned.fill(
             child: Container(
-    decoration: const BoxDecoration(
-      gradient: LinearGradient(
-        colors: <Color>[
-          Color.fromARGB(255, 13, 161, 99),
-          Color.fromARGB(255, 22, 181, 93),
-          Color.fromARGB(255, 32, 220, 85),
-        ],
-      ),
-    ),
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: <Color>[
+                    Color.fromARGB(255, 13, 161, 99),
+                    Color.fromARGB(255, 22, 181, 93),
+                    Color.fromARGB(255, 32, 220, 85),
+                  ],
+                ),
+              ),
             ),
           ),
           TextButton(
             style: TextButton.styleFrom(
-    fixedSize: Size(250, 70),
-    foregroundColor: Colors.white,
-    padding: const EdgeInsets.only(left: 20, right: 20),
-    textStyle: const TextStyle(fontSize: 50),
+              fixedSize: Size(250, 70),
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              textStyle: const TextStyle(fontSize: 50),
             ),
             onPressed: () async {
-    debugPrint(
-        "DELETE LOCAL FILE");
-    Navigator.pop(
-      context
-    );
-    Navigator.pop(
-      context
-    );
-    Navigator.pop(
-      context
-    );
+              debugPrint(trackPath);
+              File file = File(trackPath);
+              await deleteLocalFile(file);
+
+              //debugPrint("DELETE LOCAL FILE");
+              // debugPrint(trackPath);
+              Navigator.pop(context);
+              Navigator.pop(context);
+              Navigator.pop(context);
             },
             child: Align(
-      alignment: Alignment.center,
-      child: Text(
-        "Cancel",
-        style: TextStyle(
-            fontSize: 20.0, fontWeight: FontWeight.bold),
-      )),
+                alignment: Alignment.center,
+                child: Text(
+                  "Cancel",
+                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                )),
           ),
         ],
       ),
@@ -157,11 +173,73 @@ class CancelPostButton extends StatelessWidget {
   }
 }
 
+Future<String> getTemporaryFilePath() async {
+  Directory tempDir = await getTemporaryDirectory();
+  String tempPath = tempDir.path;
+  return '$tempPath/recording_${DateTime.now().millisecondsSinceEpoch}.m4a';
+}
+
+Future<String?> uploadRecordingToStorage(String? filePath) async {
+  debugPrint("Uploading recording...");
+  File file;
+  if (filePath != null) {
+    file = File(filePath);
+
+    try {
+      String fileName =
+          'recordings/${DateTime.now().millisecondsSinceEpoch}.m4a';
+            debugPrint(fileName);
+
+      TaskSnapshot uploadTask =
+          await FirebaseStorage.instance.ref(fileName).putFile(file);
+
+      //THIS AWAIT IS CAUSING ISSUES HERE?
+      String downloadUrl = await uploadTask.ref.getDownloadURL();
+      return downloadUrl;
+    } catch (e) {
+      debugPrint("Error uploading audio file: $e");
+      return null;
+    }
+  } else {
+    debugPrint("null filepath parameter");
+    return null;
+  }
+}
+
+Future<void> storeRecordingInFirestore(String fileUrl, String surah) async {
+  try {
+    await FirebaseFirestore.instance.collection('test_tracks').add({
+      'fileUrl': fileUrl,
+      'timestamp': FieldValue.serverTimestamp(),
+      // Add the additional attributes here
+      'surah': surah
+    });
+    debugPrint('File URL stored in Firestore successfully.');
+  } catch (e) {
+    debugPrint('Error storing file URL in Firestore: $e');
+  }
+}
+
+Future<void> deleteLocalFile(File file) async {
+  try {
+    if (await file.exists()) {
+      await file.delete();
+      debugPrint("Local file deleted successfully.");
+    }
+  } catch (e) {
+    debugPrint("Error deleting local file: $e");
+  }
+}
+
 class ConfirmPostButton extends StatelessWidget {
-  const ConfirmPostButton({
-    super.key,
-    required this.alertStyle,
-  });
+  final String trackPath;
+  final String surah;
+
+  const ConfirmPostButton(
+      {super.key,
+      required this.alertStyle,
+      required this.trackPath,
+      required this.surah});
 
   final AlertStyle alertStyle;
 
@@ -192,25 +270,35 @@ class ConfirmPostButton extends StatelessWidget {
               textStyle: const TextStyle(fontSize: 50),
             ),
             onPressed: () async {
-              debugPrint(
-                  "you should post the track and send us back to the profile page");
-              Navigator.pop(
-                context
-              );
-              Navigator.pop(
-                context
-              );
-              Navigator.pop(
-                context
-              );
-              Alert( image: Icon(Icons.check, size: 100.0,), style: alertStyle, context: context, title: "Posted! ").show();
+              String? fileUrl = await uploadRecordingToStorage(trackPath);
+              if (fileUrl != null) {
+                // Store the URL in Firestore along with additional attributes
+                await storeRecordingInFirestore(fileUrl, surah); // add surah parameter etc
+
+                // Navigate back or show a success message
+                Navigator.pop(context); // Or navigate as needed
+              }
+              // debugPrint(
+              //     "you should post the track and send us back to the profile page");
+              Navigator.pop(context);
+              Navigator.pop(context);
+              Navigator.pop(context);
+
+              Alert(
+                      image: Icon(
+                        Icons.check,
+                        size: 100.0,
+                      ),
+                      style: alertStyle,
+                      context: context,
+                      title: "Posted! ")
+                  .show();
             },
             child: Align(
                 alignment: Alignment.center,
                 child: Text(
                   "Post",
-                  style: TextStyle(
-                      fontSize: 20.0, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                 )),
           ),
         ],
