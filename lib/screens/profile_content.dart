@@ -2,7 +2,6 @@ import 'package:first_project/model/fake_playlists_data.dart';
 import 'package:first_project/model/fake_user_data.dart';
 import 'package:first_project/model/playlist.dart';
 import 'package:first_project/screens/record_audio_content.dart';
-import 'package:first_project/screens/upload_options_content.dart';
 import 'package:first_project/widgets/profile_picture_widget.dart';
 import 'package:first_project/widgets/section_title_widget.dart';
 import 'package:first_project/widgets/track_widget.dart';
@@ -103,7 +102,7 @@ class _PersonalProfileContentState extends State<PersonalProfileContent> {
         children: [
           Text(user.about,
               style:
-                  const TextStyle(fontWeight: FontWeight.normal, fontSize: 12))
+                  const TextStyle(fontWeight: FontWeight.normal, fontSize: 15))
         ],
       );
 }
@@ -251,7 +250,7 @@ class _ProfileContentState extends State<ProfileContent> {
         children: [
           Text(user.about,
               style:
-                  const TextStyle(fontWeight: FontWeight.normal, fontSize: 12))
+                  const TextStyle(fontWeight: FontWeight.normal, fontSize: 15))
         ],
       );
 }

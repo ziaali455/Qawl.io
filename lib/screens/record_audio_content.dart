@@ -91,53 +91,16 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
 
     //popup for surah name and then call upload storeUrlInFirestore to add with surah name
     if (_recordedFilePath != null) {
-     // debugPrint("here");
-     // File audioFile = File(_recordedFilePath!);
-     // String? fileUrl = await uploadRecording(_recordedFilePath);
-     // if (fileUrl != null) {
-   //     await storeUrlInFirestore(fileUrl);
-        // await deleteLocalFile(audioFile); // Delete the local file
-   //   }
+      // debugPrint("here");
+      // File audioFile = File(_recordedFilePath!);
+      // String? fileUrl = await uploadRecording(_recordedFilePath);
+      // if (fileUrl != null) {
+      //     await storeUrlInFirestore(fileUrl);
+      // await deleteLocalFile(audioFile); // Delete the local file
+      //   }
       // _recordedFilePath = null; // Reset the file path?
     }
   }
-
-  //takes in the url and uploads it to cloud firestore
-  // Future<void> storeUrlInFirestore(String fileUrl) async {
-  //   try {
-  //     await FirebaseFirestore.instance.collection('tracks').add({
-  //       'fileUrl': fileUrl,
-  //       'timestamp': FieldValue.serverTimestamp(),
-  //       //'surah' : surah
-  //     });
-  //     debugPrint('File URL stored in Firestore successfully.');
-  //   } catch (e) {
-  //     debugPrint('Error storing file URL in Firestore: $e');
-  //   }
-  // }
-
-  //upload the recording file itself to firebase storage
-  // Future<String?> uploadRecording(String? filePath) async {
-  //   debugPrint("Uploading recording...");
-  //   File file;
-  //   if (filePath != null) {
-  //     file = File(filePath);
-
-  //     try {
-  //       String fileName =
-  //           'recordings/${DateTime.now().millisecondsSinceEpoch}.m4a';
-  //       TaskSnapshot uploadTask =
-  //           await FirebaseStorage.instance.ref(fileName).putFile(file);
-  //       String downloadUrl = await uploadTask.ref.getDownloadURL();
-  //       return downloadUrl;
-  //     } catch (e) {
-  //       debugPrint("Error uploading audio file: $e");
-  //       return null;
-  //     }
-  //   } else {
-  //     debugPrint("null filepath parameter ");
-  //   }
-  // }
 
   Future initRecorder() async {
     final status = await Permission.microphone.request();
@@ -194,40 +157,55 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
+    bool _visible = true;
     return Scaffold(
         backgroundColor: Colors.black,
         body: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 250.0),
-              child: QawlBackButton(),
-            ),
-            //Waveforms
-            //QawlWaveforms(),
-            SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Center(
-                child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: QawlRecordButton()),
+            Center(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 250.0),
+                    child: QawlBackButton(),
+                  ),
+                  //Waveforms
+                  //QawlWaveforms(),
+                  SizedBox(height: 10),
+                  Center(
+
+                    child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: QawlRecordButton()),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: QawlPlayBackButton(),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 100),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: QawlDeleteRecordingButton(),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: QawlConfirmRecordingButton(),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: QawlPlayBackButton(),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: QawlDeleteRecordingButton(),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: QawlConfirmRecordingButton(),
             ),
           ],
         ));
@@ -253,13 +231,13 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
             ),
             TextButton(
               style: TextButton.styleFrom(
-                fixedSize: Size(250, 70),
+                fixedSize: Size(125, 70),
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.only(left: 50, right: 50),
+                padding: const EdgeInsets.only(left: 10, right: 10),
                 textStyle: const TextStyle(fontSize: 50),
               ),
               onPressed: () {
-                 //should go back one step to recording main screen
+                //should go back one step to recording main screen
                 Navigator.pop(context);
                 File file = File(_recordedFilePath!);
                 deleteLocalFile(file);
@@ -280,7 +258,8 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
       );
     }
   }
-    Widget QawlConfirmRecordingButton() {
+
+  Widget QawlConfirmRecordingButton() {
     if (doneRecording) {
       return ClipRRect(
           borderRadius: BorderRadius.circular(4),
@@ -300,19 +279,19 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
             ),
             TextButton(
               style: TextButton.styleFrom(
-                fixedSize: Size(250, 70),
+                fixedSize: Size(125, 70),
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.only(left: 50, right: 50),
+                padding: const EdgeInsets.only(left: 10, right: 10),
                 textStyle: const TextStyle(fontSize: 50),
               ),
               onPressed: () {
-                 Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => TrackInfoContent(
-                    trackPath: _recordedFilePath!,
-                  ),
-                ));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TrackInfoContent(
+                        trackPath: _recordedFilePath!,
+                      ),
+                    ));
               },
               child: Align(
                   alignment: Alignment.center,
@@ -335,146 +314,104 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
       return Container(height: 0);
     } else {
       return Stack(children: <Widget>[
-            Positioned.fill(
-              child: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: <Color>[
-                      Color.fromARGB(255, 13, 161, 99),
-                      Color.fromARGB(255, 22, 181, 93),
-                      Color.fromARGB(255, 32, 220, 85),
-                    ],
-                  ),
-                ),
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(4),
+              gradient: LinearGradient(
+                colors: <Color>[
+                  Color.fromARGB(255, 13, 161, 99),
+                  Color.fromARGB(255, 22, 181, 93),
+                  Color.fromARGB(255, 32, 220, 85),
+                ],
               ),
-            ), ElevatedButton(
-          child: isCapturing
-              ? Icon(Icons.stop, size: 50.0)
-              : Icon(Icons.mic, size: 50.0),
-          
-          // Icon(
-          //   Icons.mic,
-          //   size: 50.0,
-          // ),
-          onPressed: () async {
-            setState(() {
-              isCapturing = !isCapturing;
-            });
-            if (await isRecording()) {
-              // popup for surah name,
-              stopRecording();
-              doneRecording = !doneRecording;
-              showCheck = !showCheck;
+            ),
+          ),
+        ),
+        ElevatedButton(
+            child: isCapturing
+                ? Icon(Icons.stop, size: 80.0)
+                : Icon(Icons.mic, size: 80.0),
 
-              //VERIFICATION BUTTON
-              //uploadRecording();
-            } else {
-              await start();
-              Icons.stop;
-            }
-          },
-          
-          style: ElevatedButton.styleFrom(
-             shadowColor: Colors.transparent,
-            backgroundColor: Colors.transparent,
-            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 30),
-          ))]);
+            // Icon(
+            //   Icons.mic,
+            //   size: 50.0,
+            // ),
+            onPressed: () async {
+              setState(() {
+                isCapturing = !isCapturing;
+              });
+              if (await isRecording()) {
+                // popup for surah name,
+                stopRecording();
+                doneRecording = !doneRecording;
+                showCheck = !showCheck;
+
+                //VERIFICATION BUTTON
+                //uploadRecording();
+              } else {
+                await start();
+                Icons.stop;
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              shadowColor: Colors.transparent,
+              backgroundColor: Colors.transparent,
+              padding: EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+            ))
+      ]);
     }
   }
 
   Widget QawlPlayBackButton() {
     return doneRecording
-        ? Stack(children: <Widget>[
-            Positioned.fill(
-              child: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: <Color>[
-                      Color.fromARGB(255, 13, 161, 99),
-                      Color.fromARGB(255, 22, 181, 93),
-                      Color.fromARGB(255, 32, 220, 85),
-                    ],
+        ? Row(
+            children: [
+              Stack(children: <Widget>[
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                      gradient: LinearGradient(
+                        colors: <Color>[
+                          Color.fromARGB(255, 13, 161, 99),
+                          Color.fromARGB(255, 22, 181, 93),
+                          Color.fromARGB(255, 32, 220, 85),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ), ElevatedButton(
-            child: isPlaying
-                ? Icon(Icons.pause, size: 50.0)
-                : Icon(Icons.play_arrow, size: 50.0),
-            onPressed: () async {
-              setState(() {
-                showWaveforms = !showWaveforms;
-                isPlaying = !isPlaying;
-              });
+                ElevatedButton(
+                    child: isPlaying
+                        ? Icon(Icons.pause, size: 80.0)
+                        : Icon(Icons.play_arrow, size: 80.0),
+                    onPressed: () async {
+                      setState(() {
+                        showWaveforms = !showWaveforms;
+                        isPlaying = !isPlaying;
+                      });
 
-              debugPrint(_recordedFilePath);
-              //AudioWaveforms version of playback
-              if (isPlaying) {
-                await playAudio();
-              } else {
-                main_player.stop(); // Stop the player if already playing
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.transparent,
-              shadowColor: Colors.transparent,
-              padding: EdgeInsets.symmetric(horizontal: 30, vertical: 30),
-            ))])
+                      debugPrint(_recordedFilePath);
+                      //AudioWaveforms version of playback
+                      if (isPlaying) {
+                        await playAudio();
+                      } else {
+                        main_player
+                            .stop(); // Stop the player if already playing
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+                    ))
+              ]),
+            ],
+          )
         : Container(
             height: 0,
           );
   }
 }
-
-
-
-                  // Padding(
-                  //   padding: const EdgeInsets.all(8.0),
-                  //   child: Center(
-                  //       child: ElevatedButton(
-                  //     child: Icon(Icons.upload_file, size: 50.0),
-                  //     onPressed: () async {
-                  //       debugPrint("clicked upload");
-
-                  //       FilePickerResult? result =
-                  //           await FilePicker.platform.pickFiles();
-
-                  //       if (result != null) {
-                  //         File file = File(result.files.single.path!);
-                  //         Uint8List? fileBytes =
-                  //             result.files.first.bytes; // fileBytes is nullable
-                  //         String fileName = result.files.first.name;
-
-                  //         if (fileBytes != null) {
-                  //           //upload to firebase storage
-                  //           //         await FirebaseStorage.instance
-                  //           //           .ref('recordings/$fileName')
-                  //           //         .putFile(file);
-                  //         }
-
-                  //         TaskSnapshot uploadTask = await FirebaseStorage
-                  //             .instance
-                  //             .ref('recordings/$fileName')
-                  //             .putFile(file);
-                  //         String downloadUrl =
-                  //             await uploadTask.ref.getDownloadURL();
-
-                  //         //upload to cloud firestore
-                  //         await FirebaseFirestore.instance
-                  //             .collection('tracks')
-                  //             .add({
-                  //           'fileUrl': downloadUrl,
-                  //           'timestamp': FieldValue.serverTimestamp(),
-                  //           //'surah' : surah
-                  //         });
-                  //       } else {
-                  //         // User canceled the picker
-                  //       }
-                  //     },
-                  //     style: ElevatedButton.styleFrom(
-                  //       backgroundColor: Colors.green,
-                  //       padding:
-                  //           EdgeInsets.symmetric(horizontal: 30, vertical: 30),
-                  //     ),
-                  //   )),
-                  // ),

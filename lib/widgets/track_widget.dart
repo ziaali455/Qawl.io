@@ -9,7 +9,7 @@ class TrackWidget extends StatelessWidget {
   const TrackWidget({
     Key? key,
     required this.track,
-  }) : super(key: key);
+  }) : super(key: key); 
 
   @override
   Widget build(BuildContext context) {
@@ -20,29 +20,6 @@ class TrackWidget extends StatelessWidget {
       child: InkWell(
         onTap: () {
           playTrack(track);
-          // if (count == 0) {
-          //   count++;
-          //   if ((track.player.playing == false &&
-          //           track.player.processingState == ProcessingState.ready) ||
-          //       (track.player.playing == true)) {
-          //     // && ProcessingState.completed???
-          //     isPlaying = true;
-          //     track.player.setUrl(track.audioFile);
-          //     track.player.play();
-          //   } else {
-          //     isPlaying = false;
-          //     track.player.pause();
-          //   }
-          // }
-          // // print("the count is $count");
-          // // var snackBar = SnackBar(content: Text('Now Playing ' + track.trackName));
-          // // ScaffoldMessenger.of(context).showSnackBar(snackBar);
-          // // buildTitle(isPlaying);
-          // // track.playTrack(count);
-          // // if (count % 2 == 0) {
-          // //   isPlaying = false;
-          // //   buildTitle(isPlaying);
-          // // }
           Navigator.push(
             context,
             MaterialPageRoute(

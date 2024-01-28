@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:first_project/screens/profile_content.dart';
-import 'package:first_project/screens/upload_options_content.dart';
 import 'package:flutter/material.dart';
 import 'package:first_project/model/track.dart';
 import 'package:path_provider/path_provider.dart';
@@ -276,7 +275,6 @@ class ConfirmPostButton extends StatelessWidget {
                 await storeRecordingInFirestore(fileUrl, surah); // add surah parameter etc
 
                 // Navigate back or show a success message
-                Navigator.pop(context); // Or navigate as needed
               }
               // debugPrint(
               //     "you should post the track and send us back to the profile page");

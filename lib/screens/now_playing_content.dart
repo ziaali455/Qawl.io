@@ -29,6 +29,7 @@ class _NowPlayingContentState extends State<NowPlayingContent> {
   @override
   void initState() {
     _audioPlayer = main_player;
+    //maybe a playlist object is needed here 
   }
 
   Stream<PositionData> get _positionDataStream =>

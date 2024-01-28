@@ -21,20 +21,22 @@ class NumbersWidget extends StatelessWidget {
         ],
       );
 
-  buildButton(BuildContext context, String value, String text) {
+  buildButton(BuildContext context, String rank, String followers) {
     return Column(
       children: [
         MaterialButton(
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
           onPressed: () {},
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              Text(value,
+              Text(rank,
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 24)),
               const SizedBox(height: 2),
-              Text(text,
+              Text(followers,
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 10)),
             ],
