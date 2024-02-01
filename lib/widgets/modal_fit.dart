@@ -10,8 +10,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:typed_data';
 
-class ModalFit extends StatelessWidget {
-  const ModalFit({Key? key}) : super(key: key);
+class UploadPopupWidget extends StatelessWidget {
+  const UploadPopupWidget
+({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,17 +23,19 @@ class ModalFit extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           ListTile(
-            title: Text(
-                style:
-                    TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
-                'Record'),
-            leading: Icon(Icons.mic, color: Colors.green, size: 30.0),
-            onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => RecordAudioContent(),
-                )),
-          ),
+              title: Text(
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, color: Colors.green),
+                  'Record'),
+              leading: Icon(Icons.mic, color: Colors.green, size: 30.0),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => RecordAudioContent(),
+                    ));
+              }),
           ListTile(
             title: Text(
                 style:
@@ -41,6 +44,8 @@ class ModalFit extends StatelessWidget {
             leading: Icon(Icons.file_upload_outlined,
                 color: Colors.green, size: 30.0),
             onTap: () async {
+              Navigator.pop(context);
+
               FilePickerResult? result = await FilePicker.platform.pickFiles();
 
               if (result != null) {
@@ -57,19 +62,19 @@ class ModalFit extends StatelessWidget {
                 }
                 String? pickedFilePath = result.files.single.path;
                 debugPrint(pickedFilePath);
-                 Navigator.push(
-                     context,
-                     MaterialPageRoute(
-                       builder: (context) => TrackInfoContent(
-                         trackPath: pickedFilePath!,
-                       ),
-                     ));
-                
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TrackInfoContent(
+                        trackPath: pickedFilePath!,
+                      ),
+                    ));
+
                 // TaskSnapshot uploadTask = await FirebaseStorage.instance
                 //     .ref('recordings/$fileName')
                 //     .putFile(file);
                 // String downloadUrl = await uploadTask.ref.getDownloadURL();
-                
+
                 // // Navigator.push(
                 // //     context,
                 // //     MaterialPageRoute(

@@ -96,15 +96,24 @@ class _TrackInfoContentState extends State<TrackInfoContent> {
                   }).toList(),
                 ),
               ),
-              ConfirmPostButton(
-                  alertStyle: alertStyle,
-                  trackPath: trackPath,
-                  surah: selectedSurah ?? ""),
-
-              SizedBox(height: 10), // added for some space, adjust as needed
-
-              CancelPostButton(
-                trackPath: trackPath,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: CancelPostButton(
+                      trackPath: trackPath,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: ConfirmPostButton(
+                        alertStyle: alertStyle,
+                        trackPath: trackPath,
+                        surah: selectedSurah ?? ""),
+                  ),
+    
+                ],
               ),
             ],
           ),
@@ -143,7 +152,7 @@ class CancelPostButton extends StatelessWidget {
           ),
           TextButton(
             style: TextButton.styleFrom(
-              fixedSize: Size(250, 70),
+              fixedSize: Size(125, 70),
               foregroundColor: Colors.white,
               padding: const EdgeInsets.only(left: 20, right: 20),
               textStyle: const TextStyle(fontSize: 50),
@@ -155,7 +164,6 @@ class CancelPostButton extends StatelessWidget {
 
               //debugPrint("DELETE LOCAL FILE");
               // debugPrint(trackPath);
-              Navigator.pop(context);
               Navigator.pop(context);
               Navigator.pop(context);
             },
@@ -263,7 +271,7 @@ class ConfirmPostButton extends StatelessWidget {
           ),
           TextButton(
             style: TextButton.styleFrom(
-              fixedSize: Size(250, 70),
+              fixedSize: Size(125, 70),
               foregroundColor: Colors.white,
               padding: const EdgeInsets.only(left: 20, right: 20),
               textStyle: const TextStyle(fontSize: 50),

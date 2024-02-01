@@ -138,7 +138,7 @@ class QawlRecordButton extends StatelessWidget {
                 context: context,
                 builder: (context) => SingleChildScrollView(
                   controller: ModalScrollController.of(context),
-                  child: ModalFit(),
+                  child: UploadPopupWidget(),
                 ),
               );
               // Navigator.push(
