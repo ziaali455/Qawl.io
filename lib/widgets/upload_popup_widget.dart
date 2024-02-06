@@ -44,7 +44,6 @@ class UploadPopupWidget extends StatelessWidget {
             leading: Icon(Icons.file_upload_outlined,
                 color: Colors.green, size: 30.0),
             onTap: () async {
-              Navigator.pop(context);
 
               FilePickerResult? result = await FilePicker.platform.pickFiles();
 
@@ -70,11 +69,7 @@ class UploadPopupWidget extends StatelessWidget {
                       ),
                     ));
 
-                // TaskSnapshot uploadTask = await FirebaseStorage.instance
-                //     .ref('recordings/$fileName')
-                //     .putFile(file);
-                // String downloadUrl = await uploadTask.ref.getDownloadURL();
-
+  
                 // // Navigator.push(
                 // //     context,
                 // //     MaterialPageRoute(
