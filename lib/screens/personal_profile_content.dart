@@ -1,3 +1,4 @@
+import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:first_project/model/fake_playlists_data.dart';
 import 'package:first_project/model/fake_user_data.dart';
 import 'package:first_project/model/playlist.dart';
@@ -43,10 +44,28 @@ class _PersonalProfileContentState extends State<PersonalProfileContent> {
                 // Align(
                 //     alignment: Alignment.topRight,
                 //     child: Icon(Icons.mic_none_outlined)),
-                ProfilePictureWidget(
-                  imagePath: user.imagePath,
-                  country: "🇺🇸",
-                  onClicked: () async {},
+                GestureDetector(
+                  child: ProfilePictureWidget(
+                    imagePath: user.imagePath,
+                    country: "🇺🇸",
+                    onClicked: ()  {
+                      
+                    },
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                context,
+                MaterialPageRoute<ProfileScreen>(
+                  builder: (context) =>  ProfileScreen(
+                    actions: [
+                      SignedOutAction((context) {
+                        Navigator.of(context).pop();
+                      })
+                    ],
+                  ),
+                ),
+              );
+                  },
                 ),
                 const SizedBox(height: 24),
                 Padding(
