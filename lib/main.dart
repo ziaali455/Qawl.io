@@ -1,3 +1,5 @@
+import 'package:first_project/screens/auth_gate.dart';
+import 'package:first_project/screens/login_content.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'screens/homepage.dart';
@@ -29,11 +31,10 @@ class MyApp extends StatelessWidget {
         scheme: FlexScheme.hippieBlue,
         darkIsTrueBlack: true,
       ),
-      home: const HomePage(),
+      home: const AuthGate(),
       
     );
   }
   
 }
-
 

@@ -49,11 +49,7 @@ class QawlRecordButton extends StatelessWidget {
                   child: UploadPopupWidget(),
                 ),
               );
-              // Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //       builder: (context) => UploadOptionsContent(),
-              //     ));
+             
             },
             tooltip: 'Enter the record page',
             child: Icon(

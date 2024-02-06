@@ -57,6 +57,7 @@ dependencies:
   flutter_audio_waveforms: ^1.2.1+8
   audio_waveforms: ^1.0.4
   modal_bottom_sheet: ^2.1.2
+  firebase_ui_auth: ^1.10.0
   #audioplayers: ^0.15.1
 
 dev_dependencies:
