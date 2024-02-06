@@ -47,7 +47,7 @@ dependencies:
   countries_flag: ^1.0.0
   flutter_sound_lite: ^8.5.0
   permission_handler: ^10.4.3
-  firebase_auth: ^4.8.0
+  firebase_auth: ^4.16.0
   record: ^4.4.4
   firebase_core: ^2.22.0
   cloud_firestore: ^4.13.6
