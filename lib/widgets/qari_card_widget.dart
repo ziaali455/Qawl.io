@@ -13,7 +13,7 @@ class QariCard extends StatelessWidget {
   });
 
   final double width;
-  final User user;
+  final QawlUser user;
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +24,7 @@ class QariCard extends StatelessWidget {
         child: GestureDetector(
           onTap: () => Navigator.push(
             context,
-            MaterialPageRoute(
-                builder: (context) => ProfileContent(user: user)),
+            MaterialPageRoute(builder: (context) => ProfileContent(user: user)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -44,7 +43,10 @@ class QariCard extends StatelessWidget {
                         tag: "hi",
                         child: ClipRRect(
                             borderRadius: BorderRadius.circular(15),
-                            child: AspectRatio(aspectRatio: 1, child: Image.network(user.imagePath, fit: BoxFit.cover))),
+                            child: AspectRatio(
+                                aspectRatio: 1,
+                                child: Image.network(user.imagePath,
+                                    fit: BoxFit.cover))),
                       ),
                       const SizedBox(
                         height: 10,

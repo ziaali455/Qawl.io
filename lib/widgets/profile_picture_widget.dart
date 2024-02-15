@@ -1,6 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
 
 class ProfilePictureWidget extends StatelessWidget {
+  //must be changed to Stateful to accomodate for changing username and pfp and then going back to this page
   final String imagePath;
   final VoidCallback onClicked;
   final String country;
@@ -20,23 +23,41 @@ class ProfilePictureWidget extends StatelessWidget {
   }
 
   Widget buildImage(String country) {
-    final image = NetworkImage(imagePath);
-    return Stack(children: [
-      ClipOval(
-          child: Material(
-              color: Colors.transparent,
-              child: Ink.image(
-                image: image,
-                fit: BoxFit.cover,
-                width: 128,
-                height: 128,
-              ))),
-      Positioned(
-        bottom: 0,
-        right: 4,
-        child: buildCountryIcon(country),
-      ),
-    ]);
+    User? firebaseUser = FirebaseAuth.instance.currentUser;
+    final image = null; //Image.network(getPfp(firebaseUser?.uid));
+    //make a firebase get request for the created profile picture here
+    if (image != null) {
+      return Stack(children: [
+        ClipOval(
+            child: Material(
+                color: Colors.transparent,
+                child: Ink.image(
+                  image: image,
+                  fit: BoxFit.cover,
+                  width: 128,
+                  height: 128,
+                ))),
+        Positioned(
+          bottom: 0,
+          right: 4,
+          child: buildCountryIcon(country),
+        ),
+      ]);
+    } else {
+      return Stack(children: [
+        ClipOval(
+            child: Material(
+                child: UserAvatar(
+          size: 128,
+          placeholderColor: Colors.green,
+        ))),
+        Positioned(
+          bottom: 0,
+          right: 4,
+          child: buildCountryIcon(country),
+        ),
+      ]);
+    }
   }
 
   Widget buildCountryIcon(String country) => buildCircle(
@@ -60,14 +81,14 @@ class ProfilePictureWidget extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.all(all),
           decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: <Color>[
-                    Color.fromARGB(255, 13, 161, 99),
-                    Color.fromARGB(255, 22, 181, 93),
-                    Color.fromARGB(255, 32, 220, 85),
-                  ],
-                ),
-              ),
+            gradient: LinearGradient(
+              colors: <Color>[
+                Color.fromARGB(255, 13, 161, 99),
+                Color.fromARGB(255, 22, 181, 93),
+                Color.fromARGB(255, 32, 220, 85),
+              ],
+            ),
+          ),
           child: child,
         ),
       );

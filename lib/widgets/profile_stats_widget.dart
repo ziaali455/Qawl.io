@@ -3,7 +3,7 @@ import 'package:first_project/screens/profile_content.dart';
 import 'package:flutter/material.dart';
 
 class NumbersWidget extends StatelessWidget {
-  final User user;
+  final QawlUser user;
   const NumbersWidget({super.key, required this.user});
 
   @override
@@ -17,7 +17,6 @@ class NumbersWidget extends StatelessWidget {
               buildButton(context, user.followers.toString(), 'Followers'),
             ],
           ),
-          
         ],
       );
 

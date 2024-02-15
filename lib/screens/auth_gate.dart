@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
 
+import 'taken_from_firebaseui/sign_in_screen_firebaseui.dart';
+
 class AuthGate extends StatelessWidget {
   const AuthGate({super.key});
 
@@ -12,7 +14,7 @@ class AuthGate extends StatelessWidget {
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return SignInScreen(
+          return MySignInScreen(
             providers: [
               EmailAuthProvider(),
             ],
@@ -20,8 +22,8 @@ class AuthGate extends StatelessWidget {
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: action == AuthAction.signIn
-                    ? const Text('Welcome to Qawl')
-                    : const Text('Welcome to Qawl'),
+                    ? const Text('Sign in')
+                    : const Text('Sign in'),
               );
             },
             footerBuilder: (context, action) {

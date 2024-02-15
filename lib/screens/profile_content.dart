@@ -15,6 +15,7 @@ import 'package:first_project/widgets/upload_popup_widget.dart';
 import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
 
 import 'now_playing_content.dart';
+
 class QawlRecordButton extends StatelessWidget {
   const QawlRecordButton({
     super.key,
@@ -49,7 +50,6 @@ class QawlRecordButton extends StatelessWidget {
                   child: UploadPopupWidget(),
                 ),
               );
-             
             },
             tooltip: 'Enter the record page',
             child: Icon(
@@ -68,14 +68,14 @@ class ProfileContent extends StatefulWidget {
     Key? key,
     required this.user,
   }) : super(key: key);
-  final User user;
+  final QawlUser user;
   @override
   State<ProfileContent> createState() => _ProfileContentState(user);
 }
 
 class _ProfileContentState extends State<ProfileContent> {
-  late User myUser;
-  _ProfileContentState(User user) {
+  late QawlUser myUser;
+  _ProfileContentState(QawlUser user) {
     myUser = user;
   }
 
@@ -144,13 +144,13 @@ class _ProfileContentState extends State<ProfileContent> {
     ));
   }
 
-  Widget buildName(User user) => Column(
+  Widget buildName(QawlUser user) => Column(
         children: [
           Text(user.name,
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24))
         ],
       );
-  Widget buildAbout(User user) => Column(
+  Widget buildAbout(QawlUser user) => Column(
         children: [
           Text(user.about,
               style:
@@ -164,7 +164,7 @@ class FollowButton extends StatefulWidget {
     super.key,
     required this.user,
   });
-  final User user;
+  final QawlUser user;
 
   @override
   State<FollowButton> createState() => _FollowButtonState();

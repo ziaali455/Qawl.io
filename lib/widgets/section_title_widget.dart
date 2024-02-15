@@ -19,7 +19,7 @@ class PlaylistSectionTitle extends StatelessWidget {
 
   final String title;
   Playlist playlist = fake_playlist_data.defaultPlaylist;
-  List<User>? qaris = [fakeuserdata.user0, fakeuserdata.user1];
+  List<QawlUser>? qaris = [fakeuserdata.user0, fakeuserdata.user1];
   final GestureTapCallback press;
   final bool isPlaylist;
 
@@ -96,9 +96,7 @@ class SectionTitle extends StatelessWidget {
             color: Colors.white,
           ),
         ),
-        
       ]),
     );
   }
 }
-

@@ -1,7 +1,7 @@
 import 'package:first_project/model/user.dart';
 
 class temp_user_data {
-  static var user5 = User(
+  static var user5 = QawlUser(
       imagePath:
           'https://netstorage-tuko.akamaized.net/images/f6b3d8e16d60277b.jpg?imwidth=900',
       id: "5",
@@ -11,7 +11,7 @@ class temp_user_data {
       country: 'India',
       followers: 53);
 
-  static var user6 = User(
+  static var user6 = QawlUser(
       imagePath:
           'https://netstorage-tuko.akamaized.net/images/f6b3d8e16d60277b.jpg?imwidth=900',
       id: "6",
@@ -21,7 +21,7 @@ class temp_user_data {
       country: 'Lebanon',
       followers: 29);
 
-  static var user7 = User(
+  static var user7 = QawlUser(
       imagePath:
           'https://netstorage-tuko.akamaized.net/images/f6b3d8e16d60277b.jpg?imwidth=900',
       id: "7",
@@ -31,7 +31,7 @@ class temp_user_data {
       country: 'USA',
       followers: 31);
 
-  static var user8 = User(
+  static var user8 = QawlUser(
       imagePath:
           'https://netstorage-tuko.akamaized.net/images/f6b3d8e16d60277b.jpg?imwidth=900',
       id: "8",
@@ -41,7 +41,7 @@ class temp_user_data {
       country: 'Algeria',
       followers: 82);
 
-  static var user9 = User(
+  static var user9 = QawlUser(
       imagePath:
           'https://netstorage-tuko.akamaized.net/images/f6b3d8e16d60277b.jpg?imwidth=900',
       id: "9",
@@ -51,7 +51,7 @@ class temp_user_data {
       country: 'Pakistan',
       followers: 93);
 
-  static var user10 = User(
+  static var user10 = QawlUser(
       imagePath:
           'https://netstorage-tuko.akamaized.net/images/f6b3d8e16d60277b.jpg?imwidth=900',
       id: "10",
@@ -61,7 +61,7 @@ class temp_user_data {
       country: 'Morrocco',
       followers: 59);
 
-  static var user11 = User(
+  static var user11 = QawlUser(
       imagePath:
           'https://netstorage-tuko.akamaized.net/images/f6b3d8e16d60277b.jpg?imwidth=900',
       id: "11",
@@ -71,7 +71,7 @@ class temp_user_data {
       country: 'Palestine',
       followers: 27);
 
-  static var user12 = User(
+  static var user12 = QawlUser(
       imagePath:
           'https://netstorage-tuko.akamaized.net/images/f6b3d8e16d60277b.jpg?imwidth=900',
       id: "12",
@@ -81,7 +81,7 @@ class temp_user_data {
       country: 'Jordan',
       followers: 39);
 
-  static var user13 = User(
+  static var user13 = QawlUser(
       imagePath:
           'https://netstorage-tuko.akamaized.net/images/f6b3d8e16d60277b.jpg?imwidth=900',
       id: "13",
@@ -91,7 +91,7 @@ class temp_user_data {
       country: 'Somalia',
       followers: 12);
 
-  static var user14 = User(
+  static var user14 = QawlUser(
       imagePath:
           'https://netstorage-tuko.akamaized.net/images/f6b3d8e16d60277b.jpg?imwidth=900',
       id: "4",
@@ -101,7 +101,7 @@ class temp_user_data {
       country: 'Niger',
       followers: 34);
 
-  static var user15 = User(
+  static var user15 = QawlUser(
       imagePath:
           'https://netstorage-tuko.akamaized.net/images/f6b3d8e16d60277b.jpg?imwidth=900',
       id: "15",

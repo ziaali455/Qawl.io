@@ -58,6 +58,7 @@ dependencies:
   audio_waveforms: ^1.0.4
   modal_bottom_sheet: ^2.1.2
   firebase_ui_auth: ^1.10.0
+  image_picker: ^1.0.7
   #audioplayers: ^0.15.1
 
 dev_dependencies:

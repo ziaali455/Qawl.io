@@ -58,7 +58,7 @@ class QariCardRow extends StatelessWidget {
   }) : super(key: key);
 
   final double width, aspectRetio;
-  final User user;
+  final QawlUser user;
 
   @override
   Widget build(BuildContext context) {

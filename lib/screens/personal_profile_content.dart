@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:first_project/model/fake_playlists_data.dart';
 import 'package:first_project/model/fake_user_data.dart';
@@ -14,8 +15,9 @@ import 'package:first_project/model/fake_track_data.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:first_project/widgets/upload_popup_widget.dart';
+import '../firebase_options.dart';
+import '../screens/taken_from_firebaseui/profile_screen_firebaseui.dart';
 import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
-
 
 class PersonalProfileContent extends StatefulWidget {
   const PersonalProfileContent({
@@ -29,7 +31,7 @@ class _PersonalProfileContentState extends State<PersonalProfileContent> {
   @override
   Widget build(BuildContext context) {
     final Playlist playlist;
-    User user = fakeuserdata.user0;
+    QawlUser user = fakeuserdata.user0;
     var track1 = faketrackdata.fakeTrack1; //pass in data here
     var track2 = faketrackdata.fakeTrack2;
     var track3 = faketrackdata.fakeTrack3;
@@ -48,23 +50,23 @@ class _PersonalProfileContentState extends State<PersonalProfileContent> {
                   child: ProfilePictureWidget(
                     imagePath: user.imagePath,
                     country: "🇺🇸",
-                    onClicked: ()  {
+                    onClicked: () {
                       //testing
                     },
                   ),
                   onTap: () {
                     Navigator.push(
-                context,
-                MaterialPageRoute<ProfileScreen>(
-                  builder: (context) =>  ProfileScreen(
-                    actions: [
-                      SignedOutAction((context) {
-                        Navigator.of(context).pop();
-                      })
-                    ],
-                  ),
-                ),
-              );
+                      context,
+                      MaterialPageRoute<MyProfileScreen>(
+                        builder: (context) => MyProfileScreen(
+                          actions: [
+                            SignedOutAction((context) {
+                              Navigator.of(context).pop();
+                            })
+                          ],
+                        ),
+                      ),
+                    );
                   },
                 ),
                 const SizedBox(height: 24),
@@ -111,13 +113,21 @@ class _PersonalProfileContentState extends State<PersonalProfileContent> {
         ]));
   }
 
-  Widget buildName(User user) => Column(
-        children: [
-          Text(user.name,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24))
-        ],
-      );
-  Widget buildAbout(User user) => Column(
+  Widget buildName(QawlUser user) {
+    User? firebaseUser = FirebaseAuth.instance.currentUser;
+    String displayedUsername = firebaseUser != null
+        ? firebaseUser.displayName ?? "No Name"
+        : "No Name";
+
+    return Column(
+      children: [
+        Text(displayedUsername,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24))
+      ],
+    );
+  }
+
+  Widget buildAbout(QawlUser user) => Column(
         children: [
           Text(user.about,
               style:
