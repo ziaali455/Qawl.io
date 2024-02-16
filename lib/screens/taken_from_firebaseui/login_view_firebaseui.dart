@@ -7,6 +7,7 @@ import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:firebase_ui_localizations/firebase_ui_localizations.dart';
 import 'package:firebase_ui_oauth/firebase_ui_oauth.dart'
     hide OAuthProviderButtonBase;
+import 'package:first_project/screens/taken_from_firebaseui/email_form_firebaseui.dart';
 import 'package:flutter/cupertino.dart' hide Title;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart' hide Title;
@@ -127,6 +128,7 @@ class _LoginViewState extends State<MyLoginView> {
       });
     } else {
       setState(() {
+        
         _action = AuthAction.signIn;
       });
     }
@@ -180,14 +182,15 @@ class _LoginViewState extends State<MyLoginView> {
                 style: hintStyle,
               ),
               TextSpan(
-                text: actionText,
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color:  Colors.green,
-                    ),
-                mouseCursor: SystemMouseCursors.click,
-                recognizer: TapGestureRecognizer()
-                  ..onTap = () => _handleDifferentAuthAction(context),
-              ),
+                  text: actionText,
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: Colors.green,
+                      ),
+                  mouseCursor: SystemMouseCursors.click,
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () {
+                      _handleDifferentAuthAction(context);
+                    }),
             ],
           ),
         ),
@@ -219,7 +222,7 @@ class _LoginViewState extends State<MyLoginView> {
             if (provider.supportsPlatform(platform))
               if (provider is EmailAuthProvider) ...[
                 const SizedBox(height: 8),
-                EmailForm(
+                MyEmailForm(
                   key: ValueKey(_action),
                   auth: widget.auth,
                   action: _action,
