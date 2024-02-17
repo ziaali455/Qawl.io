@@ -105,7 +105,7 @@ class _AvailableProvidersRowState extends State<_AvailableProvidersRow> {
                   provider: provider,
                 ).then((_) => widget.onProviderLinked()),
               )
-          else
+         else
             AuthStateListener<OAuthController>(
               listener: (oldState, newState, controller) {
                 if (newState is CredentialLinked) {

@@ -1,4 +1,5 @@
 import 'package:first_project/screens/homepage.dart';
+import 'package:first_project/screens/taken_from_firebaseui/email_auth_provider_firebaseUI.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
@@ -16,7 +17,7 @@ class AuthGate extends StatelessWidget {
         if (!snapshot.hasData) {
           return MySignInScreen(
             providers: [
-              EmailAuthProvider(),
+              EmailAuthProvider(), //how can we use MyEmailAuthProvider
             ],
             subtitleBuilder: (context, action) {
               return Padding(

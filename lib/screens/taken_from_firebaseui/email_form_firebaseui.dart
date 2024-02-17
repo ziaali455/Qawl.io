@@ -10,6 +10,7 @@ import 'package:firebase_ui_shared/firebase_ui_shared.dart';
 import 'package:flutter/material.dart';
 import '../../model/user.dart';
 
+
 import 'package:firebase_ui_auth/src/validators.dart';
 
 /// {@template ui.auth.widgets.email_form.forgot_password_action}
@@ -333,7 +334,8 @@ class _SignInFormContentState extends State<_SignInFormContent> {
                 print(
                     "processing signing up on the backend by making a new qawl user...");
                 User? firebaseUser = FirebaseAuth.instance.currentUser;
-                QawlUser.createQawlUser(firebaseUser);
+                // QawlUser.createQawlUser(firebaseUser);
+
               }
             },
           );

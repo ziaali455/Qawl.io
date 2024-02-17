@@ -232,14 +232,14 @@ class _LoginViewState extends State<MyLoginView> {
                   showPasswordVisibilityToggle:
                       widget.showPasswordVisibilityToggle,
                 )
-              ] else if (provider is PhoneAuthProvider) ...[
-                const SizedBox(height: 8),
-                PhoneVerificationButton(
-                  label: l.signInWithPhoneButtonText,
-                  action: _action,
-                  auth: widget.auth,
-                ),
-                const SizedBox(height: 8),
+              // ] else if (provider is PhoneAuthProvider) ...[
+              //   const SizedBox(height: 8),
+              //   PhoneVerificationButton(
+              //     label: l.signInWithPhoneButtonText,
+              //     action: _action,
+              //     auth: widget.auth,
+              //   ),
+              //   const SizedBox(height: 8),
               ] else if (provider is EmailLinkAuthProvider) ...[
                 const SizedBox(height: 8),
                 EmailLinkSignInButton(
