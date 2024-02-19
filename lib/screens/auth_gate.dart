@@ -24,7 +24,7 @@ class AuthGate extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: action == AuthAction.signIn
                     ? const Text('Sign in')
-                    : const Text('Sign in'),
+                    : const Text('Register'),
               );
             },
             footerBuilder: (context, action) {
