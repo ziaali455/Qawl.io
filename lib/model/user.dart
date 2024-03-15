@@ -67,6 +67,38 @@ class QawlUser {
       return null;
     }
   }
+
+    static Future<String?> getAbout(String uid) async {
+    try {
+      DocumentSnapshot userDoc =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      if (userDoc.exists) {
+        return userDoc.get('about');
+      } else {
+        print("No about found for UID: $uid");
+        return null;
+      }
+    } catch (e) {
+      print("Error fetching about: $e");
+      return null;
+    }
+  }
+
+      static Future<String?> getFollowers(String uid) async {
+    try {
+      DocumentSnapshot userDoc =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      if (userDoc.exists) {
+        return userDoc.get('followers');
+      } else {
+        print("No follower data found for UID: $uid");
+        return null;
+      }
+    } catch (e) {
+      print("Error fetching followers: $e");
+      return null;
+    }
+  }
   //MUSA: Create a method that edits the imagePath property of a user given the Firebase UID of the user and path.
 
   //First find the QawlUser with the uID get request, and then update this person's imagePath

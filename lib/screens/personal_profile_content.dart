@@ -18,6 +18,7 @@ import 'package:first_project/widgets/upload_popup_widget.dart';
 import '../firebase_options.dart';
 import '../screens/taken_from_firebaseui/profile_screen_firebaseui.dart';
 import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
+import '../model/user.dart';
 
 class PersonalProfileContent extends StatefulWidget {
   const PersonalProfileContent({
@@ -127,11 +128,18 @@ class _PersonalProfileContentState extends State<PersonalProfileContent> {
     );
   }
 
-  Widget buildAbout(QawlUser user) => Column(
-        children: [
-          Text(user.about,
-              style:
-                  const TextStyle(fontWeight: FontWeight.normal, fontSize: 15))
-        ],
-      );
+  Future<Widget> buildAbout(QawlUser user) async {
+    User? firebaseUser = FirebaseAuth.instance.currentUser;
+    String? about = await QawlUser.getAbout(firebaseUser!.uid);
+    if(about==null){
+      about = "No about"
+    }
+
+    return Column(
+      children: [
+        Text(about,
+            style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 15))
+      ],
+    );
+  }
 }
