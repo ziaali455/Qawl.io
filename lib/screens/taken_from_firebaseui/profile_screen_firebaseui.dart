@@ -13,7 +13,7 @@ import 'package:first_project/screens/taken_from_firebaseui/multi_provider_scree
 import 'package:flutter/cupertino.dart' hide Title;
 import 'package:flutter/material.dart' hide Title;
 import 'package:flutter/services.dart';
-
+import 'package:first_project/model/user.dart';
 import 'package:firebase_ui_auth/src/widgets/internal/rebuild_scope.dart';
 import 'package:firebase_ui_auth/src/widgets/internal/subtitle.dart';
 import 'package:firebase_ui_auth/src/widgets/internal/universal_icon_button.dart';
@@ -793,12 +793,19 @@ class MyProfileScreen extends MultiProviderScreen {
   Future<void> _pickImage() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    debugPrint("clicked picker");
 
-    if (pickedFile != null) {
-      // Here you can handle the picked image, such as setting it as a profile picture.
-      // You may also want to display the picked image somewhere in your UI.
+   if (pickedFile != null) {
+    String? uid = QawlUser.getCurrentUserUid();
+    if (uid != null) {
+      String imagePath = pickedFile.path;
+      await QawlUser.updateImagePath(uid, imagePath); 
+      debugPrint("UPDATING IMAGE PATH");
+    } else {
+      print("No signed-in user found.");
     }
   }
+}
 
   @override
   Widget build(BuildContext context) {

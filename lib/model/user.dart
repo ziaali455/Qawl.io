@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:first_project/screens/profile_content.dart';
@@ -10,10 +9,10 @@ class QawlUser {
 
   String imagePath;
   final String id;
-  final String name;
+  String name;
   final String email;
-  final String about;
-  final String country;
+  String about;
+  String country;
   int followers = 0;
 
   QawlUser({
@@ -26,26 +25,20 @@ class QawlUser {
     required this.followers,
   });
 
-  String getId() {
-    return id;
-  }
-
-  String? getCurrentUserUid() {
+  // this method can be called in other classes to get the UID
+  static String? getCurrentUserUid() {
     final currentUser = FirebaseAuth.instance.currentUser;
     return currentUser?.uid; // This will be null if no user is logged in
   }
 
-// Future<String> currentUser() async {
-//   try  {
-//      User _firebaseUser = await _auth.currentUser!();
-//      if(_firebaseUser != null) {
-
-//      }
-//   }
-//   catch (e) {
-
-//   }
-//     return "";
+  // getters for the object itself will be quicker than firebase lookups?
+  String get getQawlUserImagePath => imagePath;
+  String get getQawlUserId => id;
+  String get getQawlUserName => name;
+  String get getQawlUserEmail => email;
+  String get getQawlUserAbout => about;
+  String get getQawlUserCountry => country;
+  int get getQawlUserFollowers => followers;
 
   //MUSA: See line 26 of profile_picture_widget. I just ran one method to build every PFP in the app
   //as the pfp of the Firebase user, but obviously I will change that later. It was just for
@@ -59,16 +52,16 @@ class QawlUser {
       if (userDoc.exists) {
         return userDoc.get('imagePath');
       } else {
-        print("No user found for UID: $uid");
+        debugPrint("No user found for UID: $uid");
         return null;
       }
     } catch (e) {
-      print("Error fetching user profile picture: $e");
+      debugPrint("Error fetching user profile picture: $e");
       return null;
     }
   }
 
-    static Future<String?> getAbout(String uid) async {
+  static Future<String?> getAbout(String uid) async {
     try {
       DocumentSnapshot userDoc =
           await FirebaseFirestore.instance.collection('users').doc(uid).get();
@@ -84,7 +77,7 @@ class QawlUser {
     }
   }
 
-      static Future<String?> getFollowers(String uid) async {
+  static Future<String?> getFollowers(String uid) async {
     try {
       DocumentSnapshot userDoc =
           await FirebaseFirestore.instance.collection('users').doc(uid).get();
@@ -99,29 +92,67 @@ class QawlUser {
       return null;
     }
   }
-  //MUSA: Create a method that edits the imagePath property of a user given the Firebase UID of the user and path.
-
-  //First find the QawlUser with the uID get request, and then update this person's imagePath
 
 // updating instance field with static method will need a current object reference passed in as a parameter
 // a way to get around this could be to have a currentQawlUser class that is global to be able to access maybe
-  void postPfp(String uid, String newImagePath) async {
+  // void postPfp(String uid, String newImagePath) async {
+  //   try {
+  //     await FirebaseFirestore.instance
+  //         .collection('users')
+  //         .doc(uid)
+  //         .update({'imagePath': newImagePath});
+  //     print("User pfp updated successfully.");
+  //     imagePath = newImagePath;
+  //   } catch (e) {
+  //     print("Error updating user pfp: $e");
+  //   }
+  // }
+
+  // Setters will set the objects field and call method to update the firestore entry
+  set setName(String newName) {
+    name = newName;
+    updateUserField(id, "name", newName);
+  }
+
+  set setAbout(String newAbout) {
+    about = newAbout;
+    updateUserField(id, "about", newAbout);
+  }
+
+  set setCountry(String newCountry) {
+    country = newCountry;
+    updateUserField(id, "country", newCountry);
+  }
+
+  set setFollowers(int newFollowers) {
+    followers = newFollowers;
+    updateUserField(id, "followers", newFollowers);
+  }
+
+  static Future<void> updateImagePath(String uid, String newPath) async {
+    await FirebaseFirestore.instance.collection('users').doc(uid).update({
+      'imagePath': newPath,
+    });
+    debugPrint("Image path updated successfully.");
+  }
+
+    Future<void> updateQawlUserImagePath(String newPath) async {
+    this.imagePath = newPath;
+    await updateUserField(this.id, "imagePath", newPath);
+  }
+
+  // Method to update a specific field for the user in Firestore
+  static Future<void> updateUserField(String uid, String field, dynamic value) async {
     try {
       await FirebaseFirestore.instance
           .collection('users')
           .doc(uid)
-          .update({'imagePath': newImagePath});
-      print("User pfp updated successfully.");
-      imagePath = newImagePath;
+          .update({field: value});
+      debugPrint("User $field updated successfully.");
     } catch (e) {
-      print("Error updating user pfp: $e");
+      debugPrint("Error updating user $field: $e");
     }
   }
-
-//  static void updateImagePath(QawlUser user, String newPath) {
-//     user.imagePath = newPath;
-//     // Further actions, like updating a database, can also be performed here
-//   }
 
   //create a Qawl user with the same UID as the firebase user and upload it to firebase
   //NOTE : User is a firebase user object, the user collection for firestore is being created in email_auth_provider.dart
@@ -138,16 +169,32 @@ class QawlUser {
           )
         : null;
 
-     if (firebaseUser != null) {
-       FirebaseFirestore.instance.collection('QawlUsers').doc(firebaseUser.uid).set({
+    //check if the user already exists in firebase
+    DocumentReference docRef = FirebaseFirestore.instance
+        .collection('QawlUsers')
+        .doc(firebaseUser?.uid);
+    DocumentSnapshot docSnapshot = await docRef.get();
+
+    if (firebaseUser != null && !docSnapshot.exists) {
+      await FirebaseFirestore.instance
+          .collection('QawlUsers')
+          .doc(firebaseUser.uid)
+          .set({
         'uid': firebaseUser.uid,
-         'email': firebaseUser.email,
-         'timestamp' :DateTime.now()
-       });
-   }
+        'email': firebaseUser.email,
+        'timestamp': DateTime.now(),
+        'imagePath': "",
+        'name': "",
+        'about': "",
+        'country': "",
+        'followers': 0
+      });
+    }
 
     if (firebaseUser?.uid != null) {
       return firebaseUser?.uid;
+    } else {
+      return null;
     }
   }
 }

@@ -333,8 +333,7 @@ class _SignInFormContentState extends State<_SignInFormContent> {
               if (state is SigningUp) {
                 print(
                     "processing signing up on the backend by making a new qawl user...");
-                User? firebaseUser = FirebaseAuth.instance.currentUser;
-                // QawlUser.createQawlUser(firebaseUser);
+               
 
               }
             },

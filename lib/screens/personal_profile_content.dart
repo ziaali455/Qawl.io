@@ -132,7 +132,7 @@ class _PersonalProfileContentState extends State<PersonalProfileContent> {
     User? firebaseUser = FirebaseAuth.instance.currentUser;
     String? about = await QawlUser.getAbout(firebaseUser!.uid);
     if(about==null){
-      about = "No about"
+      about = "No about";
     }
 
     return Column(

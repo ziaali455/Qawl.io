@@ -1,3 +1,4 @@
+import 'package:first_project/model/user.dart';
 import 'package:first_project/screens/homepage.dart';
 import 'package:first_project/screens/taken_from_firebaseui/email_auth_provider_firebaseUI.dart';
 import 'package:flutter/material.dart';
@@ -9,15 +10,28 @@ import 'taken_from_firebaseui/sign_in_screen_firebaseui.dart';
 class AuthGate extends StatelessWidget {
   const AuthGate({super.key});
 
+
+  void _checkUserSignInStatus(User? user) {
+    if (user != null) {
+      QawlUser.createQawlUser(user);
+      print("User has signed in with UID: ${user.uid}");
+    } else {
+      // User is not signed in or has signed out
+      print("User is not signed in.");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
+      _checkUserSignInStatus(snapshot.data);
+
         if (!snapshot.hasData) {
           return MySignInScreen(
             providers: [
-              EmailAuthProvider(), //how can we use MyEmailAuthProvider
+              EmailAuthProvider(), 
             ],
             subtitleBuilder: (context, action) {
               return Padding(

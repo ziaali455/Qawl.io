@@ -3,8 +3,11 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:firebase_auth/firebase_auth.dart' as fba;
+import 'package:first_project/model/user.dart';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
+
 
 /// A listener of the [EmailAuthFlow] flow lifecycle.
 abstract class EmailAuthListener extends AuthListener {}
@@ -24,16 +27,29 @@ class MyEmailAuthProvider
   bool supportsPlatform(TargetPlatform platform) => true;
 
   /// Tries to create a new user account with the given [EmailAuthCredential].
-  void signUpWithCredential(fba.EmailAuthCredential credential) {
-    authListener.onBeforeSignIn();
-    auth
-        .createUserWithEmailAndPassword(
-          email: credential.email,
-          password: credential.password!,
-        )
-        .then(authListener.onSignedIn)
-        .catchError(authListener.onError);
-  }
+void signUpWithCredential(fba.EmailAuthCredential credential) {
+  authListener.onBeforeSignIn();
+  auth
+    .createUserWithEmailAndPassword(
+      email: credential.email,
+      password: credential.password!,
+    )
+    .then((userCredential) {
+      authListener.onSignedIn(userCredential); // Assuming this method accepts a UserCredential
+
+      // Access user from userCredential directly
+      fba.User? firebaseUser = userCredential.user;
+
+      // Check if firebaseUser is not null before proceeding
+      if (firebaseUser != null) {
+        debugPrint("the UID is" + firebaseUser.uid);
+        QawlUser.createQawlUser(firebaseUser);
+      } else {
+        debugPrint("Firebase user is null");
+      }
+    })
+    .catchError(authListener.onError);
+}
 
   /// Creates an [EmailAuthCredential] with the given [email] and [password] and
   /// performs a corresponding [AuthAction].
@@ -65,6 +81,8 @@ class MyEmailAuthProvider
         }
 
         signUpWithCredential(credential);
+        debugPrint("successfully singed up");
+
         break;
       case AuthAction.link:
         linkWithCredential(credential);
