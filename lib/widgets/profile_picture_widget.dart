@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
+import 'package:first_project/model/user.dart';
 import 'package:flutter/material.dart';
 
 class ProfilePictureWidget extends StatelessWidget {
@@ -24,9 +25,10 @@ class ProfilePictureWidget extends StatelessWidget {
 
   Widget buildImage(String country) {
     User? firebaseUser = FirebaseAuth.instance.currentUser;
-    final image = null; //Image.network(getPfp(firebaseUser?.uid));
+    String imageURL = QawlUser.getPfp(firebaseUser!.uid) as String;
     //make a firebase get request for the created profile picture here
-    if (image != null) {
+    if (imageURL != null) { 
+      final image = NetworkImage(imageURL);
       return Stack(children: [
         ClipOval(
             child: Material(

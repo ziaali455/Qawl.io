@@ -44,13 +44,10 @@ class _PersonalProfileContentState extends State<PersonalProfileContent> {
             body: ListView(
               physics: const BouncingScrollPhysics(),
               children: [
-                // Align(
-                //     alignment: Alignment.topRight,
-                //     child: Icon(Icons.mic_none_outlined)),
                 GestureDetector(
                   child: ProfilePictureWidget(
                     imagePath: user.imagePath,
-                    country: "🇺🇸",
+                    country: user.country,
                     onClicked: () {
                       //testing
                     },
@@ -81,10 +78,10 @@ class _PersonalProfileContentState extends State<PersonalProfileContent> {
                     user: user,
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: buildAbout(user),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.all(8.0),
+                //   child: buildAbout(user),
+                // ),
                 const Padding(
                   padding: EdgeInsets.all(8.0),
                 ),
