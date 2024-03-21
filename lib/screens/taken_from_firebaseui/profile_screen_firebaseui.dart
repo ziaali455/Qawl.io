@@ -791,16 +791,18 @@ class MyProfileScreen extends MultiProviderScreen {
   }
 
   Future<void> _pickImage() async {
+
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    debugPrint("clicked picker");
+    print("clicked picker");
 
    if (pickedFile != null) {
     String? uid = QawlUser.getCurrentUserUid();
     if (uid != null) {
       String imagePath = pickedFile.path;
-      await QawlUser.updateImagePath(uid, imagePath); 
-      debugPrint("UPDATING IMAGE PATH");
+      QawlUser? currUser  = await QawlUser.getQawlUser(uid);
+
+      await currUser!.updateImagePath(uid, imagePath); 
     } else {
       print("No signed-in user found.");
     }
@@ -823,21 +825,21 @@ class MyProfileScreen extends MultiProviderScreen {
 
     final user = auth.currentUser!;
 
-    final avatarWidget = avatar ??
-        Align(
-          child: UserAvatar(
-            auth: auth,
-            placeholderColor: Colors.green,
-            shape: avatarShape,
-            size: avatarSize,
-          ),
-        );
+    // final avatarWidget = avatar ??
+    //     Align(
+    //       child: UserAvatar(
+    //         auth: auth,
+    //         placeholderColor: Colors.green,
+    //         shape: avatarShape,
+    //         size: avatarSize,
+    //       ),
+    //     );
 
     final content = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         QawlBackButton(),
-        avatarWidget,
+        // avatarWidget,
         Align(child: EditableUserDisplayName(auth: auth)),
         //This is for changing your email provider. Save for later
         // if (!user.emailVerified) ...[

@@ -113,9 +113,15 @@ class _PersonalProfileContentState extends State<PersonalProfileContent> {
 
   Widget buildName(QawlUser user) {
     User? firebaseUser = FirebaseAuth.instance.currentUser;
-    String displayedUsername = firebaseUser != null
-        ? firebaseUser.displayName ?? "No Name"
-        : "No Name";
+    String displayedUsername = " ";
+    if (firebaseUser != null) {
+      displayedUsername =  firebaseUser.displayName!;
+    } else {
+      displayedUsername = "no name";
+    }
+
+    QawlUser.updateUserField(firebaseUser!.uid, "name", displayedUsername);
+        
 
     return Column(
       children: [

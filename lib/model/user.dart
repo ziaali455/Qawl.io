@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:first_project/screens/profile_content.dart';
 
 import 'package:flutter/foundation.dart';
@@ -31,6 +34,29 @@ class QawlUser {
     return currentUser?.uid; // This will be null if no user is logged in
   }
 
+  factory QawlUser.fromFirestore(DocumentSnapshot doc) {
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+    return QawlUser(
+      id: doc.id,
+      name: data['name'] ?? '',
+      email: data['email'] ?? '',
+      imagePath: data['imagePath'] ?? '',
+      about: data['about'] ?? '',
+      country: data['country'] ?? '',
+      followers: data['followers'] ?? '',
+    );
+  }
+
+  static Future<QawlUser?> getQawlUser(String uid) async {
+    DocumentSnapshot doc =
+        await FirebaseFirestore.instance.collection('QawlUsers').doc(uid).get();
+    if (doc.exists) {
+      return QawlUser.fromFirestore(doc);
+    } else {
+      return null;
+    }
+  }
+
   // getters for the object itself will be quicker than firebase lookups?
   String get getQawlUserImagePath => imagePath;
   String get getQawlUserId => id;
@@ -47,8 +73,10 @@ class QawlUser {
   //First find the QawlUser with the UID get request, and then return this person's imagePath
   static Future<String?> getPfp(String uid) async {
     try {
-      DocumentSnapshot userDoc =
-          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('QawlUsers')
+          .doc(uid)
+          .get();
       if (userDoc.exists) {
         return userDoc.get('imagePath');
       } else {
@@ -61,10 +89,30 @@ class QawlUser {
     }
   }
 
+  static Future<String?> getName(String uid) async {
+    try {
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('QawlUsers')
+          .doc(uid)
+          .get();
+      if (userDoc.exists) {
+        return userDoc.get('name');
+      } else {
+        debugPrint("No user found for UID: $uid");
+        return null;
+      }
+    } catch (e) {
+      debugPrint("Error fetching user profile picture: $e");
+      return null;
+    }
+  }
+
   static Future<String?> getAbout(String uid) async {
     try {
-      DocumentSnapshot userDoc =
-          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('QawlUsers')
+          .doc(uid)
+          .get();
       if (userDoc.exists) {
         return userDoc.get('about');
       } else {
@@ -79,8 +127,10 @@ class QawlUser {
 
   static Future<String?> getFollowers(String uid) async {
     try {
-      DocumentSnapshot userDoc =
-          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('QawlUsers')
+          .doc(uid)
+          .get();
       if (userDoc.exists) {
         return userDoc.get('followers');
       } else {
@@ -129,23 +179,52 @@ class QawlUser {
     updateUserField(id, "followers", newFollowers);
   }
 
-  static Future<void> updateImagePath(String uid, String newPath) async {
-    await FirebaseFirestore.instance.collection('users').doc(uid).update({
+  Future<void> updateImagePath(String uid, String newPath) async {
+    await FirebaseFirestore.instance.collection('QawlUsers').doc(uid).update({
       'imagePath': newPath,
     });
+    debugPrint("\nImage path: " + imagePath + '\n');
+    debugPrint("\n UPLOADING IMAGE TO STORAGE\n");
+    // Create a reference to the location where you want to upload the image in Firebase Storage
+    Reference storageRef = FirebaseStorage.instance
+        .ref()
+        .child("images/profile_images/$uid/profile.jpg");
+    // Upload the file
+    File imageFile =
+        File(imagePath); // Convert the picked image path to a File object
+    try {
+      // Start the upload task
+      UploadTask uploadTask = storageRef.putFile(imageFile);
+      // Wait for the upload to complete
+      await uploadTask;
+      //this.imagePath = "images/profile_images/$uid/profile.jpg";
+      
+      // Get the download URL
+      final url = await storageRef.getDownloadURL();
+      imagePath = url;
+      updateQawlUserImagePath(imagePath);
+      print("THE DOWNLOAD URL IS: " + imagePath + '\n');
+      print("Image uploaded successfully. URL: $url");
+    } on FirebaseException catch (e) {
+      // Handle any errors
+      print("Error uploading image: ${e.message}");
+    }
+
+
     debugPrint("Image path updated successfully.");
   }
 
-    Future<void> updateQawlUserImagePath(String newPath) async {
+  Future<void> updateQawlUserImagePath(String newPath) async {
     this.imagePath = newPath;
     await updateUserField(this.id, "imagePath", newPath);
   }
 
   // Method to update a specific field for the user in Firestore
-  static Future<void> updateUserField(String uid, String field, dynamic value) async {
+  static Future<void> updateUserField(
+      String uid, String field, dynamic value) async {
     try {
       await FirebaseFirestore.instance
-          .collection('users')
+          .collection('QawlUsers')
           .doc(uid)
           .update({field: value});
       debugPrint("User $field updated successfully.");
