@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:first_project/model/user.dart';
 import 'package:first_project/screens/profile_content.dart';
 import 'package:flutter/material.dart';
 import 'package:first_project/model/track.dart';
@@ -11,11 +12,10 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:first_project/screens/record_audio_content.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-
 // DropdownMenuEntry labels and values for the first dropdown menu.
 
 class TrackInfoContent extends StatefulWidget {
-    FirebaseFirestore db = FirebaseFirestore.instance;
+  FirebaseFirestore db = FirebaseFirestore.instance;
 
   final String trackPath;
   final record = Record();
@@ -112,7 +112,6 @@ class _TrackInfoContentState extends State<TrackInfoContent> {
                         trackPath: trackPath,
                         surah: selectedSurah ?? ""),
                   ),
-    
                 ],
               ),
             ],
@@ -160,10 +159,8 @@ class CancelPostButton extends StatelessWidget {
             onPressed: () async {
               debugPrint(trackPath);
               File file = File(trackPath);
-              await deleteLocalFile(file);
+              await Track.deleteLocalFile(file);
 
-              //debugPrint("DELETE LOCAL FILE");
-              // debugPrint(trackPath);
               Navigator.pop(context);
               Navigator.pop(context);
             },
@@ -180,63 +177,63 @@ class CancelPostButton extends StatelessWidget {
   }
 }
 
-Future<String> getTemporaryFilePath() async {
-  Directory tempDir = await getTemporaryDirectory();
-  String tempPath = tempDir.path;
-  return '$tempPath/recording_${DateTime.now().millisecondsSinceEpoch}.m4a';
-}
+// Future<String> getTemporaryFilePath() async {
+//   Directory tempDir = await getTemporaryDirectory();
+//   String tempPath = tempDir.path;
+//   return '$tempPath/recording_${DateTime.now().millisecondsSinceEpoch}.m4a';
+// }
 
-Future<String?> uploadRecordingToStorage(String? filePath) async {
-  debugPrint("Uploading recording...");
-  File file;
-  if (filePath != null) {
-    file = File(filePath);
+// Future<String?> uploadRecordingToStorage(String? filePath) async {
+//   debugPrint("Uploading recording...");
+//   File file;
+//   if (filePath != null) {
+//     file = File(filePath);
 
-    try {
-      String fileName =
-          'recordings/${DateTime.now().millisecondsSinceEpoch}.m4a';
-            debugPrint(fileName);
+//     try {
+//       String fileName =
+//           'recordings/${DateTime.now().millisecondsSinceEpoch}.m4a';
+//             debugPrint(fileName);
 
-      TaskSnapshot uploadTask =
-          await FirebaseStorage.instance.ref(fileName).putFile(file);
+//       TaskSnapshot uploadTask =
+//           await FirebaseStorage.instance.ref(fileName).putFile(file);
 
-      //THIS AWAIT IS CAUSING ISSUES HERE?
-      String downloadUrl = await uploadTask.ref.getDownloadURL();
-      return downloadUrl;
-    } catch (e) {
-      debugPrint("Error uploading audio file: $e");
-      return null;
-    }
-  } else {
-    debugPrint("null filepath parameter");
-    return null;
-  }
-}
+//       //THIS AWAIT IS CAUSING ISSUES HERE?
+//       String downloadUrl = await uploadTask.ref.getDownloadURL();
+//       return downloadUrl;
+//     } catch (e) {
+//       debugPrint("Error uploading audio file: $e");
+//       return null;
+//     }
+//   } else {
+//     debugPrint("null filepath parameter");
+//     return null;
+//   }
+// }
 
-Future<void> storeRecordingInFirestore(String fileUrl, String surah) async {
-  try {
-    await FirebaseFirestore.instance.collection('test_tracks').add({
-      'fileUrl': fileUrl,
-      'timestamp': FieldValue.serverTimestamp(),
-      // Add the additional attributes here
-      'surah': surah
-    });
-    debugPrint('File URL stored in Firestore successfully.');
-  } catch (e) {
-    debugPrint('Error storing file URL in Firestore: $e');
-  }
-}
+// Future<void> storeRecordingInFirestore(String fileUrl, String surah) async {
+//   try {
+//     await FirebaseFirestore.instance.collection('QawlTracks').add({
+//       'fileUrl': fileUrl,
+//       'timestamp': FieldValue.serverTimestamp(),
+//       // Add the additional attributes here
+//       'surah': surah
+//     });
+//     debugPrint('File URL stored in Firestore successfully.');
+//   } catch (e) {
+//     debugPrint('Error storing file URL in Firestore: $e');
+//   }
+// }
 
-Future<void> deleteLocalFile(File file) async {
-  try {
-    if (await file.exists()) {
-      await file.delete();
-      debugPrint("Local file deleted successfully.");
-    }
-  } catch (e) {
-    debugPrint("Error deleting local file: $e");
-  }
-}
+// Future<void> deleteLocalFile(File file) async {
+//   try {
+//     if (await file.exists()) {
+//       await file.delete();
+//       debugPrint("Local file deleted successfully.");
+//     }
+//   } catch (e) {
+//     debugPrint("Error deleting local file: $e");
+//   }
+// }
 
 class ConfirmPostButton extends StatelessWidget {
   final String trackPath;
@@ -277,11 +274,14 @@ class ConfirmPostButton extends StatelessWidget {
               textStyle: const TextStyle(fontSize: 50),
             ),
             onPressed: () async {
-              String? fileUrl = await uploadRecordingToStorage(trackPath);
+              String? fileUrl = await Track.uploadRecordingToStorage(trackPath);
+
               if (fileUrl != null) {
                 // Store the URL in Firestore along with additional attributes
-                await storeRecordingInFirestore(fileUrl, surah); // add surah parameter etc
-
+                // await Track.storeRecordingInFirestore(fileUrl, surah); // add surah parameter etc
+                //create QawlTrack here and pass in current user id
+                String? uid = QawlUser.getCurrentUserUid();
+                Track.createQawlTrack(uid!, surah);
                 // Navigate back or show a success message
               }
               // debugPrint(
@@ -335,7 +335,29 @@ class QawlSubtitleText extends StatelessWidget {
   }
 }
 
+SurahLabel? getSurahLabelFromName(String surahName) {
+  // Assuming SurahLabelExtension.label is a reverse mapping of labels to enum values
+  try {
+    return SurahLabel.values.firstWhere(
+      (label) => label.label == surahName
+    );
+  } catch (e) {
+    // Handle the case where the surah name does not match any label
+    print("Surah name '$surahName' not found.");
+    return null;
+  }
+}
+  int? getSurahNumberByName(String surahName) {
+  final surahLabel = getSurahLabelFromName(surahName);
+  return surahLabel?.surahNumber;
+}
+
 extension SurahLabelExtension on SurahLabel {
+  int get surahNumber {
+    return this.index;
+  }
+
+
   String get label {
     switch (this) {
       case SurahLabel.none:

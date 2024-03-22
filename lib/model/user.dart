@@ -198,7 +198,7 @@ class QawlUser {
       // Wait for the upload to complete
       await uploadTask;
       //this.imagePath = "images/profile_images/$uid/profile.jpg";
-      
+
       // Get the download URL
       final url = await storageRef.getDownloadURL();
       imagePath = url;
@@ -209,7 +209,6 @@ class QawlUser {
       // Handle any errors
       print("Error uploading image: ${e.message}");
     }
-
 
     debugPrint("Image path updated successfully.");
   }
