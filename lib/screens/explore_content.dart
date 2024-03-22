@@ -43,7 +43,7 @@ class _ExploreContentState extends State<ExploreContent> {
         press: () {},
       ),
       QariCardRow(
-        user: fakeuserdata.user0,
+        category: 'Featured',
       ),
     ])));
   }
@@ -54,11 +54,12 @@ class QariCardRow extends StatelessWidget {
     Key? key,
     this.width = 175,
     this.aspectRetio = 1.02,
-    required this.user,
+    required this.category,
   }) : super(key: key);
 
+  final String category;
   final double width, aspectRetio;
-  final QawlUser user;
+
 
   @override
   Widget build(BuildContext context) {
@@ -68,9 +69,9 @@ class QariCardRow extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         child: Row(
           children: [
-            QariCard(width: width, user: user),
-            QariCard(width: width, user: fakeuserdata.user1),
-            QariCard(width: width, user: fakeuserdata.user2),
+            // QariCard(width: width, user: user),
+            // QariCard(width: width, user: fakeuserdata.user1),
+            // QariCard(width: width, user: fakeuserdata.user2),
           ],
         ),
       ),

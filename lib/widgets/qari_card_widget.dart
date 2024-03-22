@@ -1,8 +1,8 @@
+import 'package:first_project/screens/personal_profile_content.dart';
 import 'package:flutter/material.dart';
 
 import '../constants.dart';
 import '../model/user.dart';
-import '../screens/profile_content.dart';
 import '../size_config.dart';
 
 class QariCard extends StatelessWidget {
@@ -24,7 +24,7 @@ class QariCard extends StatelessWidget {
         child: GestureDetector(
           onTap: () => Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => ProfileContent(user: user)),
+            MaterialPageRoute(builder: (context) => ProfileContent(user: user, isPersonal: false,)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,5 +1,5 @@
 import 'package:first_project/model/user.dart';
-import 'package:first_project/screens/profile_content.dart';
+import 'package:first_project/screens/profile_content_DEPRECATED.dart';
 import 'package:flutter/material.dart';
 
 class NumbersWidget extends StatelessWidget {

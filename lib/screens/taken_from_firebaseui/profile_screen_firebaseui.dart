@@ -791,10 +791,11 @@ class MyProfileScreen extends MultiProviderScreen {
   }
 
   Future<void> _pickImage() async {
-
+    
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     print("clicked picker");
+    
 
    if (pickedFile != null) {
     String? uid = QawlUser.getCurrentUserUid();
@@ -803,6 +804,7 @@ class MyProfileScreen extends MultiProviderScreen {
       QawlUser? currUser  = await QawlUser.getQawlUser(uid);
 
       await currUser!.updateImagePath(uid, imagePath); 
+      
     } else {
       print("No signed-in user found.");
     }
@@ -824,7 +826,9 @@ class MyProfileScreen extends MultiProviderScreen {
     final emailVerificationScopeKey = RebuildScopeKey();
 
     final user = auth.currentUser!;
-
+    const snackBar = SnackBar(
+      content: Text('Changes will take effect after refereshing the app'),
+    );
     // final avatarWidget = avatar ??
     //     Align(
     //       child: UserAvatar(
@@ -962,7 +966,7 @@ class MyProfileScreen extends MultiProviderScreen {
                     child: Align(
                         alignment: Alignment.center,
                         child: Text(
-                          "Edit",
+                          "New Profile Photo",
                           style: TextStyle(
                               fontSize: 15.0, fontWeight: FontWeight.bold),
                         )),

@@ -1,7 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:first_project/screens/homepage_content.dart';
 import 'package:first_project/screens/explore_content.dart';
 import 'package:first_project/screens/personal_profile_content.dart';
-import 'package:first_project/screens/profile_content.dart';
+import 'package:first_project/screens/profile_content_DEPRECATED.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import '../widgets/now_playing_bar.dart';
@@ -16,10 +17,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int currentIndex = 0;
+  
   final screens = [
     const HomePageContent(),
     const ExploreContent(),
-    PersonalProfileContent(),
+    ProfileContent(isPersonal: true),
   ];
 
   @override

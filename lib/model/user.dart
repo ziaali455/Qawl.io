@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:first_project/screens/profile_content.dart';
+import 'package:first_project/screens/profile_content_DEPRECATED.dart';
 
 import 'package:flutter/foundation.dart';
 
@@ -17,6 +17,7 @@ class QawlUser {
   String about;
   String country;
   int followers = 0;
+  Set<String> uploads;
 
   QawlUser({
     required this.imagePath,
@@ -26,12 +27,32 @@ class QawlUser {
     required this.about,
     required this.country,
     required this.followers,
+    required this.uploads,
   });
 
   // this method can be called in other classes to get the UID
   static String? getCurrentUserUid() {
     final currentUser = FirebaseAuth.instance.currentUser;
     return currentUser?.uid; // This will be null if no user is logged in
+  }
+
+  static Future<QawlUser?> getQawlUserOrCurr(bool isPersonal,
+      {QawlUser? user}) async {
+    if (isPersonal) {
+      final currentUserUid = getCurrentUserUid();
+      if (currentUserUid != null) {
+        final doc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(currentUserUid)
+            .get();
+        if (doc.exists) {
+          return QawlUser.fromFirestore(doc);
+        }
+      }
+    } else {
+      return user;
+    }
+    return null; // Return null if user not found or isPersonal is true but no user is logged in
   }
 
   factory QawlUser.fromFirestore(DocumentSnapshot doc) {
@@ -44,6 +65,7 @@ class QawlUser {
       about: data['about'] ?? '',
       country: data['country'] ?? '',
       followers: data['followers'] ?? '',
+      uploads: data['uploads'] ?? '',
     );
   }
 
@@ -244,6 +266,7 @@ class QawlUser {
             about: "",
             country: "",
             followers: 0,
+            uploads: {},
           )
         : null;
 

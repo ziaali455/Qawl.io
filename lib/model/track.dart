@@ -21,7 +21,7 @@ class Track {
   final int surahNumber;
   String audioPath;
   final Set<Playlist> inPlaylists;
-  String coverImagePath = "https://www.linkpicture.com/q/no_cover_1.jpg";
+  String coverImagePath = "https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg";
   Track(
       {required this.userId,
       required this.id,
@@ -52,6 +52,7 @@ class Track {
       'fileUrl': "fileUrl",
       'surah': surah,
       'userId': uid,
+      'coverImagePath': '', //ali added this
       'id': uniqueID, // generate unique 4 digit id for track
       // 'inPlaylists: <Playlist>{}, //empty set for now
       'trackName': '',
@@ -144,26 +145,6 @@ class Track {
     }
   }
 
-  // static Future<void> storeRecordingInFirestore(
-  //     String fileUrl, String surah) async {
-  //   try {
-  //     await FirebaseFirestore.instance.collection('QawlTracks').add({
-  //       'fileUrl': fileUrl,
-  //       'timestamp': FieldValue.serverTimestamp(),
-  //       'surah': surah,
-  //       'userId': "c",
-  //       'id': Uuid().v4(), // generate unique 4 digit id for track
-  //       // 'inPlaylists: <Playlist>{}, //empty set for now
-  //       'trackName': '',
-  //       'plays': 0,
-  //       'surahNumber': 0,
-  //       'audioPath': '',
-  //     });
-  //     debugPrint('File URL stored in Firestore successfully.');
-  //   } catch (e) {
-  //     debugPrint('Error storing file URL in Firestore: $e');
-  //   }
-  // }
 
   static Future<void> deleteLocalFile(File file) async {
     try {
