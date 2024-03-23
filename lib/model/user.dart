@@ -17,7 +17,7 @@ class QawlUser {
   String about;
   String country;
   int followers = 0;
-  Set<String> uploads;
+  // Set<String> uploads;
 
   QawlUser({
     required this.imagePath,
@@ -27,7 +27,7 @@ class QawlUser {
     required this.about,
     required this.country,
     required this.followers,
-    required this.uploads,
+    // required this.uploads,
   });
 
   // this method can be called in other classes to get the UID
@@ -65,7 +65,7 @@ class QawlUser {
       about: data['about'] ?? '',
       country: data['country'] ?? '',
       followers: data['followers'] ?? '',
-      uploads: data['uploads'] ?? '',
+      // uploads: data['uploads'] ?? '',
     );
   }
 
@@ -266,7 +266,6 @@ class QawlUser {
             about: "",
             country: "",
             followers: 0,
-            uploads: {},
           )
         : null;
 

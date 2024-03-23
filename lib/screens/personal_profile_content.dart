@@ -75,7 +75,7 @@ class _PersonalProfileContentState extends State<ProfileContent> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
+          return Center(child: Text('Error!: ${snapshot.error}'));
         } else {
           final user = snapshot.data;
           if (user == null) {
