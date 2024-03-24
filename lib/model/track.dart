@@ -14,14 +14,15 @@ import 'package:uuid/uuid.dart';
 
 class Track {
   final String userId;
-  final String trackName;
+  String trackName;
   final String id;
 
   int plays;
   final int surahNumber;
   String audioPath;
-  final Set<Playlist> inPlaylists;
-  String coverImagePath = "https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg";
+  Set<Playlist> inPlaylists;
+  String coverImagePath =
+      "https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg";
   Track(
       {required this.userId,
       required this.id,
@@ -32,7 +33,43 @@ class Track {
       required this.audioPath,
       this.coverImagePath = "https://www.linkpicture.com/q/no_cover_1.jpg"});
 
-  static Future<String?> createQawlTrack(String uid, String surah) async {
+
+  factory Track.fromFirestore(Map<String, dynamic> data, String id) {
+    return Track(
+      userId: data['userId'] as String,
+      id: id,
+       inPlaylists: <Playlist>{}, 
+      trackName: data['trackName'] as String,
+      plays: data['plays'] as int,
+      surahNumber: data['surahNumber'] as int,
+      audioPath: data['audioPath'] as String,
+      coverImagePath:
+          data['coverImagePath'] as String? ?? "defaultCoverImagePath",
+    );
+  }
+
+  // Method to fetch a track by ID from Firestore
+  static Future<Track?> getQawlTrack(String trackId) async {
+    try {
+      DocumentSnapshot docSnapshot = await FirebaseFirestore.instance
+          .collection('QawlTracks')
+          .doc(trackId)
+          .get();
+      if (docSnapshot.exists) {
+        return Track.fromFirestore(
+            docSnapshot.data() as Map<String, dynamic>, docSnapshot.id);
+      } else {
+        print("Track not found.");
+        return null;
+      }
+    } catch (e) {
+      print("Error fetching track: $e");
+      return null;
+    }
+  }
+
+  static Future<String?> createQawlTrack(
+      String uid, String surah, String fileUrl, text) async {
     //create unique id for each track
     String uniqueID = Uuid().v4();
     uid != null
@@ -40,27 +77,27 @@ class Track {
             userId: uid,
             id: uniqueID,
             inPlaylists: <Playlist>{}, //empty set for now
-            trackName: '',
+            trackName: text,
             plays: 0,
             surahNumber: getSurahNumberByName(surah)!,
-            audioPath: '',
+            audioPath: fileUrl,
           )
         : null;
 
     //Store the recording in firestore
     await FirebaseFirestore.instance.collection('QawlTracks').add({
-      'fileUrl': "fileUrl",
       'surah': surah,
       'userId': uid,
       'coverImagePath': '', //ali added this
-      'id': uniqueID, // generate unique 4 digit id for track
-      // 'inPlaylists: <Playlist>{}, //empty set for now
-      'trackName': '',
+      'id': uniqueID, // generate unique id for track
+      'inPlaylists': <Playlist>{}, // need to address next
+      'trackName': text,
       'plays': 0,
       'surahNumber': getSurahNumberByName(surah)!,
-      'audioPath': '',
+      'audioPath': fileUrl,
       'timeStamp': DateTime.now() // for testing clarity
     });
+    print(fileUrl);
 
     return uid;
   }
@@ -93,14 +130,52 @@ class Track {
     return inPlaylists;
   }
 
-  static Future<void> updateTrackField(
-      String uid, String field, dynamic value) async {
+    //id and userId should not change
+    Future<void> updateLocalField(String field, dynamic value) async {
+    switch (field) {
+      case 'audioPath':
+        this.audioPath = value as String;
+        break;
+      case 'plays':
+        this.plays = value as int;
+        break;
+      case 'coverImagePath':
+        this.coverImagePath = value as String;
+        break;
+      case 'trackName':
+        this.trackName = value as String;
+        break;
+      case 'surahNumber':
+        this.plays = value as int;
+        break;
+      case 'surahNumber':
+        this.plays = value as int;
+        break;
+      case 'inPlaylists':
+        inPlaylists = value as Set<Playlist>;
+        break;
+      default:
+        print("Field $field not recognized or not updatable.");
+        return;
+    }
+
+    // After updating locally, call the static method to update Firestore
+    await updateTrackField(this.id, field, value);
+  }
+
+
+
+   Future<void> updateTrackField(
+      String id, String field, dynamic value) async {
     try {
       await FirebaseFirestore.instance
           .collection('QawlTracks')
-          .doc(uid)
+          .doc(id)
           .update({field: value});
       debugPrint("User $field updated successfully.");
+      
+
+
     } catch (e) {
       debugPrint("Error updating user $field: $e");
     }
@@ -128,12 +203,12 @@ class Track {
 
         String downloadUrl = await uploadTask.ref.getDownloadURL();
         // make field in firebase audioPath = download URL
-        String? uid = QawlUser.getCurrentUserUid();
-        if (uid != null) {
-          updateTrackField(uid, "fileUrl", downloadUrl);
-        } else {
-          print("Error: UID is null.");
-        }
+        // String? uid = QawlUser.getCurrentUserUid();
+        // if (uid != null) {
+        //   updateTrackField(uid, "fileUrl", downloadUrl);
+        // } else {
+        //   print("Error: UID is null.");
+        // }
         return downloadUrl;
       } catch (e) {
         debugPrint("Error uploading audio file: $e");
@@ -144,7 +219,6 @@ class Track {
       return null;
     }
   }
-
 
   static Future<void> deleteLocalFile(File file) async {
     try {

@@ -19,6 +19,7 @@ class TrackInfoContent extends StatefulWidget {
 
   final String trackPath;
   final record = Record();
+
   TrackInfoContent({Key? key, required this.trackPath}) : super(key: key);
 
   @override
@@ -27,9 +28,16 @@ class TrackInfoContent extends StatefulWidget {
 
 class _TrackInfoContentState extends State<TrackInfoContent> {
   String trackPath = "";
+  final TextEditingController _trackNameController = TextEditingController();
 
   _TrackInfoContentState(String path) {
     trackPath = path;
+  }
+  // cleans up controller when widget is disposed
+  void dispose() {
+    _trackNameController
+        .dispose(); // Clean up the controller when the widget is disposed.
+    super.dispose();
   }
 
   String? selectedSurah;
@@ -61,7 +69,7 @@ class _TrackInfoContentState extends State<TrackInfoContent> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Existing code...
+              //Existing code...
               Padding(
                 padding: EdgeInsets.only(bottom: 200.0),
                 child: Text(
@@ -71,6 +79,13 @@ class _TrackInfoContentState extends State<TrackInfoContent> {
                     fontWeight: FontWeight.bold,
                     fontSize: 35.0,
                   ),
+                ),
+              ),
+              TextField(
+                controller: _trackNameController,
+                decoration: InputDecoration(
+                  labelText: 'Track Name',
+                  border: OutlineInputBorder(),
                 ),
               ),
               QawlSubtitleText(title: "Surah Name"),
@@ -110,7 +125,10 @@ class _TrackInfoContentState extends State<TrackInfoContent> {
                     child: ConfirmPostButton(
                         alertStyle: alertStyle,
                         trackPath: trackPath,
-                        surah: selectedSurah ?? ""),
+                        surah: selectedSurah ?? "",
+                        trackName: _trackNameController.text),
+                    // Pass the track name here
+
                   ),
                 ],
               ),
@@ -238,12 +256,16 @@ class CancelPostButton extends StatelessWidget {
 class ConfirmPostButton extends StatelessWidget {
   final String trackPath;
   final String surah;
+  final String trackName; // Added this line
 
-  const ConfirmPostButton(
-      {super.key,
+
+  const ConfirmPostButton({
+    super.key,
       required this.alertStyle,
       required this.trackPath,
-      required this.surah});
+      required this.surah,
+      required this.trackName, // Added this line
+      });
 
   final AlertStyle alertStyle;
 
@@ -277,12 +299,15 @@ class ConfirmPostButton extends StatelessWidget {
               String? fileUrl = await Track.uploadRecordingToStorage(trackPath);
 
               if (fileUrl != null) {
-                // Store the URL in Firestore along with additional attributes
-                // await Track.storeRecordingInFirestore(fileUrl, surah); // add surah parameter etc
-                //create QawlTrack here and pass in current user id
                 String? uid = QawlUser.getCurrentUserUid();
-                Track.createQawlTrack(uid!, surah);
-                // Navigate back or show a success message
+                if (uid != null) {
+                  await Track.createQawlTrack(uid, surah, fileUrl, trackName);
+                  //update the name
+                } else {
+                  print("Error: UID is null.");
+                }
+              } else {
+                print("Error uploading the file.");
               }
               // debugPrint(
               //     "you should post the track and send us back to the profile page");
@@ -338,16 +363,15 @@ class QawlSubtitleText extends StatelessWidget {
 SurahLabel? getSurahLabelFromName(String surahName) {
   // Assuming SurahLabelExtension.label is a reverse mapping of labels to enum values
   try {
-    return SurahLabel.values.firstWhere(
-      (label) => label.label == surahName
-    );
+    return SurahLabel.values.firstWhere((label) => label.label == surahName);
   } catch (e) {
     // Handle the case where the surah name does not match any label
     print("Surah name '$surahName' not found.");
     return null;
   }
 }
-  int? getSurahNumberByName(String surahName) {
+
+int? getSurahNumberByName(String surahName) {
   final surahLabel = getSurahLabelFromName(surahName);
   return surahLabel?.surahNumber;
 }
@@ -356,7 +380,6 @@ extension SurahLabelExtension on SurahLabel {
   int get surahNumber {
     return this.index;
   }
-
 
   String get label {
     switch (this) {
