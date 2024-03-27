@@ -3,6 +3,7 @@ import 'package:first_project/model/fake_track_data.dart';
 import 'package:first_project/model/player.dart';
 import 'package:first_project/screens/track_info_content.dart';
 import 'package:flutter/material.dart';
+import 'package:tuple/tuple.dart';
 
 import '../../../../size_config.dart';
 import '../model/playlist.dart';
@@ -37,18 +38,23 @@ class ExploreTrackWidgetRow extends StatelessWidget {
           scrollDirection: Axis.horizontal,
           child: Row(
             children: playlist.list.map((track) {
-              return FutureBuilder<String>(
-                future: getUserDisplayName(track.userId),
+              return FutureBuilder<Tuple2<String, String>>(
+                future: getUserDisplayNameAndPfp(track.userId),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return CircularProgressIndicator(); // Placeholder while loading
                   } else if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   } else {
-                    final displayName = snapshot.data ?? 'Unknown';
+                    final userData = snapshot.data;
+                    final displayName = userData?.item1 ?? 'Unknown';
+                    final coverImagePath = userData?.item2 ?? null;
+                    
+                    // Use displayName and coverImagePath as needed
                     return TrackCard(
-                      image: track.coverImagePath,
-                      title: SurahMapper.getSurahNameByNumber(track.surahNumber),
+                      image: coverImagePath!,
+                      title:
+                          SurahMapper.getSurahNameByNumber(track.surahNumber),
                       author: displayName,
                       track: track,
                       press: () {},
@@ -62,15 +68,16 @@ class ExploreTrackWidgetRow extends StatelessWidget {
       ],
     );
   }
-
 }
 
-Future<String> getUserDisplayName(String userId) async {
+Future<Tuple2<String, String>> getUserDisplayNameAndPfp(String userId) async {
   var userDoc = await FirebaseFirestore.instance
       .collection('QawlUsers')
       .doc(userId)
       .get();
-  return userDoc.get('name');
+  final displayName = userDoc.get('name') as String;
+  final coverImagePath = userDoc.get('imagePath') as String;
+  return Tuple2(displayName, coverImagePath);
 }
 
 class TrackCard extends StatelessWidget {
@@ -89,6 +96,7 @@ class TrackCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     return Padding(
       padding: EdgeInsets.all(getProportionateScreenWidth(10)),
       child: GestureDetector(

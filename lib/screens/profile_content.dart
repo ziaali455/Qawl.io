@@ -41,24 +41,7 @@ class _ProfileContentState extends State<ProfileContent> {
     userFuture = _loadUserData();
   }
 
-  static Future<QawlUser?> getQawlUserOrCurr(bool isPersonal,
-      {QawlUser? user}) async {
-    if (isPersonal) {
-      final currentUserUid = QawlUser.getCurrentUserUid();
-      if (currentUserUid != null) {
-        final doc = await FirebaseFirestore.instance
-            .collection('QawlUsers')
-            .doc(currentUserUid)
-            .get();
-        if (doc.exists) {
-          return QawlUser.fromFirestore(doc);
-        }
-      }
-    } else {
-      return user;
-    }
-    return null; // Return null if user not found or isPersonal is true but no user is logged in
-  }
+  
 
   Future<QawlUser?> _loadUserData() async {
     if (widget.isPersonal) {
@@ -178,29 +161,11 @@ class _ProfileContentState extends State<ProfileContent> {
                       user: user,
                     ),
                   ),
-                // PlaylistSectionTitle(
-                //   title: "Uploads",
-                //   press: () {},
-                //   isPlaylist: true,
-                //   playlist: fake_playlist_data.defaultPlaylist,
-                // ),
-                // TrackWidget(
-                //   track: track1,
-                // ),
-                // TrackWidget(
-                //   track: track2,
-                // ),
-                // TrackWidget(
-                //   track: track3,
-                // ),
-                // TrackWidget(
-                //   track: track4,
-                // ),
-                
+           
                   PlaylistPreviewWidget(playlist: fake_playlist_data.defaultPlaylist)
               ],
             ),
-            floatingActionButton: const QawlRecordButton(),
+            floatingActionButton: isPersonal ? const QawlRecordButton(): null ,
             floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
           ),
         ]));
@@ -260,73 +225,7 @@ class _ProfileContentState extends State<ProfileContent> {
   displayUserUploads() {}
 }
 
-class FollowButton extends StatefulWidget {
-  const FollowButton({
-    super.key,
-    required this.user,
-  });
-  final QawlUser user;
 
-  @override
-  State<FollowButton> createState() => _FollowButtonState();
-}
-
-class _FollowButtonState extends State<FollowButton> {
-  bool following = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 120.0, right: 120.0),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(4),
-        child: Stack(
-          children: <Widget>[
-            Positioned.fill(
-              child: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: <Color>[
-                      Color.fromARGB(255, 13, 161, 99),
-                      Color.fromARGB(255, 22, 181, 93),
-                      Color.fromARGB(255, 32, 220, 85),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            TextButton(
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.all(2.0),
-                textStyle: const TextStyle(fontSize: 15),
-              ),
-              onPressed: () {
-                setState(() {
-                  following = !following;
-                  widget.user.followers++;
-                });
-              },
-              child: Align(
-                  alignment: Alignment.center,
-                  child: following
-                      ? const Text(
-                          "Unfollow",
-                          style: TextStyle(
-                              fontSize: 20.0, fontWeight: FontWeight.bold),
-                        )
-                      : const Text(
-                          "Follow",
-                          style: TextStyle(
-                              fontSize: 20.0, fontWeight: FontWeight.bold),
-                        )),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 class QawlRecordButton extends StatelessWidget {
   const QawlRecordButton({

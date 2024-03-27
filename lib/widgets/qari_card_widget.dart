@@ -1,4 +1,4 @@
-import 'package:first_project/screens/personal_profile_content.dart';
+import 'package:first_project/screens/profile_content.dart';
 import 'package:flutter/material.dart';
 
 import '../constants.dart';
