@@ -81,7 +81,7 @@ class QawlBackButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const SizedBox(height: 60),
+        const SizedBox(height: 20),
         Padding(
           padding: const EdgeInsets.only(left: 8.0),
           child: GestureDetector(

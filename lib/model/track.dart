@@ -33,12 +33,11 @@ class Track {
       required this.audioPath,
       this.coverImagePath = "https://www.linkpicture.com/q/no_cover_1.jpg"});
 
-
   factory Track.fromFirestore(Map<String, dynamic> data, String id) {
     return Track(
       userId: data['userId'] as String,
       id: id,
-       inPlaylists: <Playlist>{}, 
+      inPlaylists: <Playlist>{},
       trackName: data['trackName'] as String,
       plays: data['plays'] as int,
       surahNumber: data['surahNumber'] as int,
@@ -71,6 +70,7 @@ class Track {
   static Future<String?> createQawlTrack(
       String uid, String surah, String fileUrl, text) async {
     //create unique id for each track
+    String? imagePath = await QawlUser.getPfp(uid);
     String uniqueID = Uuid().v4();
     uid != null
         ? Track(
@@ -81,6 +81,7 @@ class Track {
             plays: 0,
             surahNumber: getSurahNumberByName(surah)!,
             audioPath: fileUrl,
+            coverImagePath: imagePath!,
           )
         : null;
 
@@ -88,7 +89,7 @@ class Track {
     await FirebaseFirestore.instance.collection('QawlTracks').add({
       'surah': surah,
       'userId': uid,
-      'coverImagePath': '', //ali added this
+      'coverImagePath': imagePath, //ali added this
       'id': uniqueID, // generate unique id for track
       'inPlaylists': <Playlist>{}, // need to address next
       'trackName': text,
@@ -130,8 +131,8 @@ class Track {
     return inPlaylists;
   }
 
-    //id and userId should not change
-    Future<void> updateLocalField(String field, dynamic value) async {
+  //id and userId should not change
+  Future<void> updateLocalField(String field, dynamic value) async {
     switch (field) {
       case 'audioPath':
         this.audioPath = value as String;
@@ -163,19 +164,13 @@ class Track {
     await updateTrackField(this.id, field, value);
   }
 
-
-
-   Future<void> updateTrackField(
-      String id, String field, dynamic value) async {
+  Future<void> updateTrackField(String id, String field, dynamic value) async {
     try {
       await FirebaseFirestore.instance
           .collection('QawlTracks')
           .doc(id)
           .update({field: value});
       debugPrint("User $field updated successfully.");
-      
-
-
     } catch (e) {
       debugPrint("Error updating user $field: $e");
     }

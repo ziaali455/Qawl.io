@@ -313,7 +313,7 @@ class ConfirmPostButton extends StatelessWidget {
               //     "you should post the track and send us back to the profile page");
               Navigator.pop(context);
               Navigator.pop(context);
-              Navigator.pop(context);
+
 
               Alert(
                       image: Icon(

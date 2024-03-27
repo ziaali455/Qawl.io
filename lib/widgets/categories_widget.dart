@@ -1,9 +1,9 @@
 import 'package:first_project/model/fake_playlists_data.dart';
 import 'package:first_project/model/playlist.dart';
 import 'package:first_project/screens/country_explore_content.dart';
+import 'package:first_project/screens/now_playing_content.dart';
 import 'package:first_project/screens/playlist_screen_content.dart';
 import 'package:flutter/material.dart';
-
 
 import '../../../../size_config.dart';
 import '../constants.dart';
@@ -27,12 +27,13 @@ class Categories extends StatelessWidget {
         "text": "Trending"
       },
       {
-        "icon": const Icon(Icons.local_fire_department_outlined, color: Colors.red),
+        "icon":
+            const Icon(Icons.local_fire_department_outlined, color: Colors.red),
         "text": "New"
       },
       {
-        "icon":
-            const Icon(Icons.supervised_user_circle_rounded, color: Colors.purple),
+        "icon": const Icon(Icons.supervised_user_circle_rounded,
+            color: Colors.purple),
         "text": "Following"
       },
     ];
@@ -46,7 +47,8 @@ class Categories extends StatelessWidget {
           (index) => CategoryCard(
             icon: categories[index]["icon"],
             text: categories[index]["text"],
-            press: () {}, playlist: playlist,
+            press: () {},
+            playlist: playlist,
           ),
         ),
       ),
@@ -75,29 +77,26 @@ class CategoryCard extends StatelessWidget {
         if (text == "Nations") {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const CountryExploreContent()),
+            MaterialPageRoute(builder: (context) => PlaceholderContent()),
+            //const CountryExploreContent()),
           );
-        }else if (text == "Trending"){
+        } else if (text == "Trending") {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => PlaylistScreenContent(playlist: fake_playlist_data.trending,)),
+            MaterialPageRoute(builder: (context) => PlaceholderContent()),
+            //PlaylistScreenContent(playlist: fake_playlist_data.following,)),
           );
-        }else if (text == "New"){
+        } else if (text == "New") {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => PlaylistScreenContent(playlist: fake_playlist_data.newReleases,)),
+            MaterialPageRoute(builder: (context) => PlaceholderContent()),
+            //PlaylistScreenContent(playlist: fake_playlist_data.following,)),
           );
-        }
-        else if (text == "Following"){
+        } else if (text == "Following") {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => PlaylistScreenContent(playlist: fake_playlist_data.following,)),
-          );
-        }
-        else if (text == "Following"){
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => PlaylistScreenContent(playlist: fake_playlist_data.following,)),
+            MaterialPageRoute(builder: (context) => PlaceholderContent()),
+            //PlaylistScreenContent(playlist: fake_playlist_data.following,)),
           );
         }
       },
@@ -123,6 +122,37 @@ class CategoryCard extends StatelessWidget {
               text!,
               textAlign: TextAlign.center,
             )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class PlaceholderContent extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            QawlBackButton(),
+            SizedBox(height:140),
+            Text(
+              'Coming Soon',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 24,
+              ),
+            ),
+            SizedBox(height: 60),
+            Text(
+              '😊',
+              style: TextStyle(
+                fontSize: 40,
+              ),
+            ),
           ],
         ),
       ),

@@ -5,6 +5,7 @@ import 'package:first_project/model/fake_playlists_data.dart';
 import 'package:first_project/model/playlist.dart';
 import 'package:first_project/screens/now_playing_content.dart';
 import 'package:first_project/screens/profile_content_DEPRECATED.dart';
+import 'package:first_project/widgets/playlist_preview_widget.dart';
 
 import 'package:first_project/widgets/profile_picture_widget.dart';
 import 'package:first_project/widgets/section_title_widget.dart';
@@ -28,10 +29,10 @@ class ProfileContent extends StatefulWidget {
     Key? key,
   }) : super(key: key);
   @override
-  State<ProfileContent> createState() => _PersonalProfileContentState();
+  State<ProfileContent> createState() => _ProfileContentState();
 }
 
-class _PersonalProfileContentState extends State<ProfileContent> {
+class _ProfileContentState extends State<ProfileContent> {
   late Future<QawlUser?> userFuture;
 
   @override
@@ -177,24 +178,26 @@ class _PersonalProfileContentState extends State<ProfileContent> {
                       user: user,
                     ),
                   ),
-                PlaylistSectionTitle(
-                  title: "Uploads",
-                  press: () {},
-                  isPlaylist: true,
-                  playlist: fake_playlist_data.defaultPlaylist,
-                ),
-                TrackWidget(
-                  track: track1,
-                ),
-                TrackWidget(
-                  track: track2,
-                ),
-                TrackWidget(
-                  track: track3,
-                ),
-                TrackWidget(
-                  track: track4,
-                ),
+                // PlaylistSectionTitle(
+                //   title: "Uploads",
+                //   press: () {},
+                //   isPlaylist: true,
+                //   playlist: fake_playlist_data.defaultPlaylist,
+                // ),
+                // TrackWidget(
+                //   track: track1,
+                // ),
+                // TrackWidget(
+                //   track: track2,
+                // ),
+                // TrackWidget(
+                //   track: track3,
+                // ),
+                // TrackWidget(
+                //   track: track4,
+                // ),
+                
+                  PlaylistPreviewWidget(playlist: fake_playlist_data.defaultPlaylist)
               ],
             ),
             floatingActionButton: const QawlRecordButton(),
@@ -253,6 +256,8 @@ class _PersonalProfileContentState extends State<ProfileContent> {
       ],
     );
   }
+  
+  displayUserUploads() {}
 }
 
 class FollowButton extends StatefulWidget {

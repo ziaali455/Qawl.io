@@ -105,7 +105,7 @@ class _AvailableProvidersRowState extends State<_AvailableProvidersRow> {
                   provider: provider,
                 ).then((_) => widget.onProviderLinked()),
               )
-         else
+          else
             AuthStateListener<OAuthController>(
               listener: (oldState, newState, controller) {
                 if (newState is CredentialLinked) {
@@ -157,7 +157,7 @@ class _EditButton extends StatelessWidget {
     return UniversalIconButton(
       materialIcon: isEditing ? Icons.check : Icons.edit,
       cupertinoIcon: isEditing ? CupertinoIcons.check_mark : CupertinoIcons.pen,
-      color: theme.colorScheme.secondary,
+      color: Colors.green,
       onPressed: () {
         onPressed?.call();
       },
@@ -791,25 +791,22 @@ class MyProfileScreen extends MultiProviderScreen {
   }
 
   Future<void> _pickImage() async {
-    
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     print("clicked picker");
-    
 
-   if (pickedFile != null) {
-    String? uid = QawlUser.getCurrentUserUid();
-    if (uid != null) {
-      String imagePath = pickedFile.path;
-      QawlUser? currUser  = await QawlUser.getQawlUser(uid);
+    if (pickedFile != null) {
+      String? uid = QawlUser.getCurrentUserUid();
+      if (uid != null) {
+        String imagePath = pickedFile.path;
+        QawlUser? currUser = await QawlUser.getQawlUser(uid);
 
-      await currUser!.updateImagePath(uid, imagePath); 
-      
-    } else {
-      print("No signed-in user found.");
+        await currUser!.updateImagePath(uid, imagePath);
+      } else {
+        print("No signed-in user found.");
+      }
     }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -934,44 +931,43 @@ class MyProfileScreen extends MultiProviderScreen {
         // ...children,
         const SizedBox(height: 16),
         GestureDetector(
-            onTap: () {
-              _pickImage();
-            },
-            child: ClipRRect(
-                borderRadius: BorderRadius.circular(4),
-                child: Stack(children: <Widget>[
-                  Positioned.fill(
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: <Color>[
-                            Color.fromARGB(255, 13, 161, 99),
-                            Color.fromARGB(255, 22, 181, 93),
-                            Color.fromARGB(255, 32, 220, 85),
-                          ],
-                        ),
-                      ),
-                    ),
+          onTap: () {
+            _pickImage();
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(4),
+              gradient: const LinearGradient(
+                colors: <Color>[
+                  Color.fromARGB(255, 13, 161, 99),
+                  Color.fromARGB(255, 22, 181, 93),
+                  Color.fromARGB(255, 32, 220, 85),
+                ],
+              ),
+            ),
+            width: 120,
+            height: 45,
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.upload,
+                  color: Colors.white,
+                ),
+                SizedBox(width: 5), // Adjust the spacing as needed
+                Text(
+                  "New Profile Photo",
+                  style: TextStyle(
+                    fontSize: 15.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
-                  TextButton(
-                    style: TextButton.styleFrom(
-                      fixedSize: Size(120, 65),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.only(left: 10, right: 10),
-                      textStyle: const TextStyle(fontSize: 40),
-                    ),
-                    onPressed: () {
-                      _pickImage();
-                    },
-                    child: Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          "New Profile Photo",
-                          style: TextStyle(
-                              fontSize: 15.0, fontWeight: FontWeight.bold),
-                        )),
-                  ),
-                ]))),
+                ),
+              ],
+            ),
+          ),
+        ),
+
         const SizedBox(height: 16),
 
         SignOutButton(
