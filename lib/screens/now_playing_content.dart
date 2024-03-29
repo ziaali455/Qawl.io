@@ -1,6 +1,7 @@
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:first_project/model/player.dart';
 import 'package:first_project/widgets/add_to_library_popup.dart';
+import 'package:first_project/widgets/explore_track_widget_block.dart';
 import 'package:flutter/material.dart';
 import 'package:first_project/neu_box.dart';
 import 'package:first_project/model/track.dart';
@@ -81,9 +82,9 @@ class QawlBackButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const SizedBox(height: 20),
+        const SizedBox(height: 90),
         Padding(
-          padding: const EdgeInsets.only(left: 8.0),
+          padding: const EdgeInsets.only(top: 3.0, left: 8.0),
           child: GestureDetector(
             child: const Align(
               alignment: Alignment.topLeft,
@@ -147,6 +148,8 @@ class CoverContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(
+        "The image path displayed on nowplaying is " + myTrack.coverImagePath);
     return Column(
       children: [
         NeuBox(
@@ -180,7 +183,7 @@ class CoverContent extends StatelessWidget {
                         const SizedBox(height: 6),
                         Text(
                           //weird idk why it cant be const
-                          myTrack.userId,
+                          SurahMapper.getSurahNameByNumber(myTrack.surahNumber),
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 22,
@@ -274,4 +277,3 @@ class Controls extends StatelessWidget {
     );
   }
 }
-

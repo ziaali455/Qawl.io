@@ -98,10 +98,34 @@ class Track {
       'audioPath': fileUrl,
       'timeStamp': DateTime.now() // for testing clarity
     });
+
+    QawlUser? uploader = await QawlUser.getQawlUser(uid);
+    uploader!.uploads.add(uniqueID);
+    postUploads(uploader);
+
+    //finish the code
     print(fileUrl);
 
     return uid;
   }
+  
+  static void postUploads(QawlUser? user) async {
+  try {
+    if (user != null) {
+      // Convert the set to a list before updating Firestore
+      List<String> uploadsList = user.uploads.toList();
+      await FirebaseFirestore.instance
+          .collection('QawlUsers')
+          .doc(user.id)
+          .update({'uploads': uploadsList});
+      print('Uploads updated successfully.');
+    } else {
+      print('User is null. Uploads not updated.');
+    }
+  } catch (e) {
+    print('Error updating uploads: $e');
+  }
+}
 
   String getAuthor() {
     return userId;

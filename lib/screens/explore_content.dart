@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:first_project/model/fake_playlists_data.dart';
 import 'package:first_project/model/playlist.dart';
 import 'package:first_project/widgets/search_field.dart';
@@ -18,6 +19,7 @@ class ExploreContent extends StatefulWidget {
   @override
   State<ExploreContent> createState() => _ExploreContentState();
 }
+
 class _ExploreContentState extends State<ExploreContent> {
   Future<Playlist>? _top100PlaylistFuture;
   Future<Playlist>? _newReleasesPlaylistFuture;
@@ -38,7 +40,9 @@ class _ExploreContentState extends State<ExploreContent> {
         child: Column(
           children: [
             const SearchField(),
-            Categories(playlist: fake_playlist_data.defaultPlaylist,),
+            Categories(
+              playlist: fake_playlist_data.defaultPlaylist,
+            ),
             FutureBuilder<Playlist>(
               future: _top100PlaylistFuture,
               builder: (context, snapshot) {
@@ -83,7 +87,6 @@ class _ExploreContentState extends State<ExploreContent> {
   }
 }
 
-
 class QariCardRow extends StatefulWidget {
   const QariCardRow({
     Key? key,
@@ -124,7 +127,8 @@ class _QariCardRowState extends State<QariCardRow> {
           List<QawlUser>? firstThreeUsers = snapshot.data;
           if (firstThreeUsers != null && firstThreeUsers.isNotEmpty) {
             return Padding(
-              padding: EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(0)),
+              padding: EdgeInsets.symmetric(
+                  horizontal: getProportionateScreenWidth(0)),
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
@@ -150,13 +154,17 @@ Future<List<QawlUser>> getTopThreeUsersByFollowers() async {
   try {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('QawlUsers')
-        .orderBy('followers', descending: true) // Order by followers in descending order
+        .orderBy('followers',
+            descending: true) // Order by followers in descending order
         .limit(3) // Limit the query to return only 3 documents
         .get();
 
     querySnapshot.docs.forEach((doc) {
       QawlUser user = QawlUser.fromFirestore(doc);
-      topThreeUsers.add(user);
+      if (user.id !=
+          QawlUser.getQawlUser(FirebaseAuth.instance.currentUser!.uid)) {
+        topThreeUsers.add(user);
+      }
     });
   } catch (e) {
     print("Error getting top three users by followers: $e");

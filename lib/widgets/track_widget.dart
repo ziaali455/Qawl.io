@@ -1,5 +1,7 @@
 import 'package:first_project/model/player.dart';
+import 'package:first_project/model/user.dart';
 import 'package:first_project/screens/now_playing_content.dart';
+import 'package:first_project/widgets/explore_track_widget_block.dart';
 import 'package:flutter/material.dart';
 import 'package:first_project/model/track.dart';
 
@@ -11,46 +13,59 @@ class TrackWidget extends StatelessWidget {
     required this.track,
   }) : super(key: key); 
 
-  @override
-  Widget build(BuildContext context) {
-    int count = 0;
-    bool isPlaying = false;
-    return Padding(
-      padding: const EdgeInsets.only(left: 4.0, right: 4.0),
-      child: InkWell(
-        onTap: () {
-          playTrack(track);
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => NowPlayingContent(playedTrack: track)),
+@override
+Widget build(BuildContext context) {
+
+  return Padding(
+    padding: const EdgeInsets.only(left: 4.0, right: 4.0),
+    child: InkWell(
+      onTap: () {
+        playTrack(track);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => NowPlayingContent(playedTrack: track)),
           );
         },
-        child: Card(
-            child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: AspectRatio(
-                  aspectRatio: 1,
-                  child: Image.network(track.coverImagePath, fit: BoxFit.cover),
+      child: FutureBuilder<QawlUser?>(
+        future: QawlUser.getQawlUser(track.userId),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator(); // Placeholder while loading
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            final user = snapshot.data;
+            if (user != null) {
+              return Card(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ListTile(
+                      leading: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: AspectRatio(
+                          aspectRatio: 1,
+                          child: Image.network(user.imagePath, fit: BoxFit.cover),
+                        ),
+                      ),
+                      selectedTileColor: Colors.green,
+                      title: Text(SurahMapper.getSurahNameByNumber(track.surahNumber)),
+                      subtitle: Text(user.name),
+                    ),
+                  ],
                 ),
-              ),
-              selectedTileColor: Colors.green,
-              title: Text(track.trackName),
-              subtitle: Text(track.userId),
-            ),
-          ],
-        )),
-        // child: Container(
-        //     child: Row(
-        //   children: [buildCoverImage(), buildTitle(isPlaying)],
-        // )),
+              );
+            } else {
+              return Text('User not found'); // Handle case where user is null
+            }
+          }
+        },
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   Widget buildCoverImage() {
     return ClipRRect(

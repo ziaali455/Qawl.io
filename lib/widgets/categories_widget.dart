@@ -1,8 +1,11 @@
 import 'package:first_project/model/fake_playlists_data.dart';
 import 'package:first_project/model/playlist.dart';
+import 'package:first_project/model/user.dart';
 import 'package:first_project/screens/country_explore_content.dart';
+import 'package:first_project/screens/explore_content.dart';
 import 'package:first_project/screens/now_playing_content.dart';
 import 'package:first_project/screens/playlist_screen_content.dart';
+import 'package:first_project/widgets/qari_card_widget.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../size_config.dart';
@@ -95,7 +98,7 @@ class CategoryCard extends StatelessWidget {
         } else if (text == "Following") {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => PlaceholderContent()),
+            MaterialPageRoute(builder: (context) => FollowingContent()),
             //PlaylistScreenContent(playlist: fake_playlist_data.following,)),
           );
         }
@@ -129,16 +132,91 @@ class CategoryCard extends StatelessWidget {
   }
 }
 
+class QariCardGrid extends StatefulWidget {
+  const QariCardGrid({
+    Key? key,
+    this.aspectRetio = 1.02,
+    required this.category,
+  }) : super(key: key);
+
+  final String category;
+  final double aspectRetio;
+
+  @override
+  State<QariCardGrid> createState() => _QariCardGridState();
+}
+
+class _QariCardGridState extends State<QariCardGrid> {
+  late Future<List<QawlUser>> _futureUsers;
+
+  @override
+  void initState() {
+    super.initState();
+    _futureUsers = getTopThreeUsersByFollowers();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<QawlUser>>(
+      future: _futureUsers,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // While data is loading
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          // If an error occurs
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else {
+          // Once data is loaded successfully
+          List<QawlUser>? users = snapshot.data;
+          if (users != null && users.isNotEmpty) {
+            return GridView.count(
+              crossAxisCount: 2, // Number of columns
+              crossAxisSpacing: 10.0, // Spacing between columns
+              mainAxisSpacing: 10.0, // Spacing between rows
+              padding: EdgeInsets.symmetric(
+                horizontal: getProportionateScreenWidth(10),
+                vertical: getProportionateScreenHeight(20),
+              ),
+              children: users.map((user) {
+                return QariCard(user: user, width: 175,);
+              }).toList(),
+            );
+          } else {
+            // If no users are available
+            return Center(child: Text('No users available'));
+          }
+        }
+      },
+    );
+  }
+}
+
+class FollowingContent extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        QawlBackButton(),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: QariCardGrid(category: "Following"),
+        ),
+      ],
+    );
+  }
+}
+
 class PlaceholderContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             QawlBackButton(),
-            SizedBox(height:140),
+            SizedBox(height: 140),
             Text(
               'Coming Soon',
               style: TextStyle(

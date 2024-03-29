@@ -39,17 +39,17 @@ class ExploreTrackWidgetRow extends StatelessWidget {
           child: Row(
             children: playlist.list.map((track) {
               return FutureBuilder<Tuple2<String, String>>(
-                future: getUserDisplayNameAndPfp(track.userId),
+                future: getPlaybackContents(track),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return CircularProgressIndicator(); // Placeholder while loading
                   } else if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   } else {
-                    final userData = snapshot.data;
-                    final displayName = userData?.item1 ?? 'Unknown';
-                    final coverImagePath = userData?.item2 ?? null;
-                    
+                    final data = snapshot.data;
+                    final displayName = data?.item1 ?? 'Unknown';
+                    final coverImagePath = data?.item2 ?? null;
+
                     // Use displayName and coverImagePath as needed
                     return TrackCard(
                       image: coverImagePath!,
@@ -57,7 +57,6 @@ class ExploreTrackWidgetRow extends StatelessWidget {
                           SurahMapper.getSurahNameByNumber(track.surahNumber),
                       author: displayName,
                       track: track,
-                      press: () {},
                     );
                   }
                 },
@@ -70,14 +69,21 @@ class ExploreTrackWidgetRow extends StatelessWidget {
   }
 }
 
-Future<Tuple2<String, String>> getUserDisplayNameAndPfp(String userId) async {
+Future<Tuple2<String, String>> getPlaybackContents(Track track) async {
   var userDoc = await FirebaseFirestore.instance
       .collection('QawlUsers')
-      .doc(userId)
+      .doc(track.userId)
       .get();
   final displayName = userDoc.get('name') as String;
   final coverImagePath = userDoc.get('imagePath') as String;
-  return Tuple2(displayName, coverImagePath);
+  var trackDoc = await FirebaseFirestore.instance
+      .collection('QawlTracks')
+      .doc(track.userId)
+      .get();
+  return Tuple2(
+    displayName,
+    coverImagePath,
+  );
 }
 
 class TrackCard extends StatelessWidget {
@@ -86,22 +92,19 @@ class TrackCard extends StatelessWidget {
     required this.track,
     required this.title,
     required this.image,
-    required this.press,
     required this.author,
   }) : super(key: key);
 
   final String title, image, author;
   final Track track;
-  final GestureTapCallback press;
 
   @override
   Widget build(BuildContext context) {
-    
     return Padding(
       padding: EdgeInsets.all(getProportionateScreenWidth(10)),
       child: GestureDetector(
         onTap: () {
-          playTrack(faketrackdata.defaultTrack);
+          playTrack(track);
           Navigator.push(
             context,
             MaterialPageRoute(

@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:first_project/model/playlist.dart';
+import 'package:first_project/model/track.dart';
 import 'package:flutter/foundation.dart';
 
 class QawlUser {
@@ -16,21 +17,20 @@ class QawlUser {
   String country;
   int followers;
   Set<String> following;
-  Set<Playlist> privateLibrary;
-  Set<Playlist> publicLibrary;
+  Set<String> privateLibrary;
+  Set<String> uploads;
 
-  QawlUser({
-    required this.imagePath,
-    required this.id,
-    required this.name,
-    required this.email,
-    required this.about,
-    required this.country,
-    required this.followers,
-    required this.following,
-    required this.privateLibrary,
-    required this.publicLibrary
-  });
+  QawlUser(
+      {required this.imagePath,
+      required this.id,
+      required this.name,
+      required this.email,
+      required this.about,
+      required this.country,
+      required this.followers,
+      required this.following,
+      required this.privateLibrary,
+      required this.uploads});
 
   static String? getCurrentUserUid() {
     final currentUser = FirebaseAuth.instance.currentUser;
@@ -48,8 +48,8 @@ class QawlUser {
       country: data['country'] ?? '',
       followers: data['followers'] ?? 0,
       following: Set<String>.from(data['following'] ?? []),
-      privateLibrary: Set<Playlist>.from(data['privateLibrary'] ?? []),
-      publicLibrary: Set<Playlist>.from(data['publicLibrary'] ?? []),
+      privateLibrary: Set<String>.from(data['privateLibrary'] ?? []),
+      uploads: Set<String>.from(data['publicLibrary'] ?? []),
     );
   }
 
@@ -197,8 +197,8 @@ class QawlUser {
             country: "",
             followers: 0,
             following: Set<String>(),
-            privateLibrary: Set<Playlist>(),
-            publicLibrary: Set<Playlist>(),
+            privateLibrary: Set<String>(),
+            uploads: Set<String>(),
           )
         : null;
     DocumentReference docRef = FirebaseFirestore.instance
@@ -206,6 +206,8 @@ class QawlUser {
         .doc(firebaseUser?.uid);
     DocumentSnapshot docSnapshot = await docRef.get();
     if (firebaseUser != null && !docSnapshot.exists) {
+      Playlist uploads = new Playlist(
+          author: firebaseUser.uid, name: "Uploads", list: List<Track>.empty());
       await FirebaseFirestore.instance
           .collection('QawlUsers')
           .doc(firebaseUser.uid)
@@ -219,6 +221,8 @@ class QawlUser {
         'country': "",
         'followers': 0,
         'following': [],
+        'privateLibrary': [],
+        'publicLibrary': [uploads],
       });
     }
     if (firebaseUser?.uid != null) {

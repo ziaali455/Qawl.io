@@ -3,8 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:first_project/model/fake_playlists_data.dart';
 import 'package:first_project/model/playlist.dart';
+import 'package:first_project/model/track.dart';
 import 'package:first_project/screens/now_playing_content.dart';
-import 'package:first_project/screens/profile_content_DEPRECATED.dart';
+import 'package:first_project/deprecated/profile_content_DEPRECATED.dart';
 import 'package:first_project/widgets/playlist_preview_widget.dart';
 
 import 'package:first_project/widgets/profile_picture_widget.dart';
@@ -41,7 +42,24 @@ class _ProfileContentState extends State<ProfileContent> {
     userFuture = _loadUserData();
   }
 
-  
+  static Future<QawlUser?> getQawlUserOrCurr(bool isPersonal,
+      {QawlUser? user}) async {
+    if (isPersonal) {
+      final currentUserUid = QawlUser.getCurrentUserUid();
+      if (currentUserUid != null) {
+        final doc = await FirebaseFirestore.instance
+            .collection('QawlUsers')
+            .doc(currentUserUid)
+            .get();
+        if (doc.exists) {
+          return QawlUser.fromFirestore(doc);
+        }
+      }
+    } else {
+      return user;
+    }
+    return null; // Return null if user not found or isPersonal is true but no user is logged in
+  }
 
   Future<QawlUser?> _loadUserData() async {
     if (widget.isPersonal) {
@@ -74,21 +92,34 @@ class _ProfileContentState extends State<ProfileContent> {
   @override
   Widget _buildContent(QawlUser user) {
     final bool isPersonal = widget.isPersonal;
-    final Playlist playlist;
+    List<Track> myList = [];
+    Playlist uploadPlaylist =
+        new Playlist(author: user.name, name: "Uploads", list: myList);
 
-    var track1 = faketrackdata.fakeTrack1; //pass in data here
-    var track2 = faketrackdata.fakeTrack2;
-    var track3 = faketrackdata.fakeTrack3;
-    var track4 = faketrackdata.fakeTrack4;
+    Future<void> fetchAndAddTracks() async {
+      for (var trackId in user.uploads) {
+        Track? res = await Track.getQawlTrack(trackId);
+        if (res != null) {
+          myList.add(res);
+        } else {
+          // Handle the case where the track is null (not found)
+          print('Track with ID $trackId not found.');
+        }
+      }
+    }
+
+    // Call the asynchronous method
+    fetchAndAddTracks();
+
     return Container(
-        padding: const EdgeInsets.only(top: 50),
-        child: Stack(children: [
+      padding: const EdgeInsets.only(top: 50),
+      child: Stack(
+        children: [
           Scaffold(
             body: ListView(
               physics: const BouncingScrollPhysics(),
               children: [
-                if(!isPersonal)
-                  const QawlBackButton(),
+                if (!isPersonal) const QawlBackButton(),
                 GestureDetector(
                   child: ProfilePictureWidget(
                     imagePath: user.imagePath,
@@ -138,13 +169,11 @@ class _ProfileContentState extends State<ProfileContent> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return const CircularProgressIndicator(); // Placeholder while loading
+                          return const CircularProgressIndicator();
                         } else if (snapshot.hasError) {
-                          return Text(
-                              'Error: ${snapshot.error}'); // Display error if any
+                          return Text('Error: ${snapshot.error}');
                         } else {
-                          return snapshot.data ??
-                              Container(); // Return the widget when future completes
+                          return snapshot.data ?? Container();
                         }
                       },
                     ),
@@ -161,14 +190,15 @@ class _ProfileContentState extends State<ProfileContent> {
                       user: user,
                     ),
                   ),
-           
-                  PlaylistPreviewWidget(playlist: fake_playlist_data.defaultPlaylist)
+                PlaylistPreviewWidget(playlist: uploadPlaylist)
               ],
             ),
-            floatingActionButton: isPersonal ? const QawlRecordButton(): null ,
+            floatingActionButton: isPersonal ? const QawlRecordButton() : null,
             floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
           ),
-        ]));
+        ],
+      ),
+    );
   }
 
   Widget buildPersonalName() {
@@ -221,11 +251,9 @@ class _ProfileContentState extends State<ProfileContent> {
       ],
     );
   }
-  
+
   displayUserUploads() {}
 }
-
-
 
 class QawlRecordButton extends StatelessWidget {
   const QawlRecordButton({
