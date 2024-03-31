@@ -1,21 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
-import 'package:first_project/model/fake_playlists_data.dart';
 import 'package:first_project/model/playlist.dart';
 import 'package:first_project/model/track.dart';
 import 'package:first_project/screens/now_playing_content.dart';
-import 'package:first_project/deprecated/profile_content_DEPRECATED.dart';
 import 'package:first_project/widgets/playlist_preview_widget.dart';
-
 import 'package:first_project/widgets/profile_picture_widget.dart';
-import 'package:first_project/widgets/section_title_widget.dart';
-import 'package:first_project/widgets/track_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:first_project/model/user.dart';
 import 'package:first_project/widgets/profile_stats_widget.dart';
-import 'package:first_project/model/fake_track_data.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:first_project/widgets/upload_popup_widget.dart';
 import '../screens/taken_from_firebaseui/profile_screen_firebaseui.dart';
@@ -68,6 +61,11 @@ class _ProfileContentState extends State<ProfileContent> {
       return widget.user;
     }
   }
+  Future<void> _refreshUserData() async {
+    setState(() {
+      userFuture = _loadUserData();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +81,10 @@ class _ProfileContentState extends State<ProfileContent> {
           if (user == null) {
             return const Center(child: Text('No user found'));
           }
-          return _buildContent(user);
+          return RefreshIndicator(
+            onRefresh: _refreshUserData,
+            child: _buildContent(user),
+          );
         }
       },
     );
@@ -120,30 +121,14 @@ class _ProfileContentState extends State<ProfileContent> {
               physics: const BouncingScrollPhysics(),
               children: [
                 if (!isPersonal) const QawlBackButton(),
-                GestureDetector(
-                  child: ProfilePictureWidget(
+                ProfilePictureWidget(
                     imagePath: user.imagePath,
                     country: user.country,
                     isPersonal: isPersonal,
                     user: user,
                   ),
-                  onTap: () {
-                    if (isPersonal) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute<MyProfileScreen>(
-                          builder: (context) => MyProfileScreen(
-                            actions: [
-                              SignedOutAction((context) {
-                                Navigator.of(context).pop();
-                              })
-                            ],
-                          ),
-                        ),
-                      );
-                    }
-                  },
-                ),
+              
+                  
                 const SizedBox(height: 24),
                 if (isPersonal)
                   Padding(
@@ -161,7 +146,21 @@ class _ProfileContentState extends State<ProfileContent> {
                     user: user,
                   ),
                 ),
-                if (isPersonal)
+                IconButton(onPressed: (){if (isPersonal) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<MyProfileScreen>(
+                          builder: (context) => MyProfileScreen(
+                            actions: [
+                              SignedOutAction((context) {
+                                Navigator.of(context).pop();
+                              })
+                            ],
+                          ),
+                        ),
+                      );
+                    }}, icon: Icon(Icons.settings)),
+                if (!isPersonal)
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: FutureBuilder<Widget>(
