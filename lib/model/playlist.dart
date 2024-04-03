@@ -9,13 +9,16 @@ class Playlist {
 //  final String surah;
   final List<Track> list;
   String coverImagePath = "https://www.linkpicture.com/q/no_cover_1.jpg";
+  // String id;
 
   Playlist(
       {required this.author,
       required this.name,
       this.trackCount = 0,
     //  required this.surah,
-      required this.list});
+      required this.list,
+      // required this.id
+      });
 
   void addTrack(Track track) {
     list.add(track);

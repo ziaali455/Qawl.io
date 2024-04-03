@@ -798,6 +798,7 @@ class MyProfileScreen extends MultiProviderScreen {
     if (pickedFile != null) {
       String? uid = QawlUser.getCurrentUserUid();
       if (uid != null) {
+        debugPrint("HERE");
         String imagePath = pickedFile.path;
         QawlUser? currUser = await QawlUser.getQawlUser(uid);
 

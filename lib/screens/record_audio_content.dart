@@ -110,32 +110,57 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
     //await  recordopenAudioSession();
   }
 
+  // Future<void> playAudio() async {
+  //   if (_recordedFilePath == null) {
+  //     debugPrint("No recording has been made yet");
+  //     return;
+  //   }
+  //   try {
+  //     await main_player
+  //         .setFilePath(_recordedFilePath!); // Set the local file path
+  //     await main_player.play(); // Play the audio
+  //     //add the waveforms here
+
+  //     // Listen to the player state
+  //     main_player.playerStateStream.listen((state) async {
+  //       // Check if the player has finished playing
+  //       if (state.processingState == ProcessingState.completed) {
+  //         // Delete the local file after playback
+  //         // await deleteLocalFile(File(_recordedFilePath!));
+
+  //         // Reset the recorded file path to null
+  //         // _recordedFilePath = null;
+  //       }
+  //     });
+  //   } catch (e) {
+  //     debugPrint("Error playing audio: $e");
+  //   }
+  // }
   Future<void> playAudio() async {
     if (_recordedFilePath == null) {
-      debugPrint("No recording has been made yet");
-      return;
+        debugPrint("No recording has been made yet");
+        return;
     }
     try {
-      await main_player
-          .setFilePath(_recordedFilePath!); // Set the local file path
-      await main_player.play(); // Play the audio
-      //add the waveforms here
+        await main_player.setFilePath(_recordedFilePath!); // Set the local file path
+        await main_player.play(); // Play the audio
 
-      // Listen to the player state
-      main_player.playerStateStream.listen((state) async {
-        // Check if the player has finished playing
-        if (state.processingState == ProcessingState.completed) {
-          // Delete the local file after playback
-          await deleteLocalFile(File(_recordedFilePath!));
-
-          // Reset the recorded file path to null
-          _recordedFilePath = null;
-        }
-      });
+        // Listen to the player state
+        main_player.playerStateStream.listen((state) async {
+            // Check if the player has finished playing
+            if (state.processingState == ProcessingState.completed) {
+                // Playback has finished
+                setState(() {
+                    isPlaying = false; // Reset isPlaying flag
+                });
+            }
+        });
     } catch (e) {
-      debugPrint("Error playing audio: $e");
+        debugPrint("Error playing audio: $e");
     }
-  }
+}
+
+  
 
 //temp widget for waveform
   Widget QawlWaveforms() {
@@ -176,7 +201,6 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
                   //QawlWaveforms(),
                   SizedBox(height: 10),
                   Center(
-
                     child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: QawlRecordButton()),
@@ -285,14 +309,30 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
                 textStyle: const TextStyle(fontSize: 50),
               ),
               onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => TrackInfoContent(
-                        trackPath: _recordedFilePath!,
-                      ),
-                    ));
+                if (_recordedFilePath != null) {
+                  // Check that the recorded file path is not null
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TrackInfoContent(
+                          trackPath:
+                              _recordedFilePath!, // Pass the non-null recorded file path
+                        ),
+                      ));
+                } else {
+                  // Inform the user that the file path is not available
+                  debugPrint("Recorded file path is null");
+                }
               },
+              // onPressed: () {
+              //   Navigator.push(
+              //       context,
+              //       MaterialPageRoute(
+              //         builder: (context) => TrackInfoContent(
+              //           trackPath: _recordedFilePath!,
+              //         ),
+              //       ));
+              // },
               child: Align(
                   alignment: Alignment.center,
                   child: Text(

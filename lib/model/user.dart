@@ -206,8 +206,8 @@ class QawlUser {
         .doc(firebaseUser?.uid);
     DocumentSnapshot docSnapshot = await docRef.get();
     if (firebaseUser != null && !docSnapshot.exists) {
-      Playlist uploads = new Playlist(
-          author: firebaseUser.uid, name: "Uploads", list: List<Track>.empty());
+      // Playlist uploads = new Playlist(
+      //     author: firebaseUser.uid, name: "Uploads", list: List<Track>.empty());
       await FirebaseFirestore.instance
           .collection('QawlUsers')
           .doc(firebaseUser.uid)
@@ -222,7 +222,7 @@ class QawlUser {
         'followers': 0,
         'following': [],
         'privateLibrary': [],
-        'publicLibrary': [uploads],
+        // 'publicLibrary': [uploads],
       });
     }
     if (firebaseUser?.uid != null) {

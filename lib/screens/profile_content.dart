@@ -67,28 +67,68 @@ class _ProfileContentState extends State<ProfileContent> {
     });
   }
 
+  // @override
+  // Widget build(BuildContext context) {
+  //   return FutureBuilder<QawlUser?>(
+  //     future: userFuture,
+  //     builder: (context, snapshot) {
+  //       if (snapshot.connectionState == ConnectionState.waiting) {
+  //         return const Center(child: CircularProgressIndicator());
+  //       } else if (snapshot.hasError) {
+  //         return Center(child: Text('Error!: ${snapshot.error}'));
+  //       } else {
+  //         final user = snapshot.data;
+  //         if (user == null) {
+  //           return const Center(child: Text('No user found!'));
+  //         }
+  //         return RefreshIndicator(
+  //           onRefresh: _refreshUserData,
+  //           child: _buildContent(user),
+  //         );
+  //       }
+  //     },
+  //   );
+  // }
+
   @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<QawlUser?>(
-      future: userFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error!: ${snapshot.error}'));
-        } else {
-          final user = snapshot.data;
-          if (user == null) {
-            return const Center(child: Text('No user found'));
-          }
-          return RefreshIndicator(
-            onRefresh: _refreshUserData,
-            child: _buildContent(user),
+Widget build(BuildContext context) {
+  return FutureBuilder<QawlUser?>(
+    future: userFuture,
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const Center(child: CircularProgressIndicator());
+      } else if (snapshot.hasError) {
+        // Log the error for debugging
+        debugPrint('Error loading user data: ${snapshot.error}');
+        // Display the error message on the UI
+        return Center(child: Text('Error!: ${snapshot.error.toString()}'));
+      } else {
+        final user = snapshot.data;
+        if (user == null) {
+          // Provide a more informative message or actions when no user data is found
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                const Text('No user found!'),
+                ElevatedButton(
+                  onPressed: () => _refreshUserData(), // Assuming this method refreshes the user data
+                  child: const Text('Retry'),
+                ),
+              ],
+            ),
           );
         }
-      },
-    );
-  }
+        // If user data is successfully fetched, display the content
+        return RefreshIndicator(
+          onRefresh: _refreshUserData,
+          child: _buildContent(user),
+        );
+      }
+    },
+  );
+}
+
 
   @override
   Widget _buildContent(QawlUser user) {
@@ -202,21 +242,44 @@ class _ProfileContentState extends State<ProfileContent> {
 
   Widget buildPersonalName() {
     User? firebaseUser = FirebaseAuth.instance.currentUser;
-    String displayedUsername = " ";
-    if (firebaseUser != null) {
-      displayedUsername = firebaseUser.displayName!;
+    if (firebaseUser != null && firebaseUser.displayName != null) {
+      String displayedUsername = firebaseUser.displayName!;
+      QawlUser.updateUserField(firebaseUser.uid, "name", displayedUsername);
+      return Column(
+        children: [
+          Text(displayedUsername,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24))
+        ],
+      );
     } else {
-      displayedUsername = "no name";
+      // Handle the case where there is no current user or displayName is null
+      return Column(
+        children: [
+          const Text("No name",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24))
+        ],
+      );
     }
+}
 
-    QawlUser.updateUserField(firebaseUser!.uid, "name", displayedUsername);
-    return Column(
-      children: [
-        Text(displayedUsername,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24))
-      ],
-    );
-  }
+
+  // Widget buildPersonalName() {
+  //   User? firebaseUser = FirebaseAuth.instance.currentUser;
+  //   String displayedUsername = " ";
+  //   if (firebaseUser != null) {
+  //     displayedUsername = firebaseUser.displayName!;
+  //   } else {
+  //     displayedUsername = "no name";
+  //   }
+
+  //   QawlUser.updateUserField(firebaseUser!.uid, "name", displayedUsername);
+  //   return Column(
+  //     children: [
+  //       Text(displayedUsername,
+  //           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24))
+  //     ],
+  //   );
+  // }
 
   Widget buildName(QawlUser user) {
     return Column(
