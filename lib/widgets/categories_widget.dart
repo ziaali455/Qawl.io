@@ -212,27 +212,31 @@ class PlaceholderContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            QawlBackButton(),
-            SizedBox(height: 140),
-            Text(
-              'Coming Soon',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 24,
+        child: Stack(
+          children: [ Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Coming Soon',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24,
+                ),
               ),
-            ),
-            SizedBox(height: 60),
-            Text(
-              '😊',
-              style: TextStyle(
-                fontSize: 40,
+              SizedBox(height: 60),
+              Text(
+                '😊',
+                style: TextStyle(
+                  fontSize: 40,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
+        Padding(
+          padding: EdgeInsets.all(8.0),
+          child: QawlBackButton(),
         ),
+        ]),
       ),
     );
   }

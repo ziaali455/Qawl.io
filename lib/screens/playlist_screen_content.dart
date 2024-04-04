@@ -36,8 +36,9 @@ class _PlaylistScreenContentState extends State<PlaylistScreenContent> {
         child: Container(
           child: Column(children: [
             // back button and menu button
-
+            const SizedBox(height: 50),
             QawlBackButton(),
+            
             Container(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),

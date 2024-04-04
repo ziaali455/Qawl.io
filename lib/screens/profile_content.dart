@@ -61,6 +61,7 @@ class _ProfileContentState extends State<ProfileContent> {
       return widget.user;
     }
   }
+
   Future<void> _refreshUserData() async {
     setState(() {
       userFuture = _loadUserData();
@@ -91,44 +92,44 @@ class _ProfileContentState extends State<ProfileContent> {
   // }
 
   @override
-Widget build(BuildContext context) {
-  return FutureBuilder<QawlUser?>(
-    future: userFuture,
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return const Center(child: CircularProgressIndicator());
-      } else if (snapshot.hasError) {
-        // Log the error for debugging
-        debugPrint('Error loading user data: ${snapshot.error}');
-        // Display the error message on the UI
-        return Center(child: Text('Error!: ${snapshot.error.toString()}'));
-      } else {
-        final user = snapshot.data;
-        if (user == null) {
-          // Provide a more informative message or actions when no user data is found
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                const Text('No user found!'),
-                ElevatedButton(
-                  onPressed: () => _refreshUserData(), // Assuming this method refreshes the user data
-                  child: const Text('Retry'),
-                ),
-              ],
-            ),
+  Widget build(BuildContext context) {
+    return FutureBuilder<QawlUser?>(
+      future: userFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          // Log the error for debugging
+          debugPrint('Error loading user data: ${snapshot.error}');
+          // Display the error message on the UI
+          return Center(child: Text('Error!: ${snapshot.error.toString()}'));
+        } else {
+          final user = snapshot.data;
+          if (user == null) {
+            // Provide a more informative message or actions when no user data is found
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  const Text('No user found!'),
+                  ElevatedButton(
+                    onPressed: () =>
+                        _refreshUserData(), // Assuming this method refreshes the user data
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
+            );
+          }
+          // If user data is successfully fetched, display the content
+          return RefreshIndicator(
+            onRefresh: _refreshUserData,
+            child: _buildContent(user),
           );
         }
-        // If user data is successfully fetched, display the content
-        return RefreshIndicator(
-          onRefresh: _refreshUserData,
-          child: _buildContent(user),
-        );
-      }
-    },
-  );
-}
-
+      },
+    );
+  }
 
   @override
   Widget _buildContent(QawlUser user) {
@@ -156,85 +157,104 @@ Widget build(BuildContext context) {
       padding: const EdgeInsets.only(top: 50),
       child: Stack(
         children: [
-          Scaffold(
-            body: ListView(
-              physics: const BouncingScrollPhysics(),
-              children: [
-                if (!isPersonal) const QawlBackButton(),
-                ProfilePictureWidget(
+          Stack(children: [
+            Scaffold(
+              body: ListView(
+                physics: const BouncingScrollPhysics(),
+                children: [
+                  if (!isPersonal) const QawlBackButton(),
+                  ProfilePictureWidget(
                     imagePath: user.imagePath,
                     country: user.country,
                     isPersonal: isPersonal,
                     user: user,
                   ),
-              
-                  
-                const SizedBox(height: 24),
-                if (isPersonal)
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: buildPersonalName(),
-                  ),
-                if (!isPersonal)
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: buildName(user),
-                  ),
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: NumbersWidget(
-                    user: user,
-                  ),
-                ),
-                IconButton(onPressed: (){if (isPersonal) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute<MyProfileScreen>(
-                          builder: (context) => MyProfileScreen(
-                            actions: [
-                              SignedOutAction((context) {
-                                Navigator.of(context).pop();
-                              })
-                            ],
-                          ),
-                        ),
-                      );
-                    }}, icon: Icon(Icons.settings)),
-                if (!isPersonal)
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: FutureBuilder<Widget>(
-                      future: buildPersonalAbout(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const CircularProgressIndicator();
-                        } else if (snapshot.hasError) {
-                          return Text('Error: ${snapshot.error}');
-                        } else {
-                          return snapshot.data ?? Container();
-                        }
-                      },
+
+                  const SizedBox(height: 24),
+                  if (isPersonal)
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: buildPersonalName(),
                     ),
-                  ),
-                if (!isPersonal)
+                  if (!isPersonal)
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: buildName(user),
+                    ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 11.0),
-                    child: buildAbout(user),
-                  ),
-                if (!isPersonal)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 11.0),
-                    child: FollowButton(
+                    padding: const EdgeInsets.all(10.0),
+                    child: NumbersWidget(
                       user: user,
                     ),
                   ),
-                PlaylistPreviewWidget(playlist: uploadPlaylist)
-              ],
+                  // Move settings button to top right corner
+
+                  if (!isPersonal)
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: FutureBuilder<Widget>(
+                        future: buildPersonalAbout(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            return snapshot.data ?? Container();
+                          }
+                        },
+                      ),
+                    ),
+                  if (!isPersonal)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 11.0),
+                      child: buildAbout(user),
+                    ),
+                  if (!isPersonal)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 11.0),
+                      child: FollowButton(
+                        user: user,
+                      ),
+                    ),
+                  PlaylistPreviewWidget(playlist: uploadPlaylist)
+                ],
+              ),
+              floatingActionButton:
+                  isPersonal ? const QawlRecordButton() : null,
+              floatingActionButtonLocation:
+                  FloatingActionButtonLocation.endFloat,
             ),
-            floatingActionButton: isPersonal ? const QawlRecordButton() : null,
-            floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-          ),
+            if(isPersonal)
+            Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Material(
+                  child: IconButton(
+                    onPressed: () {
+                      if (isPersonal) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute<MyProfileScreen>(
+                            builder: (context) => MyProfileScreen(
+                              actions: [
+                                SignedOutAction((context) {
+                                  Navigator.of(context).pop();
+                                })
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                    icon: Icon(Icons.settings),
+                  ),
+                ),
+              ),
+            ),
+          ]),
         ],
       ),
     );
@@ -260,8 +280,7 @@ Widget build(BuildContext context) {
         ],
       );
     }
-}
-
+  }
 
   // Widget buildPersonalName() {
   //   User? firebaseUser = FirebaseAuth.instance.currentUser;
