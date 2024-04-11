@@ -3,7 +3,6 @@ import 'package:first_project/model/user.dart';
 import 'package:first_project/deprecated/profile_content_DEPRECATED.dart';
 import 'package:flutter/material.dart';
 
-
 class NumbersWidget extends StatelessWidget {
   final QawlUser user;
 
@@ -93,19 +92,165 @@ class FollowButton extends StatefulWidget {
 
   @override
   State<FollowButton> createState() => _FollowButtonState();
-  
 }
 
+// class _FollowButtonState extends State<FollowButton> {
+//   bool following = false;
+//   int followerCount = 0; // Add a local variable to keep track of follower count
+
+//  @override
+//   void initState() {
+//     super.initState();
+//     // Initialize the follower count
+//     followerCount = widget.user.followers;
+//   }
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: const EdgeInsets.only(left: 120.0, right: 120.0),
+//       child: ClipRRect(
+//         borderRadius: BorderRadius.circular(4),
+//         child: Stack(
+//           children: <Widget>[
+//             Positioned.fill(
+//               child: Container(
+//                 decoration: const BoxDecoration(
+//                   gradient: LinearGradient(
+//                     colors: <Color>[
+//                       Color.fromARGB(255, 13, 161, 99),
+//                       Color.fromARGB(255, 22, 181, 93),
+//                       Color.fromARGB(255, 32, 220, 85),
+//                     ],
+//                   ),
+//                 ),
+//               ),
+//             ),
+//             TextButton(
+//               style: TextButton.styleFrom(
+//                 foregroundColor: Colors.white,
+//                 padding: const EdgeInsets.all(2.0),
+//                 textStyle: const TextStyle(fontSize: 15),
+//               ),
+//               onPressed: () {
+//                 setState(() {
+//                   // Toggle the following state
+//                   following = !following;
+
+//                 });
+//               },
+//               child: Align(
+//                 alignment: Alignment.center,
+//                 child: following
+//                     ? const Text(
+//                         "Unfollow",
+//                         style: TextStyle(
+//                           fontSize: 20.0,
+//                           fontWeight: FontWeight.bold,
+//                         ),
+//                       )
+//                     : const Text(
+//                         "Follow",
+//                         style: TextStyle(
+//                           fontSize: 20.0,
+//                           fontWeight: FontWeight.bold,
+//                         ),
+//                       ),
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+//  static Future<void> toggleFollow(QawlUser follower, QawlUser followed) async {
+//   try {
+//     // Check if follower is already following followed
+//     final isFollowing = follower.following.contains(followed.id);
+
+//     if (isFollowing) {
+//       // If already following, unfollow
+//       follower.following.remove(followed.id);
+//       followed.followers--;
+//     } else {
+//       // If not following, follow
+//       follower.following.add(followed.id);
+//       followed.followers++;
+//     }
+
+//     // Update network documents for follower and followed
+//     await FirebaseFirestore.instance.collection('QawlUsers').doc(follower.id).update({
+//       'following': follower.following.toList(),
+//     });
+//     await FirebaseFirestore.instance.collection('QawlUsers').doc(followed.id).update({
+//       'followers': followed.followers,
+//     });
+
+//   } catch (e) {
+//     // Handle errors
+//     print("Error toggling follow: $e");
+//     // You might want to throw or handle the error appropriately
+//     throw e;
+//   }
+// }
+//   Future<void> updateUserFollowerCount(String userId, int followerCount) async {
+//     try {
+//       await FirebaseFirestore.instance
+//           .collection('QawlUsers')
+//           .doc(userId)
+//           .update({'followers': followerCount});
+//     } catch (e) {
+//       print("Error updating follower count: $e");
+//       // Handle error
+//     }
+//   }
+// }
 class _FollowButtonState extends State<FollowButton> {
   bool following = false;
-  int followerCount = 0; // Add a local variable to keep track of follower count
 
- @override
+  @override
   void initState() {
     super.initState();
-    // Initialize the follower count
-    followerCount = widget.user.followers;
+    // Initialize the following state
+    following = widget.user.following.contains(widget.user.id);
   }
+
+  static Future<void> toggleFollow(QawlUser userBeingFollowed) async {
+    try {
+      QawlUser? follower = await QawlUser.getCurrentQawlUser();
+      // Check if follower is already following followed
+      final isFollowing = follower!.following.contains(userBeingFollowed.id);
+
+      if (isFollowing) {
+        // If already following, unfollow
+        follower.following.remove(userBeingFollowed.id);
+        userBeingFollowed.followers--;
+      } else {
+        // If not following, follow
+        follower.following.add(userBeingFollowed.id);
+        userBeingFollowed.followers++;
+      }
+
+      // Update network documents for follower and followed
+      await FirebaseFirestore.instance
+          .collection('QawlUsers')
+          .doc(follower.id)
+          .update({
+        'following': follower.following.toList(),
+      });
+      await FirebaseFirestore.instance
+          .collection('QawlUsers')
+          .doc(userBeingFollowed.id)
+          .update({
+        'followers': userBeingFollowed.followers,
+      });
+    } catch (e) {
+      // Handle errors
+      print("Error toggling follow: $e");
+      // You might want to throw or handle the error appropriately
+      throw e;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -134,14 +279,12 @@ class _FollowButtonState extends State<FollowButton> {
                 textStyle: const TextStyle(fontSize: 15),
               ),
               onPressed: () {
+                // Call toggleFollow method passing both follower and userBeingFollowed
                 setState(() {
-                  // Toggle the following state
                   following = !following;
-                  // Update the follower count based on the follow/unfollow action
-                  followerCount = following ? followerCount + 1 : followerCount - 1;
-                  // Update follower count in the database only if following
-                    updateUserFollowerCount(widget.user.id, followerCount);
                 });
+                
+                toggleFollow(widget.user);
               },
               child: Align(
                 alignment: Alignment.center,
@@ -167,62 +310,4 @@ class _FollowButtonState extends State<FollowButton> {
       ),
     );
   }
-
-  Future<void> updateUserFollowerCount(String userId, int followerCount) async {
-    try {
-      await FirebaseFirestore.instance
-          .collection('QawlUsers')
-          .doc(userId)
-          .update({'followers': followerCount});
-    } catch (e) {
-      print("Error updating follower count: $e");
-      // Handle error
-    }
-  }
 }
-
-
-// class NumbersWidget extends StatelessWidget {
-//   final QawlUser user;
-//   const NumbersWidget({super.key, required this.user});
-
-//   @override
-//   Widget build(BuildContext context) => Column(
-//         children: [
-//           Row(
-//             mainAxisAlignment: MainAxisAlignment.center,
-//             children: <Widget>[
-//               // buildButton(context, '4', 'Uploads'),
-//               // buildButton(context, '#3', 'Ranking'),
-//               buildButton(context, user.followers.toString(), 'Followers'),
-//             ],
-//           ),
-//         ],
-//       );
-
-//   buildButton(BuildContext context, String rank, String followers) {
-
-//     return Column(
-//       children: [
-//         MaterialButton(
-//           splashColor: Colors.transparent,
-//           highlightColor: Colors.transparent,
-//           onPressed: () {},
-//           child: Column(
-//             mainAxisSize: MainAxisSize.min,
-//             mainAxisAlignment: MainAxisAlignment.start,
-//             children: <Widget>[
-//               Text(rank,
-//                   style: const TextStyle(
-//                       fontWeight: FontWeight.bold, fontSize: 24)),
-//               const SizedBox(height: 2),
-//               Text(followers,
-//                   style: const TextStyle(
-//                       fontWeight: FontWeight.bold, fontSize: 10)),
-//             ],
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-// }

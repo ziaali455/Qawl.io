@@ -216,24 +216,30 @@ class PlaceholderContent extends StatelessWidget {
           children: [ Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                'Coming Soon',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24,
-                ),
-              ),
-              SizedBox(height: 60),
-              Text(
-                '😊',
-                style: TextStyle(
-                  fontSize: 40,
+              Center(
+                child: Column(
+                  children: [
+                    Text(
+                      'Coming Soon',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24,
+                      ),
+                    ),
+                    SizedBox(height: 60),
+                    Text(
+                      '😊',
+                      style: TextStyle(
+                        fontSize: 40,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
         Padding(
-          padding: EdgeInsets.all(8.0),
+          padding: EdgeInsets.all(12.0),
           child: QawlBackButton(),
         ),
         ]),

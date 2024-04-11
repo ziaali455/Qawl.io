@@ -110,32 +110,6 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
     //await  recordopenAudioSession();
   }
 
-  // Future<void> playAudio() async {
-  //   if (_recordedFilePath == null) {
-  //     debugPrint("No recording has been made yet");
-  //     return;
-  //   }
-  //   try {
-  //     await main_player
-  //         .setFilePath(_recordedFilePath!); // Set the local file path
-  //     await main_player.play(); // Play the audio
-  //     //add the waveforms here
-
-  //     // Listen to the player state
-  //     main_player.playerStateStream.listen((state) async {
-  //       // Check if the player has finished playing
-  //       if (state.processingState == ProcessingState.completed) {
-  //         // Delete the local file after playback
-  //         // await deleteLocalFile(File(_recordedFilePath!));
-
-  //         // Reset the recorded file path to null
-  //         // _recordedFilePath = null;
-  //       }
-  //     });
-  //   } catch (e) {
-  //     debugPrint("Error playing audio: $e");
-  //   }
-  // }
   Future<void> playAudio() async {
     if (_recordedFilePath == null) {
         debugPrint("No recording has been made yet");

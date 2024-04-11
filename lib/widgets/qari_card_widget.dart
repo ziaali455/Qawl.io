@@ -46,7 +46,13 @@ class QariCard extends StatelessWidget {
                             child: AspectRatio(
                                 aspectRatio: 1,
                                 child: Image.network(user.imagePath,
-                                    fit: BoxFit.cover))),
+                                    fit: BoxFit.cover, errorBuilder: (context, error, stackTrace) {
+          // Load default image when loading fails
+          return Image.network(
+            'https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg',
+            fit: BoxFit.cover,
+          );
+        },))),
                       ),
                       const SizedBox(
                         height: 10,

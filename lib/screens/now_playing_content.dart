@@ -84,7 +84,7 @@ class QawlBackButton extends StatelessWidget {
       children: [
         
         Padding(
-          padding: const EdgeInsets.only(top: 3.0, left: 8.0),
+          padding: const EdgeInsets.only(top: 40.0, left: 8.0),
           child: GestureDetector(
             child: const Align(
               alignment: Alignment.topLeft,
@@ -160,7 +160,18 @@ class CoverContent extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
               child: AspectRatio(
                 aspectRatio: 1,
-                child: Image.network(myTrack.coverImagePath, fit: BoxFit.cover),
+                child: Image.network(myTrack.coverImagePath, fit: BoxFit.cover, 
+                
+                errorBuilder: (context, error, stackTrace) {
+          // Load default image when loading fails
+          return Image.network(
+            'https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg',
+            fit: BoxFit.cover,
+          );
+        }
+                
+                
+                ),
               ),
             ),
           ),
@@ -200,7 +211,7 @@ class CoverContent extends StatelessWidget {
                             context: context,
                             builder: (context) => SingleChildScrollView(
                               controller: ModalScrollController.of(context),
-                              child: AddToLibraryWidget(),
+                              child: AddToLibraryWidget(track: myTrack,),
                             ),
                           );
                         },
@@ -225,14 +236,14 @@ class Controls extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        IconButton(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            hoverColor: Colors.transparent,
-            onPressed: audioPlayer.seekToPrevious,
-            iconSize: 60,
-            color: Colors.white,
-            icon: const Icon(Icons.skip_previous_rounded)),
+        // IconButton(
+        //     splashColor: Colors.transparent,
+        //     highlightColor: Colors.transparent,
+        //     hoverColor: Colors.transparent,
+        //     onPressed: audioPlayer.seekToPrevious,
+        //     iconSize: 60,
+        //     color: Colors.white,
+        //     icon: const Icon(Icons.skip_previous_rounded)),
         StreamBuilder<PlayerState>(
           stream: audioPlayer.playerStateStream,
           builder: (context, snapshot) {
@@ -265,14 +276,14 @@ class Controls extends StatelessWidget {
             );
           },
         ),
-        IconButton(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            hoverColor: Colors.transparent,
-            onPressed: audioPlayer.seekToNext,
-            iconSize: 60,
-            color: Colors.white,
-            icon: const Icon(Icons.skip_next_rounded)),
+        // IconButton(
+        //     splashColor: Colors.transparent,
+        //     highlightColor: Colors.transparent,
+        //     hoverColor: Colors.transparent,
+        //     onPressed: audioPlayer.seekToNext,
+        //     iconSize: 60,
+        //     color: Colors.white,
+        //     icon: const Icon(Icons.skip_next_rounded)),
       ],
     );
   }

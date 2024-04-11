@@ -48,11 +48,11 @@ class ExploreTrackWidgetRow extends StatelessWidget {
                   } else {
                     final data = snapshot.data;
                     final displayName = data?.item1 ?? 'Unknown';
-                    final coverImagePath = data?.item2 ?? null;
+                    final coverImagePath = data?.item2 ?? "https://i.stack.imgur.com/l60Hf.png";
 
                     // Use displayName and coverImagePath as needed
                     return TrackCard(
-                      image: coverImagePath!,
+                      image: coverImagePath,
                       title:
                           SurahMapper.getSurahNameByNumber(track.surahNumber),
                       author: displayName,
@@ -75,11 +75,9 @@ Future<Tuple2<String, String>> getPlaybackContents(Track track) async {
       .doc(track.userId)
       .get();
   final displayName = userDoc.get('name') as String;
-  final coverImagePath = userDoc.get('imagePath') as String;
-  var trackDoc = await FirebaseFirestore.instance
-      .collection('QawlTracks')
-      .doc(track.userId)
-      .get();
+final coverImagePath = userDoc.get('imagePath') as String? ?? "https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg";
+
+
   return Tuple2(
     displayName,
     coverImagePath,

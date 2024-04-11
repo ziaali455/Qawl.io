@@ -35,28 +35,9 @@ class _ProfileContentState extends State<ProfileContent> {
     userFuture = _loadUserData();
   }
 
-  static Future<QawlUser?> getQawlUserOrCurr(bool isPersonal,
-      {QawlUser? user}) async {
-    if (isPersonal) {
-      final currentUserUid = QawlUser.getCurrentUserUid();
-      if (currentUserUid != null) {
-        final doc = await FirebaseFirestore.instance
-            .collection('QawlUsers')
-            .doc(currentUserUid)
-            .get();
-        if (doc.exists) {
-          return QawlUser.fromFirestore(doc);
-        }
-      }
-    } else {
-      return user;
-    }
-    return null; // Return null if user not found or isPersonal is true but no user is logged in
-  }
-
   Future<QawlUser?> _loadUserData() async {
     if (widget.isPersonal) {
-      return getQawlUserOrCurr(true);
+      return QawlUser.getQawlUserOrCurr(true);
     } else {
       return widget.user;
     }
@@ -67,29 +48,6 @@ class _ProfileContentState extends State<ProfileContent> {
       userFuture = _loadUserData();
     });
   }
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   return FutureBuilder<QawlUser?>(
-  //     future: userFuture,
-  //     builder: (context, snapshot) {
-  //       if (snapshot.connectionState == ConnectionState.waiting) {
-  //         return const Center(child: CircularProgressIndicator());
-  //       } else if (snapshot.hasError) {
-  //         return Center(child: Text('Error!: ${snapshot.error}'));
-  //       } else {
-  //         final user = snapshot.data;
-  //         if (user == null) {
-  //           return const Center(child: Text('No user found!'));
-  //         }
-  //         return RefreshIndicator(
-  //           onRefresh: _refreshUserData,
-  //           child: _buildContent(user),
-  //         );
-  //       }
-  //     },
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -131,131 +89,126 @@ class _ProfileContentState extends State<ProfileContent> {
     );
   }
 
-  @override
   Widget _buildContent(QawlUser user) {
     final bool isPersonal = widget.isPersonal;
-    List<Track> myList = [];
-    Playlist uploadPlaylist =
-        new Playlist(author: user.name, name: "Uploads", list: myList);
-
-    Future<void> fetchAndAddTracks() async {
-      for (var trackId in user.uploads) {
-        Track? res = await Track.getQawlTrack(trackId);
-        if (res != null) {
-          myList.add(res);
-        } else {
-          // Handle the case where the track is null (not found)
-          print('Track with ID $trackId not found.');
-        }
-      }
-    }
-
-    // Call the asynchronous method
-    fetchAndAddTracks();
 
     return Container(
       padding: const EdgeInsets.only(top: 50),
-      child: Stack(
-        children: [
-          Stack(children: [
-            Scaffold(
-              body: ListView(
-                physics: const BouncingScrollPhysics(),
-                children: [
-                  if (!isPersonal) const QawlBackButton(),
-                  ProfilePictureWidget(
-                    imagePath: user.imagePath,
-                    country: user.country,
-                    isPersonal: isPersonal,
+      child: Scaffold(
+        body: Stack(
+          children: [
+            // Settings button positioned at the top right corner
+
+            ListView(
+              physics: const BouncingScrollPhysics(),
+              children: [
+                ProfilePictureWidget(
+                  imagePath: user.imagePath,
+                  country: user.country,
+                  isPersonal: isPersonal,
+                  user: user,
+                ),
+                const SizedBox(height: 24),
+                if (isPersonal)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: buildPersonalName(),
+                  ),
+                if (!isPersonal)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: buildName(user),
+                  ),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: NumbersWidget(
                     user: user,
                   ),
-
-                  const SizedBox(height: 24),
-                  if (isPersonal)
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: buildPersonalName(),
-                    ),
-                  if (!isPersonal)
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: buildName(user),
-                    ),
+                ),
+                if (!isPersonal)
                   Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: NumbersWidget(
+                    padding: const EdgeInsets.all(8.0),
+                    child: FutureBuilder<Widget>(
+                      future: buildPersonalAbout(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const CircularProgressIndicator();
+                        } else if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        } else {
+                          return snapshot.data ?? Container();
+                        }
+                      },
+                    ),
+                  ),
+                if (!isPersonal)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 11.0),
+                    child: buildAbout(user),
+                  ),
+                if (!isPersonal)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 0.0),
+                    child: FollowButton(
                       user: user,
                     ),
                   ),
-                  // Move settings button to top right corner
-
-                  if (!isPersonal)
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: FutureBuilder<Widget>(
-                        future: buildPersonalAbout(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const CircularProgressIndicator();
-                          } else if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
-                          } else {
-                            return snapshot.data ?? Container();
-                          }
-                        },
-                      ),
-                    ),
-                  if (!isPersonal)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 11.0),
-                      child: buildAbout(user),
-                    ),
-                  if (!isPersonal)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 11.0),
-                      child: FollowButton(
-                        user: user,
-                      ),
-                    ),
-                  PlaylistPreviewWidget(playlist: uploadPlaylist)
-                ],
-              ),
-              floatingActionButton:
-                  isPersonal ? const QawlRecordButton() : null,
-              floatingActionButtonLocation:
-                  FloatingActionButtonLocation.endFloat,
+                FutureBuilder<List<Track>>(
+                  future: Track.getTracksByUser(user),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else if (snapshot.hasError) {
+                      return Center(
+                        child: Text('Error: ${snapshot.error}'),
+                      );
+                    } else {
+                      List<Track> uploadedTracks = snapshot.data ?? [];
+                      print("The tracks are " + uploadedTracks.toString());
+                      return PlaylistPreviewWidget(
+                        playlist: Playlist(
+                          id: '0',
+                          author: user.name,
+                          name: "Uploads",
+                          list: uploadedTracks,
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ],
             ),
-            if(isPersonal)
-            Align(
-              alignment: Alignment.topRight,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Material(
-                  child: IconButton(
-                    onPressed: () {
-                      if (isPersonal) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute<MyProfileScreen>(
-                            builder: (context) => MyProfileScreen(
-                              actions: [
-                                SignedOutAction((context) {
-                                  Navigator.of(context).pop();
-                                })
-                              ],
-                            ),
-                          ),
-                        );
-                      }
-                    },
-                    icon: Icon(Icons.settings),
-                  ),
+
+            if (!isPersonal) const QawlBackButton(),
+            if (isPersonal)
+              Positioned(
+                top: 40.0,
+                right: 30.0,
+                child: IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<MyProfileScreen>(
+                        builder: (context) => MyProfileScreen(
+                          actions: [
+                            SignedOutAction((context) {
+                              Navigator.of(context).pop();
+                            })
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                  icon: Icon(Icons.settings),
                 ),
               ),
-            ),
-          ]),
-        ],
+          ],
+        ),
+        floatingActionButton: isPersonal ? const QawlRecordButton() : null,
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       ),
     );
   }
@@ -273,32 +226,14 @@ class _ProfileContentState extends State<ProfileContent> {
       );
     } else {
       // Handle the case where there is no current user or displayName is null
-      return Column(
+      return const Column(
         children: [
-          const Text("No name",
+          Text("No name",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24))
         ],
       );
     }
   }
-
-  // Widget buildPersonalName() {
-  //   User? firebaseUser = FirebaseAuth.instance.currentUser;
-  //   String displayedUsername = " ";
-  //   if (firebaseUser != null) {
-  //     displayedUsername = firebaseUser.displayName!;
-  //   } else {
-  //     displayedUsername = "no name";
-  //   }
-
-  //   QawlUser.updateUserField(firebaseUser!.uid, "name", displayedUsername);
-  //   return Column(
-  //     children: [
-  //       Text(displayedUsername,
-  //           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24))
-  //     ],
-  //   );
-  // }
 
   Widget buildName(QawlUser user) {
     return Column(
@@ -332,8 +267,6 @@ class _ProfileContentState extends State<ProfileContent> {
       ],
     );
   }
-
-  displayUserUploads() {}
 }
 
 class QawlRecordButton extends StatelessWidget {
@@ -382,3 +315,27 @@ class QawlRecordButton extends StatelessWidget {
     );
   }
 }
+// old implementation that doesnt work
+//  // FutureBuilder for PlaylistPreviewWidget
+//                 FutureBuilder<List<Track>>(
+//                   future: user.getUploadedTracks(),
+//                   builder: (context, snapshot) {
+//                     if (snapshot.connectionState == ConnectionState.waiting) {
+//                       return const Center(
+//                         child: CircularProgressIndicator(),
+//                       );
+//                     } else if (snapshot.hasError) {
+//                       return Center(
+//                         child: Text('Error: ${snapshot.error}'),
+//                       );
+//                     } else {
+//                       List<Track> uploadedTracks = snapshot.data ?? [];
+//                       print("The tracks are " + uploadedTracks.toString());
+//                       return PlaylistPreviewWidget(
+//                           playlist: Playlist(
+//                               author: user.name,
+//                               name: "Uploads",
+//                               list: uploadedTracks));
+//                     }
+//                   },
+//                 ),

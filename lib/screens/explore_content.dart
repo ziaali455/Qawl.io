@@ -1,6 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:first_project/model/fake_playlists_data.dart';
 import 'package:first_project/model/playlist.dart';
 import 'package:first_project/widgets/search_field.dart';
 import 'package:first_project/widgets/explore_track_widget_block.dart';
@@ -39,9 +37,9 @@ class _ExploreContentState extends State<ExploreContent> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            const SearchField(),
+            // const SearchField(),
             Categories(
-              playlist: fake_playlist_data.defaultPlaylist,
+              playlist: Playlist(author: 'na', name: 'na', list: [], id: '0'),
             ),
             FutureBuilder<Playlist>(
               future: _top100PlaylistFuture,
@@ -62,7 +60,7 @@ class _ExploreContentState extends State<ExploreContent> {
               future: _newReleasesPlaylistFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator(); // Show loading indicator
+                  return const CircularProgressIndicator(); // Show loading indicator
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}'); // Show error message
                 } else {
@@ -77,10 +75,11 @@ class _ExploreContentState extends State<ExploreContent> {
               title: "Popular Qaris",
               press: () {},
             ),
-            QariCardRow(
+            const QariCardRow(
               category: 'Featured',
             ),
           ],
+        
         ),
       ),
     );
@@ -118,7 +117,7 @@ class _QariCardRowState extends State<QariCardRow> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           // While data is loading
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         } else if (snapshot.hasError) {
           // If an error occurs
           return Text('Error: ${snapshot.error}');
@@ -140,7 +139,7 @@ class _QariCardRowState extends State<QariCardRow> {
             );
           } else {
             // If no users are available
-            return Text('No users available');
+            return const Text('No users available');
           }
         }
       },
@@ -152,23 +151,24 @@ Future<List<QawlUser>> getTopThreeUsersByFollowers() async {
   List<QawlUser> topThreeUsers = [];
 
   try {
+    QawlUser? currUser = await QawlUser.getCurrentQawlUser(); // Await here
+
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('QawlUsers')
-        .orderBy('followers',
-            descending: true) // Order by followers in descending order
-        .limit(3) // Limit the query to return only 3 documents
+        .orderBy('followers', descending: true)
+        .limit(3)
         .get();
 
-    querySnapshot.docs.forEach((doc) {
+    for (QueryDocumentSnapshot doc in querySnapshot.docs) {
       QawlUser user = QawlUser.fromFirestore(doc);
-      if (user.id !=
-          QawlUser.getQawlUser(FirebaseAuth.instance.currentUser!.uid)) {
+      if (currUser != null && user.id != currUser.id) {
         topThreeUsers.add(user);
       }
-    });
+    }
   } catch (e) {
     print("Error getting top three users by followers: $e");
   }
 
   return topThreeUsers;
 }
+

@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,7 +6,6 @@ import 'package:first_project/model/playlist.dart';
 import 'package:first_project/model/user.dart';
 import 'package:first_project/screens/track_info_content.dart';
 import 'package:flutter/material.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
@@ -46,26 +44,48 @@ class Track {
           data['coverImagePath'] as String? ?? "defaultCoverImagePath",
     );
   }
+  
+static Future<List<Track>> getTracksByUser(QawlUser user) async {
+  List<Track> tracks = [];
+  try {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('QawlTracks')
+        .where('userId', isEqualTo: user.id)
+        .get();
 
-  // Method to fetch a track by ID from Firestore
-  static Future<Track?> getQawlTrack(String trackId) async {
-    try {
-      DocumentSnapshot docSnapshot = await FirebaseFirestore.instance
-          .collection('QawlTracks')
-          .doc(trackId)
-          .get();
-      if (docSnapshot.exists) {
-        return Track.fromFirestore(
-            docSnapshot.data() as Map<String, dynamic>, docSnapshot.id);
-      } else {
-        print("Track not found.");
-        return null;
-      }
-    } catch (e) {
-      print("Error fetching track: $e");
+    querySnapshot.docs.forEach((doc) {
+      Track track = Track.fromFirestore(doc.data()! as Map<String, dynamic>, doc.id);
+      tracks.add(track);
+    });
+  } catch (error) {
+    print("Error getting tracks: $error");
+    // Handle error as necessary
+  }
+  return tracks;
+}
+
+
+static Future<Track?> getQawlTrack(String trackId) async {
+  try {
+    DocumentSnapshot doc = await FirebaseFirestore.instance
+        .collection('QawlTracks')
+        .doc(trackId)
+        .get();
+    if (doc.exists) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      print('Firestore document data for track with ID $trackId: $data');
+      return Track.fromFirestore(data, doc.id);
+    } else {
       return null;
     }
+  } catch (e) {
+    print('Error fetching track: $e');
+    return null;
   }
+}
+
+
+  // Method to fetch a track by ID from Firestore
 
   static Future<String?> createQawlTrack(
       String uid, String surah, String fileUrl, text) async {
@@ -100,35 +120,37 @@ class Track {
     });
 
     QawlUser? uploader = await QawlUser.getQawlUser(uid);
+    if (uploader == null) {
+      print("no corresponding uploader");
+    }
     uploader!.uploads.add(uniqueID);
     postUploads(uploader);
 
-    //finish the code
     print(fileUrl);
 
     return uid;
   }
-  
-  static void postUploads(QawlUser? user) async {
-  try {
-    if (user != null) {
-      // Convert the set to a list before updating Firestore
-      List<String> uploadsList = user.uploads.toList();
-      await FirebaseFirestore.instance
-          .collection('QawlUsers')
-          .doc(user.id)
-          .update({'uploads': uploadsList});
-      print('Uploads updated successfully.');
-    } else {
-      print('User is null. Uploads not updated.');
-    }
-  } catch (e) {
-    print('Error updating uploads: $e');
-  }
-}
 
-  String getAuthor() {
-    return userId;
+  static void postUploads(QawlUser? user) async {
+    try {
+      if (user != null) {
+        // Convert the set to a list before updating Firestore
+        List<String> uploadsList = user.uploads.toList();
+        await FirebaseFirestore.instance
+            .collection('QawlUsers')
+            .doc(user.id)
+            .update({'uploads': uploadsList});
+        print('Uploads updated successfully.');
+      } else {
+        print('User is null. Uploads not updated.');
+      }
+    } catch (e) {
+      print('Error updating uploads: $e');
+    }
+  }
+
+  Future<String?> getAuthor() {
+    return QawlUser.getName(userId);
   }
 
   String getTrackName() {
@@ -221,13 +243,7 @@ class Track {
             await FirebaseStorage.instance.ref(fileName).putFile(file);
 
         String downloadUrl = await uploadTask.ref.getDownloadURL();
-        // make field in firebase audioPath = download URL
-        // String? uid = QawlUser.getCurrentUserUid();
-        // if (uid != null) {
-        //   updateTrackField(uid, "fileUrl", downloadUrl);
-        // } else {
-        //   print("Error: UID is null.");
-        // }
+
         return downloadUrl;
       } catch (e) {
         debugPrint("Error uploading audio file: $e");

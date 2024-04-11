@@ -11,61 +11,63 @@ class TrackWidget extends StatelessWidget {
   const TrackWidget({
     Key? key,
     required this.track,
-  }) : super(key: key); 
+  }) : super(key: key);
 
-@override
-Widget build(BuildContext context) {
-
-  return Padding(
-    padding: const EdgeInsets.only(left: 4.0, right: 4.0),
-    child: InkWell(
-      onTap: () {
-        playTrack(track);
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => NowPlayingContent(playedTrack: track)),
+  @override
+  Widget build(BuildContext context) {
+    print("the user id is " + track.userId);
+    return Padding(
+      padding: const EdgeInsets.only(left: 4.0, right: 4.0),
+      child: InkWell(
+        onTap: () {
+          playTrack(track);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => NowPlayingContent(playedTrack: track)),
           );
         },
-      child: FutureBuilder<QawlUser?>(
-        future: QawlUser.getQawlUser(track.userId),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator(); // Placeholder while loading
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else {
-            final user = snapshot.data;
-            if (user != null) {
-              return Card(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ListTile(
-                      leading: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: AspectRatio(
-                          aspectRatio: 1,
-                          child: Image.network(user.imagePath, fit: BoxFit.cover),
-                        ),
-                      ),
-                      selectedTileColor: Colors.green,
-                      title: Text(SurahMapper.getSurahNameByNumber(track.surahNumber)),
-                      subtitle: Text(user.name),
-                    ),
-                  ],
-                ),
-              );
+        child: FutureBuilder<QawlUser?>(
+          future: QawlUser.getQawlUser(track.userId),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return CircularProgressIndicator(); // Placeholder while loading
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
             } else {
-              return Text('User not found'); // Handle case where user is null
+              final user = snapshot.data;
+              if (user != null) {
+                return Card(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ListTile(
+                        leading: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: AspectRatio(
+                            aspectRatio: 1,
+                            child: Image.network(user.imagePath,
+                                fit: BoxFit.cover),
+                          ),
+                        ),
+                        selectedTileColor: Colors.green,
+                        title: Text(SurahMapper.getSurahNameByNumber(
+                            track.surahNumber)),
+                        subtitle: Text(user.name),
+                      ),
+                    ],
+                  ),
+                );
+              } else {
+                return Text(
+                    'User not found with userID: '); // Handle case where user is null
+              }
             }
-          }
-        },
+          },
+        ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 
   Widget buildCoverImage() {
     return ClipRRect(

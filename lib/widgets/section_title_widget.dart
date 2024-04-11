@@ -18,7 +18,7 @@ class PlaylistSectionTitle extends StatelessWidget {
   }) : super(key: key);
 
   final String title;
-  Playlist playlist = fake_playlist_data.defaultPlaylist;
+  Playlist playlist;
   List<QawlUser>? qaris = [];
   final GestureTapCallback press;
   final bool isPlaylist;

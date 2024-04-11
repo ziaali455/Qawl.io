@@ -63,6 +63,181 @@ class QawlUser {
     }
   }
 
+  static Future<QawlUser?> getQawlUserOrCurr(bool isPersonal,
+      {QawlUser? user}) async {
+    if (isPersonal) {
+      final currentUserUid = QawlUser.getCurrentUserUid();
+      if (currentUserUid != null) {
+        final doc = await FirebaseFirestore.instance
+            .collection('QawlUsers')
+            .doc(currentUserUid)
+            .get();
+        if (doc.exists) {
+          return QawlUser.fromFirestore(doc);
+        }
+      }
+    } else {
+      return user;
+    }
+    return null; // Return null if user not found or isPersonal is true but no user is logged in
+  }
+
+  Future<List<Track>> getUploadedTracks() async {
+    List<Track> uploadedTracks = [];
+
+    try {
+      // Fetch the QawlUser document
+      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+          .collection('QawlUsers')
+          .doc(id)
+          .get();
+
+      // Check if the user document exists
+      if (userSnapshot.exists) {
+        // Retrieve the uploads field from the user data as a set
+        Set<String> userUploads = Set<String>.from(
+            (userSnapshot.data() as Map<String, dynamic>)['uploads'] ?? []);
+
+        // Iterate through each track ID in the uploads
+        for (String trackId in userUploads) {
+          print('Fetching track with ID: $trackId'); // Add debug print
+          DocumentSnapshot trackSnapshot = await FirebaseFirestore.instance
+              .collection('QawlTracks')
+              .doc(trackId)
+              .get();
+          
+          if (trackSnapshot.exists) {
+            Map<String, dynamic> data =
+                trackSnapshot.data() as Map<String, dynamic>;
+            Track track = Track(
+              userId: data['userId'],
+              id: trackSnapshot.id,
+              trackName: data['trackName'],
+              plays: data['plays'],
+              surahNumber: data['surahNumber'],
+              audioPath: data['audioPath'],
+              inPlaylists: data['inPlaylists'],
+              coverImagePath: data['coverImagePath'] ?? "defaultCoverImagePath",
+            );
+            uploadedTracks.add(track);
+            print(
+                'Track with ID $trackId found and added to uploadedTracks.'); // Add debug print
+          } else {
+            print('Track with ID $trackId not found.');
+          }
+        }
+      } else {
+        print('QawlUser with ID $id not found.');
+      }
+    } catch (e) {
+      print('Error fetching uploaded tracks: $e');
+    }
+
+    return uploadedTracks;
+  }
+
+//   Future<List<Track>> getUploadedTracks() async {
+//     List<Track> uploadedTracks = [];
+//    Map<String, dynamic> trackData = {
+//   'userId': 'user123',
+//   'trackName': 'Track 1',
+//   'plays': 100,
+//   'surahNumber': 1,
+//   'audioPath': 'path/to/audio.mp3',
+//   'coverImagePath': 'path/to/coverImage.png',
+// };
+//     try {
+//       for (String trackId in uploads) {
+//         Track? track = await Track.fromFirestore(trackData, trackId);
+//         if (track != null) {
+//           uploadedTracks.add(track);
+//         } else {
+//           // Handle the case where the track is null (not found)
+//           print('Track with ID $trackId not found.');
+//         }
+//       }
+//     } catch (e) {
+//       print('Error fetching uploaded tracks: $e');
+//     }
+
+//     return uploadedTracks;
+//   }
+
+  // Future<Playlist> getUploadedTracksPlaylist() async {
+  //   List<Track> uploadedTracks = [];
+
+  //   try {
+  //     // Check if uploads list is empty
+  //     if (uploads.isEmpty) {
+  //       print('Error: uploads list is empty.');
+  //       return Playlist(author: "", name: "Uploads", list: uploadedTracks);
+  //     }
+
+  //     // Fetch tracks directly from Firestore
+  //     QuerySnapshot trackSnapshot = await FirebaseFirestore.instance
+  //         .collection('QawlTracks')
+  //         .where(FieldPath.documentId,
+  //             whereIn: uploads.toList()) // Convert Set to List
+  //         .get();
+
+  //     // Extract track data from the snapshot and create Track objects
+  //     trackSnapshot.docs.forEach((doc) {
+  //       Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+  //       Track track = Track(
+  //         userId: data['userId'],
+  //         id: doc.id,
+  //         trackName: data['trackName'],
+  //         plays: data['plays'],
+  //         surahNumber: data['surahNumber'],
+  //         audioPath: data['audioPath'],
+  //         inPlaylists: data['inPlaylists'],
+  //         coverImagePath: data['coverImagePath'] ?? "defaultCoverImagePath",
+  //       );
+  //       uploadedTracks.add(track);
+  //     });
+
+  //     // Print the number of tracks fetched
+  //     print("Fetched ${uploadedTracks.length} tracks successfully.");
+  //   } catch (e) {
+  //     print('Error fetching uploaded tracks: $e');
+  //   }
+
+  //   Playlist uploadPlaylist =
+  //       Playlist(author: "", name: "Uploads", list: uploadedTracks);
+
+  //   // Print all attributes of the Playlist object
+  //   print("Playlist: $uploadPlaylist");
+
+  //   return uploadPlaylist;
+  // }
+
+  static Future<QawlUser?> getCurrentQawlUser() async {
+    final currentUserID = FirebaseAuth.instance.currentUser?.uid;
+    return getQawlUser(currentUserID!);
+  }
+
+  static Future<void> updateUserUploads(String uploadId) async {
+    try {
+      QawlUser? currentUser = await getCurrentQawlUser();
+      if (currentUser != null) {
+        // Update local QawlUser object
+        currentUser.uploads.add(uploadId);
+
+        // Update network document on Firebase
+        await FirebaseFirestore.instance
+            .collection('QawlUsers')
+            .doc(currentUser.id)
+            .update({
+          'uploads': currentUser.uploads.toList(),
+        });
+      } else {
+        print('Error: Current user not found.');
+      }
+    } catch (e) {
+      print('Error updating user uploads: $e');
+    }
+  }
+
   String get getQawlUserImagePath => imagePath;
   String get getQawlUserId => id;
   String get getQawlUserName => name;
@@ -229,6 +404,42 @@ class QawlUser {
       return firebaseUser?.uid;
     } else {
       return null;
+    }
+  }
+
+  static Future<void> toggleFollow(QawlUser follower, QawlUser followed) async {
+    try {
+      // Check if follower is already following followed
+      final isFollowing = follower.following.contains(followed.id);
+
+      if (isFollowing) {
+        // If already following, unfollow
+        follower.following.remove(followed.id);
+        followed.followers--;
+      } else {
+        // If not following, follow
+        follower.following.add(followed.id);
+        followed.followers++;
+      }
+
+      // Update network documents for follower and followed
+      await FirebaseFirestore.instance
+          .collection('QawlUsers')
+          .doc(follower.id)
+          .update({
+        'following': follower.following.toList(),
+      });
+      await FirebaseFirestore.instance
+          .collection('QawlUsers')
+          .doc(followed.id)
+          .update({
+        'followers': followed.followers,
+      });
+    } catch (e) {
+      // Handle errors
+      print("Error toggling follow: $e");
+      // You might want to throw or handle the error appropriately
+      throw e;
     }
   }
 }
