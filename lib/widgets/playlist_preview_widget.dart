@@ -4,13 +4,13 @@ import 'package:first_project/widgets/section_title_widget.dart';
 import 'package:first_project/widgets/track_widget.dart';
 import 'package:flutter/material.dart';
 
-
 class PlaylistPreviewWidget extends StatelessWidget {
   final Playlist playlist;
-
+  final bool isPersonal;
   const PlaylistPreviewWidget({
     Key? key,
     required this.playlist,
+    required this.isPersonal,
   }) : super(key: key);
 
   @override
@@ -29,7 +29,12 @@ class PlaylistPreviewWidget extends StatelessWidget {
           playlist: playlist,
         ),
         // Track widgets
-        ...tracks.map((track) => TrackWidget(track: track)).toList(),
+        ...tracks
+            .map((track) => TrackWidget(
+                  track: track,
+                  isPersonal: isPersonal,
+                ))
+            .toList(),
       ],
     );
   }

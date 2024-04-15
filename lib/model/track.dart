@@ -84,7 +84,17 @@ static Future<Track?> getQawlTrack(String trackId) async {
   }
 }
 
-
+static Future<void> deleteTrack(Track track) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('QawlTracks')
+          .doc(track.id)
+          .delete();
+      print('Track with ID ${track.id} deleted successfully');
+    } catch (e) {
+      print('Error deleting track: $e');
+    }
+  }
   // Method to fetch a track by ID from Firestore
 
   static Future<String?> createQawlTrack(

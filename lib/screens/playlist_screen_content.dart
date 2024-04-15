@@ -55,7 +55,7 @@ class _PlaylistScreenContentState extends State<PlaylistScreenContent> {
               Material(
                 child: Padding(
                   padding: const EdgeInsets.all(1.0),
-                  child: TrackWidget(track: track),
+                  child: TrackWidget(track: track, isPersonal: false,),
                 ),
               ),
           ]),

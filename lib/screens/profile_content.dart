@@ -175,6 +175,7 @@ class _ProfileContentState extends State<ProfileContent> {
                           name: "Uploads",
                           list: uploadedTracks,
                         ),
+                        isPersonal: true,
                       );
                     }
                   },

@@ -2,15 +2,18 @@ import 'package:first_project/model/player.dart';
 import 'package:first_project/model/user.dart';
 import 'package:first_project/screens/now_playing_content.dart';
 import 'package:first_project/widgets/explore_track_widget_block.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:first_project/model/track.dart';
 
 //FIX THE TEXT UPDATING TO GREEN WHEN U TAP IT
 class TrackWidget extends StatelessWidget {
   final Track track;
+  final bool isPersonal;
   const TrackWidget({
     Key? key,
     required this.track,
+    required this.isPersonal,
   }) : super(key: key);
 
   @override
@@ -31,35 +34,81 @@ class TrackWidget extends StatelessWidget {
           future: QawlUser.getQawlUser(track.userId),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator(); // Placeholder while loading
+              return const CircularProgressIndicator(); // Placeholder while loading
             } else if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
             } else {
               final user = snapshot.data;
               if (user != null) {
                 return Card(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
+                  child: Stack(
                     children: [
-                      ListTile(
-                        leading: ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: AspectRatio(
-                            aspectRatio: 1,
-                            child: Image.network(user.imagePath,
-                                fit: BoxFit.cover),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ListTile(
+                            leading: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: AspectRatio(
+                                aspectRatio: 1,
+                                child: Image.network(user.imagePath,
+                                    fit: BoxFit.cover),
+                              ),
+                            ),
+                            selectedTileColor: Colors.green,
+                            title: Text(SurahMapper.getSurahNameByNumber(
+                                track.surahNumber)),
+                            subtitle: Text(user.name),
+                          ),
+                        ],
+                      ),
+                      if (isPersonal)
+                        Positioned(
+                          top: 10,
+                          right: 0,
+                          child: IconButton(
+                            icon: const Icon(Icons.delete_outline_rounded,
+                                color: Colors.green),
+                            onPressed: () {
+                              showCupertinoDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return CupertinoAlertDialog(
+                                    title: const Text("Confirm Deletion"),
+                                    content: const Text(
+                                        "Are you sure you want to delete?"),
+                                    actions: <Widget>[
+                                      CupertinoDialogAction(
+                                        child: const Text("No", style: TextStyle(color: Colors.green),),
+                                        onPressed: () {
+                                          Navigator.of(context)
+                                              .pop(); // Close the dialog
+                                        },
+                                      ),
+                                      CupertinoDialogAction(
+                                        child: const Text("Yes", style: TextStyle(color: Colors.white),),
+                                        onPressed: () {
+                                          // Handle delete action here
+                                          // For example:
+                                          Track.deleteTrack(
+                                              track); // Assuming you have a deleteTrack method
+                                          Navigator.of(context)
+                                              .pop(); // Close the dialog
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                            splashColor: Colors.transparent,
                           ),
                         ),
-                        selectedTileColor: Colors.green,
-                        title: Text(SurahMapper.getSurahNameByNumber(
-                            track.surahNumber)),
-                        subtitle: Text(user.name),
-                      ),
                     ],
                   ),
                 );
               } else {
-                return Text(
+                return const Text(
                     'User not found with userID: '); // Handle case where user is null
               }
             }
