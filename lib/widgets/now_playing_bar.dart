@@ -1,4 +1,5 @@
 import 'package:first_project/model/player.dart';
+import 'package:first_project/widgets/explore_track_widget_block.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 
@@ -54,7 +55,7 @@ class NowPlayingBarWidget extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  getCurrentTrack().trackName,
+                                  SurahMapper.getSurahNameByNumber(getCurrentTrack().surahNumber),
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(fontWeight: FontWeight.bold),
                                 ),
