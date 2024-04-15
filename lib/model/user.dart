@@ -19,6 +19,7 @@ class QawlUser {
   Set<String> following;
   Set<String> privateLibrary;
   Set<String> uploads;
+  String gender;
 
   QawlUser(
       {required this.imagePath,
@@ -30,7 +31,9 @@ class QawlUser {
       required this.followers,
       required this.following,
       required this.privateLibrary,
-      required this.uploads});
+      required this.uploads,
+      required this.gender
+      });
 
   static String? getCurrentUserUid() {
     final currentUser = FirebaseAuth.instance.currentUser;
@@ -49,7 +52,8 @@ class QawlUser {
       followers: data['followers'] ?? 0,
       following: Set<String>.from(data['following'] ?? []),
       privateLibrary: Set<String>.from(data['privateLibrary'] ?? []),
-      uploads: Set<String>.from(data['publicLibrary'] ?? []),
+      uploads: Set<String>.from(data['publicLibrary'] ?? []), 
+      gender: data['gender']?? '',
     );
   }
 
@@ -373,7 +377,8 @@ class QawlUser {
             followers: 0,
             following: Set<String>(),
             privateLibrary: Set<String>(),
-            uploads: Set<String>(),
+            uploads: Set<String>(), 
+            gender: '', //needs to be set later
           )
         : null;
     DocumentReference docRef = FirebaseFirestore.instance
@@ -397,6 +402,7 @@ class QawlUser {
         'followers': 0,
         'following': [],
         'privateLibrary': [],
+        'gender' : ""
         // 'publicLibrary': [uploads],
       });
     }

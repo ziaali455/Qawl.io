@@ -156,7 +156,7 @@ Future<List<QawlUser>> getTopThreeUsersByFollowers() async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('QawlUsers')
         .orderBy('followers', descending: true)
-        .limit(3)
+        .limit(5)
         .get();
 
     for (QueryDocumentSnapshot doc in querySnapshot.docs) {
