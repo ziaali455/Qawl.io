@@ -253,21 +253,26 @@ class CancelPostButton extends StatelessWidget {
 //   }
 // }
 
-class ConfirmPostButton extends StatelessWidget {
+class ConfirmPostButton extends StatefulWidget {
   final String trackPath;
   final String surah;
-  final String trackName; // Added this line
-
+  final String trackName;
+  final AlertStyle alertStyle;
 
   const ConfirmPostButton({
-    super.key,
-      required this.alertStyle,
-      required this.trackPath,
-      required this.surah,
-      required this.trackName, // Added this line
-      });
+    Key? key,
+    required this.trackPath,
+    required this.surah,
+    required this.trackName,
+    required this.alertStyle,
+  }) : super(key: key);
 
-  final AlertStyle alertStyle;
+  @override
+  _ConfirmPostButtonState createState() => _ConfirmPostButtonState();
+}
+
+class _ConfirmPostButtonState extends State<ConfirmPostButton> {
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -290,51 +295,51 @@ class ConfirmPostButton extends StatelessWidget {
           ),
           TextButton(
             style: TextButton.styleFrom(
-              fixedSize: Size(125, 70),
+              fixedSize: const Size(125, 70),
               foregroundColor: Colors.white,
-              padding: const EdgeInsets.only(left: 20, right: 20),
-              textStyle: const TextStyle(fontSize: 50),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            onPressed: () async {
-              String? fileUrl = await Track.uploadRecordingToStorage(trackPath);
-
-              if (fileUrl != null) {
-                String? uid = QawlUser.getCurrentUserUid();
-                if (uid != null) {
-                  await Track.createQawlTrack(uid, surah, fileUrl, trackName);
-                  //update the name
-                } else {
-                  print("Error: UID is null.");
-                }
-              } else {
-                print("Error uploading the file.");
-              }
-              // debugPrint(
-              //     "you should post the track and send us back to the profile page");
-              Navigator.pop(context);
-              Navigator.pop(context);
-
-
-              Alert(
-                      image: Icon(
-                        Icons.check,
-                        size: 100.0,
-                      ),
-                      style: alertStyle,
-                      context: context,
-                      title: "Posted! ")
-                  .show();
-            },
-            child: Align(
-                alignment: Alignment.center,
-                child: Text(
-                  "Post",
-                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-                )),
+            onPressed: _postContent,
+            child: _isLoading
+                ? const CircularProgressIndicator(color: Colors.white)
+                : const Text("Post"),
           ),
         ],
       ),
     );
+  }
+
+  void _postContent() async {
+    setState(() {
+      _isLoading = true; // Show loading indicator
+    });
+
+    String? fileUrl = await Track.uploadRecordingToStorage(widget.trackPath);
+    if (fileUrl != null) {
+      String? uid = QawlUser.getCurrentUserUid();
+      if (uid != null) {
+        await Track.createQawlTrack(uid, widget.surah, fileUrl, widget.trackName);
+      } else {
+        print("Error: UID is null.");
+      }
+    } else {
+      print("Error uploading the file.");
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    Navigator.pop(context);
+    Navigator.pop(context);
+
+    Alert(
+      image: const Icon(Icons.check, size: 100.0),
+      style: widget.alertStyle,
+      context: context,
+      title: "Posted!"
+    ).show();
   }
 }
 
