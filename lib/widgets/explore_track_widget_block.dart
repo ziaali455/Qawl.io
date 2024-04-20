@@ -103,6 +103,7 @@ class TrackCard extends StatelessWidget {
       child: GestureDetector(
         onTap: () {
           playTrack(track);
+          track.increasePlays();
           Navigator.push(
             context,
             MaterialPageRoute(

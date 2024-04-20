@@ -167,8 +167,9 @@ static Future<void> deleteTrack(Track track) async {
     return trackName;
   }
 
-  void increasePlays() {
-    plays++;
+  Future<void> increasePlays() async {
+    this.plays++;
+    updateTrackField(this.id, 'plays', plays);
   }
 
   int getPlays() {
