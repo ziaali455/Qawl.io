@@ -13,7 +13,7 @@ import 'package:first_project/screens/record_audio_content.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 // DropdownMenuEntry labels and values for the first dropdown menu.
-
+ 
 class TrackInfoContent extends StatefulWidget {
   FirebaseFirestore db = FirebaseFirestore.instance;
 
