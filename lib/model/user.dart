@@ -32,8 +32,7 @@ class QawlUser {
       required this.following,
       required this.privateLibrary,
       required this.uploads,
-      required this.gender
-      });
+      required this.gender});
 
   static String? getCurrentUserUid() {
     final currentUser = FirebaseAuth.instance.currentUser;
@@ -52,8 +51,8 @@ class QawlUser {
       followers: data['followers'] ?? 0,
       following: Set<String>.from(data['following'] ?? []),
       privateLibrary: Set<String>.from(data['privateLibrary'] ?? []),
-      uploads: Set<String>.from(data['publicLibrary'] ?? []), 
-      gender: data['gender']?? '',
+      uploads: Set<String>.from(data['publicLibrary'] ?? []),
+      gender: data['gender'] ?? '',
     );
   }
 
@@ -109,7 +108,7 @@ class QawlUser {
               .collection('QawlTracks')
               .doc(trackId)
               .get();
-          
+
           if (trackSnapshot.exists) {
             Map<String, dynamic> data =
                 trackSnapshot.data() as Map<String, dynamic>;
@@ -323,6 +322,38 @@ class QawlUser {
     }
   }
 
+  static Future<void> updateGender(String newGender) async {
+    try {
+      // Update local QawlUser object
+      QawlUser? user = await getCurrentQawlUser();
+      user?.gender = newGender;
+
+      // Update network document on Firebase
+      await FirebaseFirestore.instance
+          .collection('QawlUsers')
+          .doc(user?.id)
+          .update({'gender': newGender});
+    } catch (e) {
+      print('Error updating gender: $e');
+    }
+  }
+
+  static Future<void> updateCountry(String newCountry) async {
+    try {
+      // Update local QawlUser object
+      QawlUser? user = await getCurrentQawlUser();
+      user?.country = newCountry;
+
+      // Update network document on Firebase
+      await FirebaseFirestore.instance
+          .collection('QawlUsers')
+          .doc(user?.id)
+          .update({'country': newCountry});
+    } catch (e) {
+      print('Error updating country: $e');
+    }
+  }
+
   Future<void> updateImagePath(String uid, String newPath) async {
     await FirebaseFirestore.instance.collection('QawlUsers').doc(uid).update({
       'imagePath': newPath,
@@ -377,7 +408,7 @@ class QawlUser {
             followers: 0,
             following: Set<String>(),
             privateLibrary: Set<String>(),
-            uploads: Set<String>(), 
+            uploads: Set<String>(),
             gender: '', //needs to be set later
           )
         : null;
@@ -402,7 +433,7 @@ class QawlUser {
         'followers': 0,
         'following': [],
         'privateLibrary': [],
-        'gender' : ""
+        'gender': ""
         // 'publicLibrary': [uploads],
       });
     }

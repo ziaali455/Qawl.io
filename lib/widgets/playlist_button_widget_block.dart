@@ -4,11 +4,11 @@ import '../screens/playlist_screen_content.dart';
 
 class PlaylistButtonWidget extends StatelessWidget {
 //  final String title;
-  final Playlist playlist;
+  final QawlPlaylist playlist;
   const PlaylistButtonWidget({
     Key? key,
     required this.playlist,
- //   required this.title,
+    //   required this.title,
   }) : super(key: key);
 
   @override
@@ -29,12 +29,12 @@ class PlaylistButtonWidget extends StatelessWidget {
         height: 10,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-                  colors: <Color>[
-                    Color.fromARGB(255, 13, 161, 99),
-                    Color.fromARGB(255, 22, 181, 93),
-                    Color.fromARGB(255, 32, 220, 85),
-                  ],
-                ),
+            colors: <Color>[
+              Color.fromARGB(255, 13, 161, 99),
+              Color.fromARGB(255, 22, 181, 93),
+              Color.fromARGB(255, 32, 220, 85),
+            ],
+          ),
           borderRadius: BorderRadius.circular(50),
         ),
         child: Center(

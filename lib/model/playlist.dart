@@ -3,14 +3,14 @@ import 'package:first_project/model/track.dart';
 import 'package:first_project/model/user.dart';
 import 'package:uuid/uuid.dart';
 
-class Playlist {
+class QawlPlaylist {
   final String author;
   final String name;
   final List<Track> list;
   String coverImagePath = "https://www.linkpicture.com/q/no_cover_1.jpg";
   String id;
 
-  Playlist(
+  QawlPlaylist(
       {required this.author,
       required this.name,
       required this.list,
@@ -20,7 +20,7 @@ class Playlist {
     list.add(track);
   }
 
-  static Future<void> createPlaylist(Playlist playlist) async {
+  static Future<void> createPlaylist(QawlPlaylist playlist) async {
     try {
       await FirebaseFirestore.instance.collection('QawlPlaylists').add({
         'author': playlist.author,
@@ -96,74 +96,163 @@ class Playlist {
     return list.isEmpty;
   }
 
-  static Future<Playlist> getTop100Playlist() async {
+  static Future<QawlPlaylist> getTop100Playlist() async {
+    QawlUser? currUser = await QawlUser.getCurrentQawlUser();
     // Fetch top 100 tracks from Firestore and create a Playlist object
-    List<Track> topTracks = await fetchTopTracks(); // Implement this method
-    return Playlist(
+    List<Track> topTracks = await fetchTopTracks(currUser!.gender); // Implement this method
+    return QawlPlaylist(
         author: "Top 100", name: "Top 100", id: '0', list: topTracks);
   }
 
-  static Future<Playlist> getNewReleasesPlaylist() async {
+  static Future<QawlPlaylist> getNewReleasesPlaylist() async {
+    QawlUser? currUser = await QawlUser.getCurrentQawlUser();
     // Fetch new releases from Firestore and create a Playlist object
-    List<Track> newReleases = await fetchNewReleases(); // Implement this method
-    return Playlist(
+    List<Track> newReleases = await fetchNewReleases(currUser!.gender); // Implement this method
+    return QawlPlaylist(
         author: "New Releases",
         name: "New Releases",
         id: '0',
         list: newReleases);
   }
+  //no gender ver
+  // static Future<List<Track>> fetchTopTracks(String gender) async {
+  //   try {
+  //     // Query Firestore to get top tracks based on plays count
+  //     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+  //         .collection('QawlTracks')
+  //         .orderBy('plays',
+  //             descending: true) // Order by plays count in descending order
+  //         .limit(100) // Limit to top 100 tracks
+  //         .get();
 
-  static Future<List<Track>> fetchTopTracks() async {
-    try {
-      // Query Firestore to get top tracks based on plays count
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection('QawlTracks')
-          .orderBy('plays',
-              descending: true) // Order by plays count in descending order
-          .limit(100) // Limit to top 100 tracks
-          .get();
+  //     // Map each document snapshot to a Track object
+  //     List<Track> topTracks = querySnapshot.docs.map((doc) {
+  //       return Track.fromFirestore(doc.data() as Map<String, dynamic>, doc.id);
+  //     }).toList();
 
-      // Map each document snapshot to a Track object
-      List<Track> topTracks = querySnapshot.docs.map((doc) {
-        return Track.fromFirestore(doc.data() as Map<String, dynamic>, doc.id);
-      }).toList();
+  //     return topTracks;
+  //   } catch (e) {
+  //     print("Error fetching top tracks: $e");
+  //     return [];
+  //   }
+  // }
+static Future<List<Track>> fetchTopTracks(String gender) async {
+  try {
+    // Query Firestore to get top tracks based on plays count
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('QawlTracks')
+        .orderBy('plays', descending: true) // Order by plays count in descending order
+        .limit(100) // Limit to top 100 tracks
+        .get();
 
+    // If gender is 'f', return all top tracks
+    if (gender == 'f') {
+      List<Track> topTracks = querySnapshot.docs
+          .map((doc) => Track.fromFirestore(doc.data() as Map<String, dynamic>, doc.id))
+          .toList();
       return topTracks;
-    } catch (e) {
-      print("Error fetching top tracks: $e");
-      return [];
     }
+
+    // Get the user IDs of authors with the specified gender
+    List<String> userIds = [];
+    QuerySnapshot userQuerySnapshot = await FirebaseFirestore.instance
+        .collection('QawlUsers')
+        .where('gender', isEqualTo: 'm')
+        .get();
+    userQuerySnapshot.docs.forEach((doc) {
+      userIds.add(doc.id);
+    });
+
+    // Filter top tracks based on the user IDs with matching gender
+    List<Track> topTracks = querySnapshot.docs
+        .where((doc) => userIds.contains(doc.get('userId')))
+        .map((doc) => Track.fromFirestore(doc.data() as Map<String, dynamic>, doc.id))
+        .toList();
+
+    return topTracks;
+  } catch (e) {
+    print("Error fetching top tracks: $e");
+    return [];
   }
+}
 
-  static Future<List<Track>> fetchNewReleases() async {
-    try {
-      // Calculate the timestamp for one week ago
-      DateTime oneWeekAgo = DateTime.now().subtract(Duration(days: 7));
 
-      // Query Firestore to get new releases published in the last week
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection('QawlTracks')
-          .where('timeStamp',
-              isGreaterThan:
-                  oneWeekAgo) // Filter tracks published in the last week
-          .orderBy('timeStamp',
-              descending: true) // Order by timestamp in descending order
-          .limit(100) // Limit to the latest 100 tracks
-          .get();
 
-      // Map each document snapshot to a Track object
-      List<Track> newReleases = querySnapshot.docs.map((doc) {
-        return Track.fromFirestore(doc.data() as Map<String, dynamic>, doc.id);
-      }).toList();
+  //no gender ver
+  // static Future<List<Track>> fetchNewReleases(String gender) async {
+  //   try {
+  //     // Calculate the timestamp for one week ago
+  //     DateTime twoWeeksAgo = DateTime.now().subtract(Duration(days: 14));
 
+  //     // Query Firestore to get new releases published in the last week
+  //     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+  //         .collection('QawlTracks')
+  //         .where('timeStamp',
+  //             isGreaterThan:
+  //                 twoWeeksAgo) // Filter tracks published in the last week
+  //         .orderBy('timeStamp',
+  //             descending: true) // Order by timestamp in descending order
+  //         .limit(100) // Limit to the latest 100 tracks
+  //         .get();
+
+  //     // Map each document snapshot to a Track object
+  //     List<Track> newReleases = querySnapshot.docs.map((doc) {
+  //       return Track.fromFirestore(doc.data() as Map<String, dynamic>, doc.id);
+  //     }).toList();
+
+  //     return newReleases;
+  //   } catch (e) {
+  //     print("Error fetching new releases: $e");
+  //     return [];
+  //   }
+  // }
+static Future<List<Track>> fetchNewReleases(String gender) async {
+  try {
+    // Calculate the timestamp for two weeks ago
+    DateTime twoWeeksAgo = DateTime.now().subtract(Duration(days: 14));
+
+    // Query Firestore to get new releases published in the last two weeks
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('QawlTracks')
+        .where('timeStamp', isGreaterThan: twoWeeksAgo) // Filter tracks published in the last two weeks
+        .orderBy('timeStamp', descending: true) // Order by timestamp in descending order
+        .limit(100) // Limit to the latest 100 tracks
+        .get();
+
+    // If gender is 'f', return all new releases
+    if (gender == 'f') {
+      List<Track> newReleases = querySnapshot.docs
+          .map((doc) => Track.fromFirestore(doc.data() as Map<String, dynamic>, doc.id))
+          .toList();
       return newReleases;
-    } catch (e) {
-      print("Error fetching new releases: $e");
-      return [];
     }
-  }
 
-  static Future<Playlist?> getFavorites() async {
+    // Get the user IDs of authors with the specified gender
+    List<String> userIds = [];
+    QuerySnapshot userQuerySnapshot = await FirebaseFirestore.instance
+        .collection('QawlUsers')
+        .where('gender', isEqualTo: 'm')
+        .get();
+    userQuerySnapshot.docs.forEach((doc) {
+      userIds.add(doc.id);
+    });
+
+    // Filter new releases based on the user IDs with matching gender
+    List<Track> newReleases = querySnapshot.docs
+        .where((doc) => userIds.contains(doc.get('userId')))
+        .map((doc) => Track.fromFirestore(doc.data() as Map<String, dynamic>, doc.id))
+        .toList();
+
+    return newReleases;
+  } catch (e) {
+    print("Error fetching new releases: $e");
+    return [];
+  }
+}
+
+  
+
+  static Future<QawlPlaylist?> getFavorites() async {
     try {
       QawlUser? user = await QawlUser.getCurrentQawlUser();
       if (user != null) {
@@ -200,7 +289,7 @@ class Playlist {
             }
           }
 
-          return Playlist(
+          return QawlPlaylist(
             author: data['userId'],
             name: data['name'],
             list: tracks,

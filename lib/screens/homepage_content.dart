@@ -87,8 +87,8 @@ class _HomePageContentState extends State<HomePageContent> {
               title: "My Playlists",
               press: () {},
             ),
-            FutureBuilder<Playlist?>(
-              future: Playlist.getFavorites(),
+            FutureBuilder<QawlPlaylist?>(
+              future: QawlPlaylist.getFavorites(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   // While waiting for the data to load, display a loading indicator
@@ -98,7 +98,7 @@ class _HomePageContentState extends State<HomePageContent> {
                   return Text('Error: ${snapshot.error}');
                 } else {
                   // If data is successfully loaded, build your widget with the fetched playlist
-                  Playlist? favoritesPlaylist = snapshot.data;
+                  QawlPlaylist? favoritesPlaylist = snapshot.data;
                   if (favoritesPlaylist != null) {
                     // If playlist is not null, display it
                     return PlaylistListWidget(
@@ -107,7 +107,8 @@ class _HomePageContentState extends State<HomePageContent> {
                     // If playlist is null, display a message indicating no favorites playlist found
                     return const Padding(
                       padding: EdgeInsets.all(8.0),
-                      child: Text('To start your library, add a track to your favorites!'),
+                      child: Text(
+                          'To start your library, add a track to your favorites!'),
                     );
                   }
                 }

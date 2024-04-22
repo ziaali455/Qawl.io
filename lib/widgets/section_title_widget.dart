@@ -18,7 +18,7 @@ class PlaylistSectionTitle extends StatelessWidget {
   }) : super(key: key);
 
   final String title;
-  Playlist playlist;
+  QawlPlaylist playlist;
   List<QawlUser>? qaris = [];
   final GestureTapCallback press;
   final bool isPlaylist;
@@ -51,7 +51,7 @@ class SeeMoreButton extends StatelessWidget {
     super.key,
     required this.playlist,
   });
-  final Playlist playlist;
+  final QawlPlaylist playlist;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

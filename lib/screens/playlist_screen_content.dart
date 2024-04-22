@@ -10,7 +10,7 @@ import '../neu_box.dart';
 
 class PlaylistScreenContent extends StatefulWidget {
   //final String playlistTitle;
-  final Playlist playlist;
+  final QawlPlaylist playlist;
 
   //refactor playlistTitle
 
@@ -24,8 +24,8 @@ class PlaylistScreenContent extends StatefulWidget {
 }
 
 class _PlaylistScreenContentState extends State<PlaylistScreenContent> {
-  late Playlist playlist;
-  _PlaylistScreenContentState(Playlist playlist) {
+  late QawlPlaylist playlist;
+  _PlaylistScreenContentState(QawlPlaylist playlist) {
     this.playlist = playlist;
   }
   @override
@@ -38,7 +38,7 @@ class _PlaylistScreenContentState extends State<PlaylistScreenContent> {
             // back button and menu button
             const SizedBox(height: 50),
             QawlBackButton(),
-            
+
             Container(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -55,7 +55,10 @@ class _PlaylistScreenContentState extends State<PlaylistScreenContent> {
               Material(
                 child: Padding(
                   padding: const EdgeInsets.all(1.0),
-                  child: TrackWidget(track: track, isPersonal: false,),
+                  child: TrackWidget(
+                    track: track,
+                    isPersonal: false,
+                  ),
                 ),
               ),
           ]),

@@ -31,7 +31,7 @@ class AddToLibraryWidget extends StatelessWidget {
               onTap: () async {
                 QawlUser? user = await QawlUser.getCurrentQawlUser();
                 if (user != null) {
-                  Playlist.updateFavorites(user, track);
+                  QawlPlaylist.updateFavorites(user, track);
                 } else {
                   print("User null");
                 }

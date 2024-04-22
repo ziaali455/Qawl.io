@@ -5,7 +5,7 @@ import 'package:first_project/widgets/track_widget.dart';
 import 'package:flutter/material.dart';
 
 class PlaylistPreviewWidget extends StatelessWidget {
-  final Playlist playlist;
+  final QawlPlaylist playlist;
   final bool isPersonal;
   const PlaylistPreviewWidget({
     Key? key,

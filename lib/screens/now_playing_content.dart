@@ -1,10 +1,13 @@
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:first_project/model/player.dart';
+import 'package:first_project/model/user.dart';
+import 'package:first_project/screens/profile_content.dart';
 import 'package:first_project/widgets/add_to_library_popup.dart';
 import 'package:first_project/widgets/explore_track_widget_block.dart';
 import 'package:flutter/material.dart';
 import 'package:first_project/neu_box.dart';
 import 'package:first_project/model/track.dart';
+import 'package:flutter/widgets.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:rxdart/rxdart.dart';
@@ -82,7 +85,6 @@ class QawlBackButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        
         Padding(
           padding: const EdgeInsets.only(top: 40.0, left: 8.0),
           child: GestureDetector(
@@ -160,49 +162,79 @@ class CoverContent extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
               child: AspectRatio(
                 aspectRatio: 1,
-                child: Image.network(myTrack.coverImagePath, fit: BoxFit.cover, 
-                
-                errorBuilder: (context, error, stackTrace) {
-          // Load default image when loading fails
-          return Image.network(
-            'https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg',
-            fit: BoxFit.cover,
-          );
-        }
-                
-                
-                ),
+                child: Image.network(myTrack.coverImagePath, fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                  // Load default image when loading fails
+                  return Image.network(
+                    'https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg',
+                    fit: BoxFit.cover,
+                  );
+                }),
               ),
             ),
           ),
           Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          myTrack.trackName,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                            color: Colors.grey.shade700,
+            padding: const EdgeInsets.all(8.0),
+            child: FutureBuilder<String?>(
+              future: myTrack.getAuthor(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  // Return a loading indicator or placeholder widget
+                  return CircularProgressIndicator(); // Example loading indicator
+                } else if (snapshot.hasError) {
+                  // Handle error case
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  // Data has been retrieved successfully
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          GestureDetector(
+                            child: Text(
+                              snapshot.data ??
+                                  '', // Display author if available
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                color: Colors.grey.shade700,
+                              ),
+                            ),
+                            onTap: () async {
+                              String? author = snapshot.data;
+                              if (author != null) {
+                                QawlUser? user =
+                                    await QawlUser.getQawlUser(myTrack.userId);
+                                if (user != null) {
+                                  Navigator.pop(context);
+
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ProfileContent(
+                                        user: user,
+                                        isPersonal: false,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }
+                            },
                           ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          //weird idk why it cant be const
-                          SurahMapper.getSurahNameByNumber(myTrack.surahNumber),
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 22,
+                          const SizedBox(height: 6),
+                          Text(
+                            SurahMapper.getSurahNameByNumber(
+                                myTrack.surahNumber),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    IconButton(
+                        ],
+                      ),
+                      IconButton(
                         splashColor: Colors.transparent,
                         highlightColor: Colors.transparent,
                         hoverColor: Colors.transparent,
@@ -211,14 +243,22 @@ class CoverContent extends StatelessWidget {
                             context: context,
                             builder: (context) => SingleChildScrollView(
                               controller: ModalScrollController.of(context),
-                              child: AddToLibraryWidget(track: myTrack,),
+                              child: AddToLibraryWidget(
+                                track: myTrack,
+                              ),
                             ),
                           );
                         },
                         iconSize: 35,
                         color: Colors.white,
-                        icon: const Icon(Icons.library_add)),
-                  ]))
+                        icon: const Icon(Icons.library_add),
+                      ),
+                    ],
+                  );
+                }
+              },
+            ),
+          )
         ])),
       ],
     );

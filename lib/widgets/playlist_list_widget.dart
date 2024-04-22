@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import '../model/playlist.dart';
 
 class PlaylistListWidget extends StatelessWidget {
-  final List<Playlist> playlists_List;
+  final List<QawlPlaylist> playlists_List;
 
   const PlaylistListWidget({
     Key? key,
@@ -21,7 +21,7 @@ class PlaylistListWidget extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       children: [
-        for(Playlist item in playlists_List)
+        for (QawlPlaylist item in playlists_List)
           PlaylistItem(title: item.name, playlist: item),
       ],
     );
@@ -30,18 +30,17 @@ class PlaylistListWidget extends StatelessWidget {
 
 class PlaylistItem extends StatelessWidget {
   final String title;
-  final Playlist playlist;
+  final QawlPlaylist playlist;
   String image;
-  String noimage =
+   String noimage =
       "https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg";
 
   PlaylistItem({
     Key? key,
     required this.title,
     required this.playlist,
-    this.image = "",
-  }) 
-  : super(key: key);
+    this.image = "https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg",
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +52,7 @@ class PlaylistItem extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (context) => PlaylistScreenContent(
-                     // Playlist: playlist,
+                      // Playlist: playlist,
                       playlist: playlist,
                     )),
           ),
@@ -67,7 +66,11 @@ class PlaylistItem extends StatelessWidget {
                     aspectRatio: 1.0,
                     child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
-                        child: Image.network(playlist.list.elementAt(0).coverImagePath, fit: BoxFit.cover,)),
+                        child: Image.network(
+                          //playlist.list.elementAt(0).coverImagePath ?? 'https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg',
+                          'https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg',
+                          fit: BoxFit.cover,
+                        )),
                   ),
                   selectedTileColor: Colors.green,
                   title: Text(playlist.getName()),

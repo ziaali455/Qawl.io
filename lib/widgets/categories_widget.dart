@@ -13,7 +13,7 @@ import '../constants.dart';
 
 class Categories extends StatelessWidget {
   const Categories({super.key, required this.playlist});
-  final Playlist playlist;
+  final QawlPlaylist playlist;
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +60,7 @@ class Categories extends StatelessWidget {
 }
 
 class CategoryCard extends StatelessWidget {
-  final Playlist playlist;
+  final QawlPlaylist playlist;
   const CategoryCard({
     Key? key,
     required this.icon,
@@ -152,7 +152,7 @@ class _QariCardGridState extends State<QariCardGrid> {
   @override
   void initState() {
     super.initState();
-    _futureUsers = getTopThreeUsersByFollowers();
+    _futureUsers = getTopUsersByFollowers();
   }
 
   @override
@@ -179,7 +179,10 @@ class _QariCardGridState extends State<QariCardGrid> {
                 vertical: getProportionateScreenHeight(20),
               ),
               children: users.map((user) {
-                return QariCard(user: user, width: 175,);
+                return QariCard(
+                  user: user,
+                  width: 175,
+                );
               }).toList(),
             );
           } else {
@@ -212,8 +215,8 @@ class PlaceholderContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Center(
-        child: Stack(
-          children: [ Column(
+        child: Stack(children: [
+          Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Center(
@@ -238,10 +241,10 @@ class PlaceholderContent extends StatelessWidget {
               ),
             ],
           ),
-        Padding(
-          padding: EdgeInsets.all(12.0),
-          child: QawlBackButton(),
-        ),
+          Padding(
+            padding: EdgeInsets.all(12.0),
+            child: QawlBackButton(),
+          ),
         ]),
       ),
     );

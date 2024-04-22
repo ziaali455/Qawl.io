@@ -18,7 +18,7 @@ class Track {
   int plays;
   final int surahNumber;
   String audioPath;
-  Set<Playlist> inPlaylists;
+  Set<QawlPlaylist> inPlaylists;
   String coverImagePath =
       "https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg";
   Track(
@@ -35,7 +35,7 @@ class Track {
     return Track(
       userId: data['userId'] as String,
       id: id,
-      inPlaylists: <Playlist>{},
+      inPlaylists: <QawlPlaylist>{},
       trackName: data['trackName'] as String,
       plays: data['plays'] as int,
       surahNumber: data['surahNumber'] as int,
@@ -44,47 +44,47 @@ class Track {
           data['coverImagePath'] as String? ?? "defaultCoverImagePath",
     );
   }
-  
-static Future<List<Track>> getTracksByUser(QawlUser user) async {
-  List<Track> tracks = [];
-  try {
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('QawlTracks')
-        .where('userId', isEqualTo: user.id)
-        .get();
 
-    querySnapshot.docs.forEach((doc) {
-      Track track = Track.fromFirestore(doc.data()! as Map<String, dynamic>, doc.id);
-      tracks.add(track);
-    });
-  } catch (error) {
-    print("Error getting tracks: $error");
-    // Handle error as necessary
+  static Future<List<Track>> getTracksByUser(QawlUser user) async {
+    List<Track> tracks = [];
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('QawlTracks')
+          .where('userId', isEqualTo: user.id)
+          .get();
+
+      querySnapshot.docs.forEach((doc) {
+        Track track =
+            Track.fromFirestore(doc.data()! as Map<String, dynamic>, doc.id);
+        tracks.add(track);
+      });
+    } catch (error) {
+      print("Error getting tracks: $error");
+      // Handle error as necessary
+    }
+    return tracks;
   }
-  return tracks;
-}
 
-
-static Future<Track?> getQawlTrack(String trackId) async {
-  try {
-    DocumentSnapshot doc = await FirebaseFirestore.instance
-        .collection('QawlTracks')
-        .doc(trackId)
-        .get();
-    if (doc.exists) {
-      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-      print('Firestore document data for track with ID $trackId: $data');
-      return Track.fromFirestore(data, doc.id);
-    } else {
+  static Future<Track?> getQawlTrack(String trackId) async {
+    try {
+      DocumentSnapshot doc = await FirebaseFirestore.instance
+          .collection('QawlTracks')
+          .doc(trackId)
+          .get();
+      if (doc.exists) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        print('Firestore document data for track with ID $trackId: $data');
+        return Track.fromFirestore(data, doc.id);
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print('Error fetching track: $e');
       return null;
     }
-  } catch (e) {
-    print('Error fetching track: $e');
-    return null;
   }
-}
 
-static Future<void> deleteTrack(Track track) async {
+  static Future<void> deleteTrack(Track track) async {
     try {
       await FirebaseFirestore.instance
           .collection('QawlTracks')
@@ -106,7 +106,7 @@ static Future<void> deleteTrack(Track track) async {
         ? Track(
             userId: uid,
             id: uniqueID,
-            inPlaylists: <Playlist>{}, //empty set for now
+            inPlaylists: <QawlPlaylist>{}, //empty set for now
             trackName: text,
             plays: 0,
             surahNumber: getSurahNumberByName(surah)!,
@@ -121,7 +121,7 @@ static Future<void> deleteTrack(Track track) async {
       'userId': uid,
       'coverImagePath': imagePath, //ali added this
       'id': uniqueID, // generate unique id for track
-      'inPlaylists': <Playlist>{}, // need to address next
+      'inPlaylists': <QawlPlaylist>{}, // need to address next
       'trackName': text,
       'plays': 0,
       'surahNumber': getSurahNumberByName(surah)!,
@@ -184,7 +184,7 @@ static Future<void> deleteTrack(Track track) async {
     return audioPath;
   }
 
-  Set<Playlist> getInPlayLists() {
+  Set<QawlPlaylist> getInPlayLists() {
     return inPlaylists;
   }
 
@@ -210,7 +210,7 @@ static Future<void> deleteTrack(Track track) async {
         this.plays = value as int;
         break;
       case 'inPlaylists':
-        inPlaylists = value as Set<Playlist>;
+        inPlaylists = value as Set<QawlPlaylist>;
         break;
       default:
         print("Field $field not recognized or not updatable.");

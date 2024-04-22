@@ -19,14 +19,14 @@ class ExploreContent extends StatefulWidget {
 }
 
 class _ExploreContentState extends State<ExploreContent> {
-  Future<Playlist>? _top100PlaylistFuture;
-  Future<Playlist>? _newReleasesPlaylistFuture;
+  Future<QawlPlaylist>? _top100PlaylistFuture;
+  Future<QawlPlaylist>? _newReleasesPlaylistFuture;
 
   @override
   void initState() {
     super.initState();
-    _top100PlaylistFuture = Playlist.getTop100Playlist();
-    _newReleasesPlaylistFuture = Playlist.getNewReleasesPlaylist();
+    _top100PlaylistFuture = QawlPlaylist.getTop100Playlist();
+    _newReleasesPlaylistFuture = QawlPlaylist.getNewReleasesPlaylist();
   }
 
   @override
@@ -39,9 +39,10 @@ class _ExploreContentState extends State<ExploreContent> {
           children: [
             // const SearchField(),
             Categories(
-              playlist: Playlist(author: 'na', name: 'na', list: [], id: '0'),
+              playlist:
+                  QawlPlaylist(author: 'na', name: 'na', list: [], id: '0'),
             ),
-            FutureBuilder<Playlist>(
+            FutureBuilder<QawlPlaylist>(
               future: _top100PlaylistFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -56,7 +57,7 @@ class _ExploreContentState extends State<ExploreContent> {
                 }
               },
             ),
-            FutureBuilder<Playlist>(
+            FutureBuilder<QawlPlaylist>(
               future: _newReleasesPlaylistFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -79,7 +80,6 @@ class _ExploreContentState extends State<ExploreContent> {
               category: 'Featured',
             ),
           ],
-        
         ),
       ),
     );
@@ -107,7 +107,7 @@ class _QariCardRowState extends State<QariCardRow> {
   @override
   void initState() {
     super.initState();
-    _futureUsers = getTopThreeUsersByFollowers();
+    _futureUsers = getTopUsersByFollowers();
   }
 
   @override
@@ -147,7 +147,7 @@ class _QariCardRowState extends State<QariCardRow> {
   }
 }
 
-Future<List<QawlUser>> getTopThreeUsersByFollowers() async {
+Future<List<QawlUser>> getTopUsersByFollowers() async {
   List<QawlUser> topThreeUsers = [];
 
   try {
@@ -171,4 +171,3 @@ Future<List<QawlUser>> getTopThreeUsersByFollowers() async {
 
   return topThreeUsers;
 }
-

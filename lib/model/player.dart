@@ -16,6 +16,8 @@ import 'package:first_project/model/track.dart';
   }
 }*/
 
+import 'package:audio_service/audio_service.dart';
+
 AudioPlayer main_player = AudioPlayer();
 List<Track> current_list = [];
 late Track currentTrack;
@@ -23,15 +25,20 @@ bool isNext = true;
 bool autoplay = true;
 var currentPlaylist;
 
-void playTracks(Playlist playlist) async {}
+void playTracks(List<Track> tracks) async {
+  updateCurrentPlaylist(tracks);
+  await main_player.setAudioSource(currentPlaylist);
+  main_player.play();
+}
 
-void updateCurrentPlaylist(Playlist playlist) {
-  List<AudioSource> tracks = [];
-  for (var track in playlist.list) {
-    tracks.add(
-        AudioSource.uri(Uri.parse(track.audioPath), tag: track.toMediaItem()));
-  }
-  currentPlaylist = ConcatenatingAudioSource(children: tracks);
+void updateCurrentPlaylist(List<Track> tracks) {
+  List<AudioSource> audioSources = tracks.map((track) {
+    return AudioSource.uri(
+      Uri.parse(track.audioPath),
+      tag: track.toMediaItem(),
+    );
+  }).toList();
+  currentPlaylist = ConcatenatingAudioSource(children: audioSources);
 }
 
 void playTrack(Track playedTrack) async {
@@ -62,8 +69,7 @@ void unpauseTrack() {
 
 void closePlayer() {
   main_player.dispose();
-
-  ///notifyListeners();
+  AudioService.stop();
 }
 
 // I click on surah nas by musa -> surah nas by musa ends -> I need to find the previous tracks -> 
