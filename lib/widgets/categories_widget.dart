@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:first_project/model/fake_playlists_data.dart';
 import 'package:first_project/model/playlist.dart';
 import 'package:first_project/model/user.dart';
@@ -98,7 +99,7 @@ class CategoryCard extends StatelessWidget {
         } else if (text == "Following") {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => FollowingContent()),
+            MaterialPageRoute(builder: (context) => QariCardGrid(category: "Following",)),
             //PlaylistScreenContent(playlist: fake_playlist_data.following,)),
           );
         }
@@ -132,33 +133,15 @@ class CategoryCard extends StatelessWidget {
   }
 }
 
-class QariCardGrid extends StatefulWidget {
-  const QariCardGrid({
-    Key? key,
-    this.aspectRetio = 1.02,
-    required this.category,
-  }) : super(key: key);
+class QariCardGrid extends StatelessWidget {
+  const QariCardGrid({Key? key, required this.category}) : super(key: key);
 
   final String category;
-  final double aspectRetio;
-
-  @override
-  State<QariCardGrid> createState() => _QariCardGridState();
-}
-
-class _QariCardGridState extends State<QariCardGrid> {
-  late Future<List<QawlUser>> _futureUsers;
-
-  @override
-  void initState() {
-    super.initState();
-    _futureUsers = getTopUsersByFollowers();
-  }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<QawlUser>>(
-      future: _futureUsers,
+      future: getFollowingUsers(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           // While data is loading
@@ -170,20 +153,32 @@ class _QariCardGridState extends State<QariCardGrid> {
           // Once data is loaded successfully
           List<QawlUser>? users = snapshot.data;
           if (users != null && users.isNotEmpty) {
-            return GridView.count(
-              crossAxisCount: 2, // Number of columns
-              crossAxisSpacing: 10.0, // Spacing between columns
-              mainAxisSpacing: 10.0, // Spacing between rows
-              padding: EdgeInsets.symmetric(
-                horizontal: getProportionateScreenWidth(10),
-                vertical: getProportionateScreenHeight(20),
-              ),
-              children: users.map((user) {
-                return QariCard(
-                  user: user,
-                  width: 175,
-                );
-              }).toList(),
+            return Stack(
+              children: [
+                
+                Column(
+                  children: [
+                    SizedBox(height: 50,),
+                    Expanded(
+                    
+                      child: GridView.count(
+                        crossAxisCount: 2, // Number of columns
+                        crossAxisSpacing: 10.0, // Spacing between columns
+                        mainAxisSpacing: 80.0, // Spacing between rows
+                        
+                        children: users.map((user) {
+                          print(users);
+                          return QariCard(
+                            user: user,
+                            width: 105,
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ],
+                ),
+                QawlBackButton()
+              ],
             );
           } else {
             // If no users are available
@@ -193,19 +188,47 @@ class _QariCardGridState extends State<QariCardGrid> {
       },
     );
   }
+
+  Future<List<QawlUser>> getFollowingUsers() async {
+    QawlUser? currentUser = await QawlUser.getCurrentQawlUser();
+    List<QawlUser> followingUsers = [];
+
+    if (currentUser != null) {
+      List<String> followingUserIds = currentUser.following.toList();
+
+      // Iterate over each userId in the following list
+      for (String userId in followingUserIds) {
+        // Query Firestore to get the QawlUser with the current userId
+        DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+            .collection('QawlUsers')
+            .doc(userId)
+            .get();
+
+        // If the document exists, convert it to a QawlUser object and add it to the list
+        if (userSnapshot.exists) {
+          QawlUser user = QawlUser.fromFirestore(userSnapshot);
+          followingUsers.add(user);
+        }
+      }
+    }
+
+    return followingUsers;
+  }
 }
 
 class FollowingContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        QawlBackButton(),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: QariCardGrid(category: "Following"),
-        ),
-      ],
+    return Material(
+      child: Column(
+        children: [
+          QawlBackButton(),
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: QariCardGrid(category: "Following"),
+          ),
+        ],
+      ),
     );
   }
 }
