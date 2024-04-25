@@ -32,19 +32,22 @@ class PlaylistItem extends StatelessWidget {
   final String title;
   final QawlPlaylist playlist;
   String image;
-   String noimage =
+  String noimage =
       "https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg";
 
   PlaylistItem({
     Key? key,
     required this.title,
     required this.playlist,
-    this.image = "https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg",
+    this.image =
+        "https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg",
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     SizeConfig().init;
+    int length = playlist.list.length;
+   String lengthDisplay = length.toString() + " Recitations";
     return Padding(
         padding: const EdgeInsets.only(left: 4.0, right: 4.0),
         child: InkWell(
@@ -74,7 +77,7 @@ class PlaylistItem extends StatelessWidget {
                   ),
                   selectedTileColor: Colors.green,
                   title: Text(playlist.getName()),
-                  subtitle: const Text("Number of plays here"),
+                  subtitle: Text(lengthDisplay),
                 ),
               ],
             )),

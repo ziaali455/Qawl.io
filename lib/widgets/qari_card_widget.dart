@@ -24,7 +24,11 @@ class QariCard extends StatelessWidget {
         child: GestureDetector(
           onTap: () => Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => ProfileContent(user: user, isPersonal: false,)),
+            MaterialPageRoute(
+                builder: (context) => ProfileContent(
+                      user: user,
+                      isPersonal: false,
+                    )),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -40,19 +44,22 @@ class QariCard extends StatelessWidget {
                   child: Column(
                     children: [
                       Hero(
-                        tag: "hi",
+                        tag: "user pfp",
                         child: ClipRRect(
                             borderRadius: BorderRadius.circular(15),
                             child: AspectRatio(
                                 aspectRatio: 1,
-                                child: Image.network(user.imagePath,
-                                    fit: BoxFit.cover, errorBuilder: (context, error, stackTrace) {
-          // Load default image when loading fails
-          return Image.network(
-            'https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg',
-            fit: BoxFit.cover,
-          );
-        },))),
+                                child: Image.network(
+                                  user.imagePath,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    // Load default image when loading fails
+                                    return Image.network(
+                                      'https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg',
+                                      fit: BoxFit.cover,
+                                    );
+                                  },
+                                ))),
                       ),
                       const SizedBox(
                         height: 10,

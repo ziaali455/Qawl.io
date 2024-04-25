@@ -99,9 +99,17 @@ class CategoryCard extends StatelessWidget {
         } else if (text == "Following") {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => QariCardGrid(category: "Following",)),
+            MaterialPageRoute(builder: (context) => PlaceholderContent()),
             //PlaylistScreenContent(playlist: fake_playlist_data.following,)),
           );
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //       builder: (context) => QariCardGrid(
+          //             category: "Following",
+          //           )),
+          //   //PlaylistScreenContent(playlist: fake_playlist_data.following,)),
+          // );
         }
       },
       child: SizedBox(
@@ -155,17 +163,17 @@ class QariCardGrid extends StatelessWidget {
           if (users != null && users.isNotEmpty) {
             return Stack(
               children: [
-                
                 Column(
                   children: [
-                    SizedBox(height: 50,),
+                    SizedBox(
+                      height: 50,
+                    ),
                     Expanded(
-                    
                       child: GridView.count(
                         crossAxisCount: 2, // Number of columns
                         crossAxisSpacing: 10.0, // Spacing between columns
                         mainAxisSpacing: 80.0, // Spacing between rows
-                        
+
                         children: users.map((user) {
                           print(users);
                           return QariCard(
@@ -198,6 +206,11 @@ class QariCardGrid extends StatelessWidget {
 
       // Iterate over each userId in the following list
       for (String userId in followingUserIds) {
+        // Skip adding the currentUser's id to the list of following users
+        if (userId == currentUser.id) {
+          continue;
+        }
+
         // Query Firestore to get the QawlUser with the current userId
         DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
             .collection('QawlUsers')

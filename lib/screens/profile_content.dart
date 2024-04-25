@@ -229,7 +229,7 @@ class _ProfileContentState extends State<ProfileContent> {
       // Handle the case where there is no current user or displayName is null
       return const Column(
         children: [
-          Text("No name",
+          Text("Anon User",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24))
         ],
       );

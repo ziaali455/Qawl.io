@@ -81,7 +81,8 @@ class _ProfilePictureWidgetState extends State<ProfilePictureWidget> {
         ),
       );
 
-  Widget buildCircle({
+
+Widget buildCircle({
     required Widget child,
     required double all,
     required Color color,
@@ -101,4 +102,39 @@ class _ProfilePictureWidgetState extends State<ProfilePictureWidget> {
           child: child,
         ),
       );
+
+  Widget buildEmptyPFP({
+  required Widget child,
+  required double all,
+  required Color color,
+}) =>
+    Stack(
+      children: [
+        ClipOval(
+          child: Container(
+            padding: EdgeInsets.all(all),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: <Color>[
+                  Color.fromARGB(255, 13, 161, 99),
+                  Color.fromARGB(255, 22, 181, 93),
+                  Color.fromARGB(255, 32, 220, 85),
+                ],
+              ),
+            ),
+            child: child,
+          ),
+        ),
+        Positioned.fill(
+          child: Align(
+            alignment: Alignment.center,
+            child: Icon(
+              Icons.account_circle,
+              color: Colors.white,
+              size: 40, // Adjust the size of the icon as needed
+            ),
+          ),
+        ),
+      ],
+    );
 }

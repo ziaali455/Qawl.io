@@ -353,6 +353,32 @@ class QawlUser {
       print('Error updating country: $e');
     }
   }
+  static Future<void> updateName(String newName) async {
+  try {
+    // Get the current Firebase user
+    User? firebaseUser = FirebaseAuth.instance.currentUser;
+
+    if (firebaseUser != null) {
+      // Update the display name of the Firebase user
+      await firebaseUser.updateDisplayName(newName);
+
+      // Update local QawlUser object
+      QawlUser? user = await getCurrentQawlUser();
+      if (user != null) {
+        user.name = newName;
+      }
+
+      // Update network document on Firebase (optional)
+      await FirebaseFirestore.instance
+          .collection('QawlUsers')
+          .doc(firebaseUser.uid)
+          .update({'name': newName});
+    }
+  } catch (e) {
+    print('Error updating name: $e');
+  }
+}
+
 
   Future<void> updateImagePath(String uid, String newPath) async {
     await FirebaseFirestore.instance.collection('QawlUsers').doc(uid).update({
