@@ -1,6 +1,8 @@
 import 'package:first_project/model/playlist.dart';
+import 'package:first_project/widgets/explore_track_widget_block.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:first_project/model/track.dart';
+import 'package:audio_session/audio_session.dart';
 
 //OBI: NOTE THIS CLASS NO LONGER FUNCTIONS AS A PROVIDER
 //all of the methods were moved outside of the class
@@ -42,12 +44,30 @@ void updateCurrentPlaylist(List<Track> tracks) {
 }
 
 void playTrack(Track playedTrack) async {
+  final session = await AudioSession.instance;
+  await session.configure(AudioSessionConfiguration.music());
+
   currentTrack = playedTrack;
-  await main_player.setUrl(playedTrack.audioPath);
+  print("Name is" + playedTrack.trackName);
+  // Create an AudioSource with metadata
+  AudioSource audioSource = AudioSource.uri(
+    Uri.parse(playedTrack.audioPath),
+    tag: MediaItem(
+      id: playedTrack.id, // Unique ID for each track
+      album: SurahMapper.getSurahNameByNumber(playedTrack.surahNumber),
+      title: "Track Title", //playedTrack.trackName,
+      artUri: Uri.parse(playedTrack.coverImagePath),
+    ),
+  );
+
+  // Stop the player if it's currently playing
   if (main_player.playing == true &&
       main_player.processingState == ProcessingState.ready) {
-    main_player.pause();
+    await main_player.pause();
   }
+
+  // Load and play the new audio source
+  await main_player.setAudioSource(audioSource);
   main_player.play();
 }
 
@@ -72,6 +92,6 @@ void closePlayer() {
   AudioService.stop();
 }
 
-// I click on surah nas by musa -> surah nas by musa ends -> I need to find the previous tracks -> 
-//I need to know what playlist surah nas by musa in -> 
+// I click on surah nas by musa -> surah nas by musa ends -> I need to find the previous tracks ->
+//I need to know what playlist surah nas by musa in ->
 // I need to find surah nas' location in this list -> I go to the track before it

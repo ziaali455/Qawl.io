@@ -1,7 +1,9 @@
+import 'package:first_project/model/player.dart';
 import 'package:first_project/screens/auth_gate.dart';
 import 'package:first_project/screens/login_content.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'screens/homepage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -34,6 +36,11 @@ Future<void>main() async {
   await Firebase.initializeApp(
    // name: 'qawl-io',
     //options: DefaultFirebaseOptions.currentPlatform,
+  );
+  await JustAudioBackground.init(
+    androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
+    androidNotificationChannelName: 'Audio playback',
+    androidNotificationOngoing: true,
   );
   
   runApp(MyApp());

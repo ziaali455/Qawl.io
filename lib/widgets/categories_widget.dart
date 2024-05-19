@@ -102,14 +102,6 @@ class CategoryCard extends StatelessWidget {
             MaterialPageRoute(builder: (context) => PlaceholderContent()),
             //PlaylistScreenContent(playlist: fake_playlist_data.following,)),
           );
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //       builder: (context) => QariCardGrid(
-          //             category: "Following",
-          //           )),
-          //   //PlaylistScreenContent(playlist: fake_playlist_data.following,)),
-          // );
         }
       },
       child: SizedBox(
