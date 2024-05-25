@@ -130,7 +130,7 @@ class TrackWidget extends StatelessWidget {
 
   Widget buildTitle(bool isPlaying) {
     Color titleColor;
-    if (main_player.playing) {
+    if (trackIsPlaying()) {
       titleColor = Colors.green;
     } else {
       titleColor = Colors.white;

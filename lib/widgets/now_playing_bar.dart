@@ -12,10 +12,11 @@ class NowPlayingBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool loaded = main_player.processingState == ProcessingState.ready ||
-        main_player.processingState == ProcessingState.completed ||
-        main_player.processingState == ProcessingState.buffering;
-    if (loaded) {
+    // bool loaded = main_player.processingState == ProcessingState.ready ||
+    //     main_player.processingState == ProcessingState.completed ||
+    //     main_player.processingState == ProcessingState.buffering;
+    bool loaded2 = audioHandler.isLoaded;
+    if (loaded2) {
       return GestureDetector(
         onTap: () {
           Navigator.push(
@@ -55,9 +56,11 @@ class NowPlayingBarWidget extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  SurahMapper.getSurahNameByNumber(getCurrentTrack().surahNumber),
+                                  SurahMapper.getSurahNameByNumber(
+                                      getCurrentTrack().surahNumber),
                                   textAlign: TextAlign.center,
-                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 Text(
                                   snapshot.data ?? '',
@@ -73,7 +76,7 @@ class NowPlayingBarWidget extends StatelessWidget {
                           top: 0,
                           bottom: 0,
                           child: Opacity(
-                            opacity: main_player.playing ? 1.0 : 0.0,
+                            opacity: trackIsPlaying()  ? 1.0 : 0.0,
                             child: SoundWaveformWidget(),
                           ),
                         ),
@@ -93,7 +96,6 @@ class NowPlayingBarWidget extends StatelessWidget {
     }
   }
 }
-
 
 class SoundWaveformWidget extends StatefulWidget {
   final int count;

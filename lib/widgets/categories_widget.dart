@@ -99,9 +99,10 @@ class CategoryCard extends StatelessWidget {
         } else if (text == "Following") {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => PlaceholderContent()),
+            MaterialPageRoute(builder: (context) => const FollowingContent()),
             //PlaylistScreenContent(playlist: fake_playlist_data.following,)),
           );
+          
         }
       },
       child: SizedBox(
@@ -133,63 +134,7 @@ class CategoryCard extends StatelessWidget {
   }
 }
 
-class QariCardGrid extends StatelessWidget {
-  const QariCardGrid({Key? key, required this.category}) : super(key: key);
-
-  final String category;
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<List<QawlUser>>(
-      future: getFollowingUsers(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          // While data is loading
-          return Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          // If an error occurs
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else {
-          // Once data is loaded successfully
-          List<QawlUser>? users = snapshot.data;
-          if (users != null && users.isNotEmpty) {
-            return Stack(
-              children: [
-                Column(
-                  children: [
-                    SizedBox(
-                      height: 50,
-                    ),
-                    Expanded(
-                      child: GridView.count(
-                        crossAxisCount: 2, // Number of columns
-                        crossAxisSpacing: 10.0, // Spacing between columns
-                        mainAxisSpacing: 80.0, // Spacing between rows
-
-                        children: users.map((user) {
-                          print(users);
-                          return QariCard(
-                            user: user,
-                            width: 105,
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ],
-                ),
-                QawlBackButton()
-              ],
-            );
-          } else {
-            // If no users are available
-            return Center(child: Text('No users available'));
-          }
-        }
-      },
-    );
-  }
-
-  Future<List<QawlUser>> getFollowingUsers() async {
+Future<List<QawlUser>> getFollowingUsers() async {
     QawlUser? currentUser = await QawlUser.getCurrentQawlUser();
     List<QawlUser> followingUsers = [];
 
@@ -219,20 +164,44 @@ class QariCardGrid extends StatelessWidget {
 
     return followingUsers;
   }
-}
-
 class FollowingContent extends StatelessWidget {
+  const FollowingContent({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return Material(
-      child: Column(
-        children: [
-          QawlBackButton(),
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: QariCardGrid(category: "Following"),
-          ),
-        ],
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Following'),
+      ),
+      body: FutureBuilder<List<QawlUser>>(
+        future: getFollowingUsers(), // Your method to fetch following Qaris
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            final List<QawlUser>? users = snapshot.data;
+            if (users != null && users.isNotEmpty) {
+              return GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 10.0,
+                  mainAxisSpacing: 80.0,
+                ),
+                itemCount: users.length,
+                itemBuilder: (context, index) {
+                  return QariCard(
+                    user: users[index],
+                    width: MediaQuery.of(context).size.width / 2 - 20, // Adjust width
+                  );
+                },
+              );
+            } else {
+              return const Center(child: Text('No Qaris available'));
+            }
+          }
+        },
       ),
     );
   }

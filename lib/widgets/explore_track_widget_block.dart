@@ -8,6 +8,7 @@ import 'package:tuple/tuple.dart';
 import '../../../../size_config.dart';
 import '../model/playlist.dart';
 import '../model/track.dart';
+import '../model/playlist.dart';
 import '../screens/now_playing_content.dart';
 import 'section_title_widget.dart';
 
@@ -53,6 +54,7 @@ class ExploreTrackWidgetRow extends StatelessWidget {
 
                     // Use displayName and coverImagePath as needed
                     return TrackCard(
+                      playlist: playlist,
                       image: coverImagePath,
                       title:
                           SurahMapper.getSurahNameByNumber(track.surahNumber),
@@ -92,10 +94,13 @@ class TrackCard extends StatelessWidget {
     required this.title,
     required this.image,
     required this.author,
+    required this.playlist,
+
   }) : super(key: key);
 
   final String title, image, author;
   final Track track;
+  final QawlPlaylist playlist;
 
   @override
   Widget build(BuildContext context) {
@@ -103,8 +108,7 @@ class TrackCard extends StatelessWidget {
       padding: EdgeInsets.all(getProportionateScreenWidth(10)),
       child: GestureDetector(
         onTap: () {
-          playTrack(track);
-          track.increasePlays();
+          playTrackWithList(track, playlist);
           Navigator.push(
             context,
             MaterialPageRoute(

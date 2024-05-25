@@ -1,97 +1,110 @@
 import 'package:first_project/model/playlist.dart';
-import 'package:first_project/widgets/explore_track_widget_block.dart';
+import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:first_project/model/track.dart';
-import 'package:audio_session/audio_session.dart';
-
-//OBI: NOTE THIS CLASS NO LONGER FUNCTIONS AS A PROVIDER
-//all of the methods were moved outside of the class
-/*class MusicProvider /*extends ChangeNotifier */ {
-  //list that the audio player starts with, should be the song of the first take on take page
-
-  //global player
-  AudioPlayer player = AudioPlayer();
-
-  void init() async {
-    await openPlayer(music_list: current_list, initial_index: 0);
-    // notifyListeners();
-  }
-}*/
 
 import 'package:audio_service/audio_service.dart';
+import 'package:provider/provider.dart';
+import 'package:first_project/model/audio_handler.dart';
 
-AudioPlayer main_player = AudioPlayer();
+// AudioPlayer main_player = AudioPlayer();
+MyAudioHandler audioHandler = MyAudioHandler();
 List<Track> current_list = [];
 late Track currentTrack;
 bool isNext = true;
 bool autoplay = true;
 var currentPlaylist;
 
-void playTracks(List<Track> tracks) async {
-  updateCurrentPlaylist(tracks);
-  await main_player.setAudioSource(currentPlaylist);
-  main_player.play();
-}
+// void playTracks(List<Track> tracks) async {
+//   updateCurrentPlaylist(tracks);
+//   await main_player.setAudioSource(currentPlaylist);
+//   main_player.play();
+// }
 
-void updateCurrentPlaylist(List<Track> tracks) {
-  List<AudioSource> audioSources = tracks.map((track) {
-    return AudioSource.uri(
-      Uri.parse(track.audioPath),
-      tag: track.toMediaItem(),
-    );
-  }).toList();
-  currentPlaylist = ConcatenatingAudioSource(children: audioSources);
-}
+// void updateCurrentPlaylist(List<Track> tracks) {
+//   List<AudioSource> audioSources = tracks.map((track) {
+//     return AudioSource.uri(
+//       Uri.parse(track.audioPath),
+//       tag: track.toMediaItem(),
+//     );
+//   }).toList();
+//   currentPlaylist = ConcatenatingAudioSource(children: audioSources);
+// }
 
-void playTrack(Track playedTrack) async {
-  final session = await AudioSession.instance;
-  await session.configure(AudioSessionConfiguration.music());
+// void playTrack(Track playedTrack) async {
+//   currentTrack = playedTrack;
+//   await main_player.setUrl(playedTrack.audioPath);
+//   if (main_player.playing == true &&
+//       main_player.processingState == ProcessingState.ready) {
+//     main_player.pause();
+//   }
+//   main_player.play();
+// }
 
-  currentTrack = playedTrack;
-  print("Name is" + playedTrack.trackName);
-  // Create an AudioSource with metadata
-  AudioSource audioSource = AudioSource.uri(
-    Uri.parse(playedTrack.audioPath),
-    tag: MediaItem(
-      id: playedTrack.id, // Unique ID for each track
-      album: SurahMapper.getSurahNameByNumber(playedTrack.surahNumber),
-      title: "Track Title", //playedTrack.trackName,
-      artUri: Uri.parse(playedTrack.coverImagePath),
-    ),
-  );
+// bool trackIsPlaying() {
+//   return main_player.playing == true;
+// }
 
-  // Stop the player if it's currently playing
-  if (main_player.playing == true &&
-      main_player.processingState == ProcessingState.ready) {
-    await main_player.pause();
-  }
+// void pauseTrack() {
+//   main_player.pause();
+// }
 
-  // Load and play the new audio source
-  await main_player.setAudioSource(audioSource);
-  main_player.play();
-}
+// void unpauseTrack() {
+//   main_player.play();
+// }
 
-bool trackIsPlaying() {
-  return main_player.playing == true;
-}
+// void closePlayer() {
+//   main_player.dispose();
+//   AudioService.stop();
+// }
 
 Track getCurrentTrack() {
   return currentTrack;
 }
 
+void playTracks(List<Track> tracks) async {
+  await audioHandler.updatePlaylist(tracks);
+  audioHandler.play();
+}
+
+// Function to update the current playlist
+Future<void> updateCurrentPlaylist(List<Track> tracks) async {
+  await audioHandler.updatePlaylist(tracks);
+}
+
+// Function to play a specific track
+void playTrack(Track playedTrack) async {
+  currentTrack = playedTrack;
+  audioHandler.loadSingleTrack(playedTrack);
+  audioHandler.play();
+  playedTrack.increasePlays();
+}
+
+void playTrackWithList(
+    Track playedTrack, QawlPlaylist destinationPlaylist) async {
+  currentTrack = playedTrack;
+  playedTrack.increasePlays();
+  audioHandler.playTrackWithPlaylist(playedTrack, destinationPlaylist.list);
+}
+
+// Function to check if a track is playing
+bool trackIsPlaying() {
+  return audioHandler.playbackState.value.playing;
+}
+
+// Function to get the current track
+
+// Function to pause the current track
 void pauseTrack() {
-  main_player.pause();
+  audioHandler.pause();
 }
 
+// Function to unpause the current track
 void unpauseTrack() {
-  main_player.play();
+  audioHandler.play();
 }
 
+// Function to close the player
 void closePlayer() {
-  main_player.dispose();
-  AudioService.stop();
+  audioHandler.stop();
 }
-
-// I click on surah nas by musa -> surah nas by musa ends -> I need to find the previous tracks ->
-//I need to know what playlist surah nas by musa in ->
-// I need to find surah nas' location in this list -> I go to the track before it
