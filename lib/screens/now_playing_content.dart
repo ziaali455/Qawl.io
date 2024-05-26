@@ -19,8 +19,7 @@ class NowPlayingContent extends StatefulWidget {
       : super(key: key);
 
   @override
-  State<NowPlayingContent> createState() =>
-      _NowPlayingContentState();
+  State<NowPlayingContent> createState() => _NowPlayingContentState();
 }
 
 class PositionData {
@@ -33,7 +32,7 @@ class PositionData {
 class _NowPlayingContentState extends State<NowPlayingContent> {
   late Track myTrack;
   late AudioPlayer _audioPlayer;
-  
+
   @override
   void initState() {
     super.initState();
@@ -63,7 +62,7 @@ class _NowPlayingContentState extends State<NowPlayingContent> {
           const SizedBox(height: 20),
           const QawlBackButton(),
           const SizedBox(height: 20),
-          CoverContent(myTrack: myTrack),
+          CoverContent(),
           Padding(
             padding: const EdgeInsets.only(left: 10.0, right: 10.0),
             child: QawlProgressBar(
@@ -80,6 +79,7 @@ class _NowPlayingContentState extends State<NowPlayingContent> {
     );
   }
 }
+
 class Controls extends StatelessWidget {
   const Controls({
     super.key,
@@ -95,6 +95,7 @@ class Controls extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        //prev
         IconButton(
           splashColor: Colors.transparent,
           highlightColor: Colors.transparent,
@@ -107,13 +108,14 @@ class Controls extends StatelessWidget {
           color: Colors.white,
           icon: const Icon(Icons.skip_previous_rounded),
         ),
+        //play
         StreamBuilder<PlayerState>(
           stream: audioHandler.audioPlayer.playerStateStream,
           builder: (context, snapshot) {
             final playerState = snapshot.data;
             final processingState = playerState?.processingState;
             final playing = playerState?.playing ?? false;
-            
+
             if (!playing) {
               return IconButton(
                 splashColor: Colors.transparent,
@@ -142,6 +144,7 @@ class Controls extends StatelessWidget {
             );
           },
         ),
+        //next
         IconButton(
           splashColor: Colors.transparent,
           highlightColor: Colors.transparent,
@@ -159,6 +162,7 @@ class Controls extends StatelessWidget {
     );
   }
 }
+
 class QawlBackButton extends StatelessWidget {
   const QawlBackButton({
     super.key,
@@ -223,18 +227,25 @@ class QawlProgressBar extends StatelessWidget {
   }
 }
 
-class CoverContent extends StatelessWidget {
-  const CoverContent({
-    super.key,
-    required this.myTrack,
-  });
+class CoverContent extends StatefulWidget {
+  const CoverContent({Key? key}) : super(key: key);
 
-  final Track myTrack;
+  @override
+  _CoverContentState createState() => _CoverContentState();
+}
+
+class _CoverContentState extends State<CoverContent> {
+  @override
+  void initState() {
+    super.initState();
+    // myTrack = widget.myTrack;
+  }
 
   @override
   Widget build(BuildContext context) {
+    final Track? myTrack = getCurrentTrack();
     print(
-        "The image path displayed on nowplaying is " + myTrack.coverImagePath);
+        "The image path displayed on nowplaying is " + myTrack!.coverImagePath);
     return Column(
       children: [
         NeuBox(
@@ -245,7 +256,7 @@ class CoverContent extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
               child: AspectRatio(
                 aspectRatio: 1,
-                child: Image.network(myTrack.coverImagePath, fit: BoxFit.cover,
+                child: Image.network(myTrack!.coverImagePath, fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                   // Load default image when loading fails
                   return Image.network(
@@ -347,6 +358,131 @@ class CoverContent extends StatelessWidget {
     );
   }
 }
+
+class CoverContent2 extends StatelessWidget {
+  const CoverContent2({
+    Key? key,
+    required this.currentTrackStream,
+  }) : super(key: key);
+
+  final Stream<Track?> currentTrackStream;
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<Track?>(
+      stream: currentTrackStream,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // Return a loading indicator or placeholder widget
+          return CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          // Handle error case
+          return Text('Error: ${snapshot.error}');
+        } else {
+          // Data has been retrieved successfully
+          final Track? currentTrack = snapshot.data;
+          if (currentTrack == null) {
+            // Handle case where current track is null
+            return Text('No track playing');
+          } else {
+            // Return your CoverContent widget with the current track information
+            return Column(
+              children: [
+                NeuBox(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: AspectRatio(
+                            aspectRatio: 1,
+                            child: Image.network(
+                              currentTrack.coverImagePath,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Image.network(
+                                  'https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg',
+                                  fit: BoxFit.cover,
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FutureBuilder<String?>(
+                          future: currentTrack.getAuthor(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return CircularProgressIndicator();
+                            }
+
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                GestureDetector(
+                                  child: Text(
+                                    snapshot.data!,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                      color: Colors.grey.shade700,
+                                    ),
+                                  ),
+                                  onTap: () async {
+                                    String? author = snapshot.data;
+                                    if (author != null) {
+                                      QawlUser? user =
+                                          await QawlUser.getQawlUser(
+                                              currentTrack.userId);
+                                      if (user != null) {
+                                        Navigator.pop(context);
+
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                ProfileContent(
+                                              user: user,
+                                              isPersonal: false,
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    }
+                                  },
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  SurahMapper.getSurahNameByNumber(
+                                      currentTrack.surahNumber),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            );
+          }
+        }
+      },
+    );
+  }
+}
+
+
+
+
 
 
 // class Controls extends StatelessWidget {
