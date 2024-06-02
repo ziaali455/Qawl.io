@@ -32,6 +32,7 @@ class PositionData {
 class _NowPlayingContentState extends State<NowPlayingContent> {
   late Track myTrack;
   late AudioPlayer _audioPlayer;
+  
 
   @override
   void initState() {
@@ -62,7 +63,7 @@ class _NowPlayingContentState extends State<NowPlayingContent> {
           const SizedBox(height: 20),
           const QawlBackButton(),
           const SizedBox(height: 20),
-          CoverContent(),
+          CoverContent2(audioHandler: audioHandler,),
           Padding(
             padding: const EdgeInsets.only(left: 10.0, right: 10.0),
             child: QawlProgressBar(
@@ -76,6 +77,275 @@ class _NowPlayingContentState extends State<NowPlayingContent> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class CoverContent2 extends StatelessWidget {
+  const CoverContent2({
+    Key? key,
+    required this.audioHandler,
+  }) : super(key: key);
+
+  final MyAudioHandler audioHandler;
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<Track?>(
+      valueListenable: audioHandler.currentTrackNotifier,
+      builder: (context, myTrack, child) {
+        if (myTrack == null) {
+          return Text('No track playing');
+        } else {
+          return Column(
+            children: [
+              NeuBox(
+                child: Column(
+                  children: [
+                    // Track image
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: AspectRatio(
+                          aspectRatio: 1,
+                          child: Image.network(
+                            myTrack.coverImagePath,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              // Load default image when loading fails
+                              return Image.network(
+                                'https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg',
+                                fit: BoxFit.cover,
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Author name
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: FutureBuilder<String?>(
+                        future: myTrack.getAuthor(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return CircularProgressIndicator(); // Example loading indicator
+                          } else if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    GestureDetector(
+                                      child: Text(
+                                        snapshot.data ?? '', // Display author if available
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18,
+                                          color: Colors.grey.shade700,
+                                        ),
+                                      ),
+                                      onTap: () async {
+                                        String? author = snapshot.data;
+                                        if (author != null) {
+                                          QawlUser? user = await QawlUser.getQawlUser(myTrack.userId);
+                                          if (user != null) {
+                                            Navigator.pop(context);
+
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => ProfileContent(
+                                                  user: user,
+                                                  isPersonal: false,
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        }
+                                      },
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      SurahMapper.getSurahNameByNumber(myTrack.surahNumber),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                IconButton(
+                                  splashColor: Colors.transparent,
+                                  highlightColor: Colors.transparent,
+                                  hoverColor: Colors.transparent,
+                                  onPressed: () {
+                                    showMaterialModalBottomSheet(
+                                      context: context,
+                                      builder: (context) => SingleChildScrollView(
+                                        controller: ModalScrollController.of(context),
+                                        child: AddToLibraryWidget(
+                                          track: myTrack,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  iconSize: 35,
+                                  color: Colors.white,
+                                  icon: const Icon(Icons.library_add),
+                                ),
+                              ],
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        }
+      },
+    );
+  }
+}
+
+
+
+
+class CoverContent extends StatefulWidget {
+  const CoverContent({Key? key}) : super(key: key);
+
+  @override
+  _CoverContentState createState() => _CoverContentState();
+}
+
+class _CoverContentState extends State<CoverContent> {
+  @override
+  void initState() {
+    super.initState();
+    // myTrack = widget.myTrack;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Track? myTrack = getCurrentTrack();
+    print(
+        "The image path displayed on nowplaying is " + myTrack!.coverImagePath);
+    return Column(
+      children: [
+        NeuBox(
+            child: Column(children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: Image.network(myTrack!.coverImagePath, fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                  // Load default image when loading fails
+                  return Image.network(
+                    'https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg',
+                    fit: BoxFit.cover,
+                  );
+                }),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: FutureBuilder<String?>(
+              future: myTrack.getAuthor(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  // Return a loading indicator or placeholder widget
+                  return CircularProgressIndicator(); // Example loading indicator
+                } else if (snapshot.hasError) {
+                  // Handle error case
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  // Data has been retrieved successfully
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          GestureDetector(
+                            child: Text(
+                              snapshot.data ??
+                                  '', // Display author if available
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                color: Colors.grey.shade700,
+                              ),
+                            ),
+                            onTap: () async {
+                              String? author = snapshot.data;
+                              if (author != null) {
+                                QawlUser? user =
+                                    await QawlUser.getQawlUser(myTrack.userId);
+                                if (user != null) {
+                                  Navigator.pop(context);
+
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ProfileContent(
+                                        user: user,
+                                        isPersonal: false,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            SurahMapper.getSurahNameByNumber(
+                                myTrack.surahNumber),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
+                          ),
+                        ],
+                      ),
+                      IconButton(
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        hoverColor: Colors.transparent,
+                        onPressed: () {
+                          showMaterialModalBottomSheet(
+                            context: context,
+                            builder: (context) => SingleChildScrollView(
+                              controller: ModalScrollController.of(context),
+                              child: AddToLibraryWidget(
+                                track: myTrack,
+                              ),
+                            ),
+                          );
+                        },
+                        iconSize: 35,
+                        color: Colors.white,
+                        icon: const Icon(Icons.library_add),
+                      ),
+                    ],
+                  );
+                }
+              },
+            ),
+          )
+        ])),
+      ],
     );
   }
 }
@@ -226,262 +496,6 @@ class QawlProgressBar extends StatelessWidget {
     );
   }
 }
-
-class CoverContent extends StatefulWidget {
-  const CoverContent({Key? key}) : super(key: key);
-
-  @override
-  _CoverContentState createState() => _CoverContentState();
-}
-
-class _CoverContentState extends State<CoverContent> {
-  @override
-  void initState() {
-    super.initState();
-    // myTrack = widget.myTrack;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final Track? myTrack = getCurrentTrack();
-    print(
-        "The image path displayed on nowplaying is " + myTrack!.coverImagePath);
-    return Column(
-      children: [
-        NeuBox(
-            child: Column(children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: AspectRatio(
-                aspectRatio: 1,
-                child: Image.network(myTrack!.coverImagePath, fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                  // Load default image when loading fails
-                  return Image.network(
-                    'https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg',
-                    fit: BoxFit.cover,
-                  );
-                }),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: FutureBuilder<String?>(
-              future: myTrack.getAuthor(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  // Return a loading indicator or placeholder widget
-                  return CircularProgressIndicator(); // Example loading indicator
-                } else if (snapshot.hasError) {
-                  // Handle error case
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  // Data has been retrieved successfully
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          GestureDetector(
-                            child: Text(
-                              snapshot.data ??
-                                  '', // Display author if available
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                                color: Colors.grey.shade700,
-                              ),
-                            ),
-                            onTap: () async {
-                              String? author = snapshot.data;
-                              if (author != null) {
-                                QawlUser? user =
-                                    await QawlUser.getQawlUser(myTrack.userId);
-                                if (user != null) {
-                                  Navigator.pop(context);
-
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ProfileContent(
-                                        user: user,
-                                        isPersonal: false,
-                                      ),
-                                    ),
-                                  );
-                                }
-                              }
-                            },
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            SurahMapper.getSurahNameByNumber(
-                                myTrack.surahNumber),
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                            ),
-                          ),
-                        ],
-                      ),
-                      IconButton(
-                        splashColor: Colors.transparent,
-                        highlightColor: Colors.transparent,
-                        hoverColor: Colors.transparent,
-                        onPressed: () {
-                          showMaterialModalBottomSheet(
-                            context: context,
-                            builder: (context) => SingleChildScrollView(
-                              controller: ModalScrollController.of(context),
-                              child: AddToLibraryWidget(
-                                track: myTrack,
-                              ),
-                            ),
-                          );
-                        },
-                        iconSize: 35,
-                        color: Colors.white,
-                        icon: const Icon(Icons.library_add),
-                      ),
-                    ],
-                  );
-                }
-              },
-            ),
-          )
-        ])),
-      ],
-    );
-  }
-}
-
-class CoverContent2 extends StatelessWidget {
-  const CoverContent2({
-    Key? key,
-    required this.currentTrackStream,
-  }) : super(key: key);
-
-  final Stream<Track?> currentTrackStream;
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<Track?>(
-      stream: currentTrackStream,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          // Return a loading indicator or placeholder widget
-          return CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          // Handle error case
-          return Text('Error: ${snapshot.error}');
-        } else {
-          // Data has been retrieved successfully
-          final Track? currentTrack = snapshot.data;
-          if (currentTrack == null) {
-            // Handle case where current track is null
-            return Text('No track playing');
-          } else {
-            // Return your CoverContent widget with the current track information
-            return Column(
-              children: [
-                NeuBox(
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: AspectRatio(
-                            aspectRatio: 1,
-                            child: Image.network(
-                              currentTrack.coverImagePath,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Image.network(
-                                  'https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg',
-                                  fit: BoxFit.cover,
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: FutureBuilder<String?>(
-                          future: currentTrack.getAuthor(),
-                          builder: (context, snapshot) {
-                            if (!snapshot.hasData) {
-                              return CircularProgressIndicator();
-                            }
-
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                GestureDetector(
-                                  child: Text(
-                                    snapshot.data!,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
-                                      color: Colors.grey.shade700,
-                                    ),
-                                  ),
-                                  onTap: () async {
-                                    String? author = snapshot.data;
-                                    if (author != null) {
-                                      QawlUser? user =
-                                          await QawlUser.getQawlUser(
-                                              currentTrack.userId);
-                                      if (user != null) {
-                                        Navigator.pop(context);
-
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                ProfileContent(
-                                              user: user,
-                                              isPersonal: false,
-                                            ),
-                                          ),
-                                        );
-                                      }
-                                    }
-                                  },
-                                ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  SurahMapper.getSurahNameByNumber(
-                                      currentTrack.surahNumber),
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ],
-            );
-          }
-        }
-      },
-    );
-  }
-}
-
-
-
 
 
 

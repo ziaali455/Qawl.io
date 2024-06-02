@@ -58,6 +58,7 @@ class _PlaylistScreenContentState extends State<PlaylistScreenContent> {
                   child: TrackWidget(
                     track: track,
                     isPersonal: false,
+                    playlist: playlist,
                   ),
                 ),
               ),

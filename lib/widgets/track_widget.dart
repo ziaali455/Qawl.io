@@ -1,4 +1,5 @@
 import 'package:first_project/model/player.dart';
+import 'package:first_project/model/playlist.dart';
 import 'package:first_project/model/user.dart';
 import 'package:first_project/screens/now_playing_content.dart';
 import 'package:first_project/widgets/explore_track_widget_block.dart';
@@ -10,10 +11,12 @@ import 'package:first_project/model/track.dart';
 class TrackWidget extends StatelessWidget {
   final Track track;
   final bool isPersonal;
+  final QawlPlaylist playlist;
   const TrackWidget({
     Key? key,
     required this.track,
     required this.isPersonal,
+    required this.playlist,
   }) : super(key: key);
 
   @override
@@ -23,7 +26,7 @@ class TrackWidget extends StatelessWidget {
       padding: const EdgeInsets.only(left: 4.0, right: 4.0),
       child: InkWell(
         onTap: () {
-          playTrack(track);
+          playTrackWithList(track, playlist);
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -79,14 +82,20 @@ class TrackWidget extends StatelessWidget {
                                         "Are you sure you want to delete?"),
                                     actions: <Widget>[
                                       CupertinoDialogAction(
-                                        child: const Text("No", style: TextStyle(color: Colors.green),),
+                                        child: const Text(
+                                          "No",
+                                          style: TextStyle(color: Colors.green),
+                                        ),
                                         onPressed: () {
                                           Navigator.of(context)
                                               .pop(); // Close the dialog
                                         },
                                       ),
                                       CupertinoDialogAction(
-                                        child: const Text("Yes", style: TextStyle(color: Colors.white),),
+                                        child: const Text(
+                                          "Yes",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
                                         onPressed: () {
                                           // Handle delete action here
                                           // For example:

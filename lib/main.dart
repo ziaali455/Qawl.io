@@ -1,4 +1,5 @@
 import 'package:audio_service/audio_service.dart';
+import 'package:audio_session/audio_session.dart';
 import 'package:first_project/model/audio_handler.dart';
 import 'package:first_project/screens/auth_gate.dart';
 import 'package:first_project/screens/login_content.dart';
@@ -10,6 +11,8 @@ import 'firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 
 //sql-like queries that you can call in main()
 // void updateGendersToMale() async {
@@ -30,7 +33,6 @@ import 'package:provider/provider.dart';
 //   }
 // }
 
-
 // Future<void>main() async {
 
 //   WidgetsFlutterBinding.ensureInitialized();
@@ -47,7 +49,7 @@ import 'package:provider/provider.dart';
 //       androidNotificationOngoing: true,
 //     ),
 //   );
-  
+
 //   runApp(MyApp());
 // }
 
@@ -69,24 +71,23 @@ import 'package:provider/provider.dart';
 //       home: const AuthGate(),
 //     );
 //   }
-  
+
 // }
-
-
-
 
 //how to use audio handler elsewhere:
 //final audioHandler = Provider.of<AudioHandler>(context);
 
 import 'package:first_project/model/audio_handler.dart'; // Make sure to import your MyAudioHandler
+
 // import 'firebase_options.dart'; // Uncomment and use if you have this file
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    // name: 'qawl-io',
-    // options: DefaultFirebaseOptions.currentPlatform,
-  );
+      // name: 'qawl-io',
+      // options: DefaultFirebaseOptions.currentPlatform,
+      );
 
   final audioHandler = await AudioService.init(
     builder: () => MyAudioHandler(),
@@ -96,6 +97,7 @@ Future<void> main() async {
       androidNotificationOngoing: true,
     ),
   );
+
 
   runApp(
     MultiProvider(

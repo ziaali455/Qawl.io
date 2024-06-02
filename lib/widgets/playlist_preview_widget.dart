@@ -33,6 +33,7 @@ class PlaylistPreviewWidget extends StatelessWidget {
             .map((track) => TrackWidget(
                   track: track,
                   isPersonal: isPersonal,
+                  playlist: playlist,
                 ))
             .toList(),
       ],

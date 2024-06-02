@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:first_project/model/playlist.dart';
 import 'package:first_project/model/user.dart';
 import 'package:first_project/screens/track_info_content.dart';
+import 'package:first_project/widgets/explore_track_widget_block.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:path_provider/path_provider.dart';
@@ -282,12 +283,29 @@ class Track {
   //   return Track(author: fakeuserdata.user0.name, id: mediaItem.id, trackName: mediaItem.title, plays: 0, surah: surah, audioFile: trackURL, coverImagePath: coverImagePath)
   // }
   MediaItem toMediaItem() => MediaItem(
-          id: id,
-          title: trackName,
-          artist: userId,
-          artUri: Uri.parse(coverImagePath),
-          extras: <String, dynamic>{
-            'surah': surahNumber,
-            "plays": plays,
-          });
+        id: id,
+        title: SurahMapper.getSurahNameByNumber(surahNumber),
+        artist: userId,
+        artUri: Uri.parse(coverImagePath),
+        extras: <String, dynamic>{
+          'surah': surahNumber,
+          'plays': plays,
+          'audioPath': audioPath,
+          'inPlaylists': inPlaylists,
+        },
+      );
+
+  factory Track.fromMediaItem(MediaItem mediaItem) {
+    return Track(
+      userId: mediaItem.artist ?? '',
+      id: mediaItem.id,
+      inPlaylists: mediaItem.extras?['inPlaylists'] ?? {},
+      trackName: mediaItem.title,
+      plays: mediaItem.extras?['plays'] ?? 0,
+      surahNumber: mediaItem.extras?['surah'] ?? 0,
+      audioPath: mediaItem.extras?['audioPath'] ?? '',
+      coverImagePath: mediaItem.artUri?.toString() ??
+          "https://www.linkpicture.com/q/no_cover_1.jpg",
+    );
+  }
 }

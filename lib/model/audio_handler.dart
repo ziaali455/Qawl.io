@@ -2,13 +2,47 @@ import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:first_project/model/player.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:first_project/model/track.dart';
 
 class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   final AudioPlayer _audioPlayer = AudioPlayer();
   late ConcatenatingAudioSource _playlist;
-  
+  static const methodChannel = const MethodChannel('com.testing.qawl/audio_session');
+  Track? _currentTrack;
+
+  PlaybackState _transformEvent(PlaybackEvent event) {
+    return PlaybackState(
+      controls: [
+        if (_audioPlayer.playing) MediaControl.pause else MediaControl.play,
+      ],
+      androidCompactActionIndices: [MediaAction.play.index, MediaAction.pause.index],
+      processingState: const {
+        ProcessingState.idle: AudioProcessingState.idle,
+        ProcessingState.loading: AudioProcessingState.loading,
+        ProcessingState.buffering: AudioProcessingState.buffering,
+        ProcessingState.ready: AudioProcessingState.ready,
+        ProcessingState.completed: AudioProcessingState.completed,
+      }[_audioPlayer.processingState]!,
+      playing: _audioPlayer.playing,
+    );
+}
+  // ValueNotifier to notify listeners about current track changes
+  ValueNotifier<Track?> currentTrackNotifier = ValueNotifier<Track?>(null);
+
+  void _updateNowPlayingInfo(Track track) {
+    final mediaItem = track.toMediaItem();
+    // methodChannel.invokeMethod('updateNowPlayingInfo', {
+    //   'id': mediaItem.id,
+    //   'title': mediaItem.title,
+    //   'artist': mediaItem.artist,
+    //   'artUri': mediaItem.artUri.toString(),
+    //   'duration': mediaItem.duration?.inSeconds,
+    //   'position': _audioPlayer.position.inSeconds,
+    // });
+  }
 
   MyAudioHandler() {
     _init();
@@ -17,7 +51,26 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   AudioPlayer get audioPlayer => _audioPlayer;
 
   void _init() {
-    // Listen to audio player state and update audio service state accordingly.
+    _audioPlayer.currentIndexStream.listen((index) {
+      if (index != null && _playlist.children.isNotEmpty) {
+        final mediaItem =
+            (_playlist.children[index] as UriAudioSource).tag as MediaItem;
+        final track = Track.fromMediaItem(mediaItem);
+        _currentTrack = track;
+        currentTrackNotifier.value = track; // Notify listeners
+        _updateNowPlayingInfo(track);
+      } else {
+        _currentTrack = null;
+        currentTrackNotifier.value = null; // Notify listeners
+      }
+    });
+
+    _audioPlayer.processingStateStream.listen((state) {
+      if (state == ProcessingState.completed) {
+        stop();
+      }
+    });
+
     _audioPlayer.playbackEventStream.listen((event) {
       playbackState.add(playbackState.value.copyWith(
         controls: [
@@ -45,47 +98,11 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         queueIndex: _audioPlayer.currentIndex,
       ));
     });
-
-    // Listen for changes in the current track.
-    _audioPlayer.currentIndexStream.listen((index) {
-      if (index != null && _playlist.children.isNotEmpty) {
-        mediaItem.add(
-            (_playlist.children[index] as UriAudioSource).tag as MediaItem);
-      }
-    });
-
-    _audioPlayer.currentIndexStream.listen((index) {
-      if (index != null && _playlist.children.isNotEmpty) {
-        final track =
-            (_playlist.children[index] as UriAudioSource).tag as Track;
-        mediaItem.add(track.toMediaItem());
-        _currentTrackController.add(track);
-      }
-    });
-    // Handle when the player completes playback.
-    _audioPlayer.processingStateStream.listen((state) {
-      if (state == ProcessingState.completed) {
-        stop();
-      }
-    });
-  }
-
-  final _currentTrackController = StreamController<Track?>.broadcast();
-  Stream<Track?> get currentTrackStream => _currentTrackController.stream;
-
-  // Update the current track whenever the currentIndex changes
-  void _updateCurrentTrack() {
-    if (_audioPlayer.currentIndex != null && _playlist.children.isNotEmpty) {
-      final currentTrack = _playlist.children[_audioPlayer.currentIndex!] as UriAudioSource;
-      _currentTrackController.add(currentTrack.tag as Track?);
-    } else {
-      _currentTrackController.add(null);
-    }
   }
 
   @override
   void dispose() {
-    _currentTrackController.close();
+    currentTrackNotifier.dispose();
   }
 
   Future<void> updatePlaylist(List<Track> tracks) async {
@@ -94,10 +111,16 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       return AudioSource.uri(
         Uri.parse(track.audioPath),
         tag: MediaItem(
-          id: track.audioPath,
+          id: track.id,
           title: track.trackName,
           artist: track.userId ?? '', // Replace with actual artist name
           artUri: Uri.parse(track.coverImagePath),
+          extras: <String, dynamic>{
+            'surah': track.surahNumber,
+            'plays': track.plays,
+            'audioPath': track.audioPath,
+            'inPlaylists': track.inPlaylists,
+          },
         ),
       );
     }).toList();
@@ -108,27 +131,44 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   Future<void> loadSingleTrack(Track track) async {
     final mediaItem = MediaItem(
-      id: track.audioPath,
+      id: track.id,
       title: track.trackName,
       artist: track.userId ?? '',
       artUri: Uri.parse(track.coverImagePath),
+      extras: <String, dynamic>{
+        'surah': track.surahNumber,
+        'plays': track.plays,
+        'audioPath': track.audioPath,
+        'inPlaylists': track.inPlaylists,
+      },
     );
 
     final audioSource = AudioSource.uri(
       Uri.parse(track.audioPath),
       tag: mediaItem,
     );
-
+    _currentTrack = track;
     await _audioPlayer.setAudioSource(audioSource);
     this.mediaItem.add(mediaItem);
     this.queue.add([mediaItem]);
+    _updateNowPlayingInfo(track);
   }
 
   @override
-  Future<void> play() => _audioPlayer.play();
+  Future<void> play() async {
+    await _audioPlayer.play();
+    if (_currentTrack != null) {
+      _updateNowPlayingInfo(_currentTrack!);
+    }
+  }
 
   @override
-  Future<void> pause() => _audioPlayer.pause();
+  Future<void> pause() async {
+    await _audioPlayer.pause();
+    if (_currentTrack != null) {
+      _updateNowPlayingInfo(_currentTrack!);
+    }
+  }
 
   @override
   Future<void> stop() async {
@@ -170,6 +210,7 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   Future<void> setSpeed(double speed) => _audioPlayer.setSpeed(speed);
 
   bool get isLoaded => _audioPlayer.processingState == ProcessingState.ready;
+
   Future<void> playTrackWithPlaylist(
       Track selectedTrack, List<Track> playlist) async {
     // Find index of selected track in the playlist
@@ -184,10 +225,16 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       return AudioSource.uri(
         Uri.parse(track.audioPath),
         tag: MediaItem(
-          id: track.audioPath,
+          id: track.id,
           title: track.trackName,
           artist: track.userId ?? '',
           artUri: Uri.parse(track.coverImagePath),
+          extras: <String, dynamic>{
+            'surah': track.surahNumber,
+            'plays': track.plays,
+            'audioPath': track.audioPath,
+            'inPlaylists': track.inPlaylists,
+          },
         ),
       );
     }).toList();
@@ -219,5 +266,4 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     }
     return null;
   }
-
 }
