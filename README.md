@@ -1,6 +1,6 @@
-# first_project
+# Qawl
 
-A new Flutter project.
+A Quran app for everyone.
 
 ## Getting Started
 
