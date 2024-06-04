@@ -86,7 +86,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
       // name: 'qawl-io',
-      // options: DefaultFirebaseOptions.currentPlatform,
+      options: DefaultFirebaseOptions.currentPlatform,
       );
 
   final audioHandler = await AudioService.init(
