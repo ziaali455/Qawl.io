@@ -3,6 +3,7 @@ import 'package:audio_session/audio_session.dart';
 import 'package:first_project/model/audio_handler.dart';
 import 'package:first_project/screens/auth_gate.dart';
 import 'package:first_project/screens/login_content.dart';
+import 'package:first_project/screens/own_login_screen.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'screens/homepage.dart';
@@ -122,7 +123,8 @@ class MyApp extends StatelessWidget {
         scheme: FlexScheme.hippieBlue,
         darkIsTrueBlack: true,
       ),
-      home: const AuthGate(),
+      home: LoginPage(), // *NEW*
+      // home: const AuthGate(), *OLD*
     );
   }
 }
