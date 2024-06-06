@@ -1,18 +1,21 @@
 import 'package:first_project/screens/own_login_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:first_project/own_auth_service.dart';
+import 'package:first_project/screens/auth_gate.dart';
+
 
 class RegistrationPage extends StatelessWidget {
   RegistrationPage({super.key});
 
   // Text editing controllers
-  final nameController = TextEditingController();
+  // final nameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
   // Method to handle user registration
   void registerUser() {
     // Implement registration logic
-    print('User registered with name: ${nameController.text}, email: ${emailController.text}');
+    print('User registered with name: email: ${emailController.text}');
   }
 
   @override
@@ -44,13 +47,13 @@ class RegistrationPage extends StatelessWidget {
                 const SizedBox(height: 25),
 
                 // Name textfield
-                TextFormField(
-                  controller: nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Name',
-                    hintText: 'Enter your name',
-                  ),
-                ),
+                // TextFormField(
+                //   controller: nameController,
+                //   decoration: const InputDecoration(
+                //     labelText: 'Name',
+                //     hintText: 'Enter your name',
+                //   ),
+                // ),
 
                 const SizedBox(height: 10),
 
@@ -59,7 +62,7 @@ class RegistrationPage extends StatelessWidget {
                   controller: emailController,
                   decoration: const InputDecoration(
                     labelText: 'Email',
-                    hintText: 'Enter your email',
+                    hintText: 'Email',
                   ),
                 ),
 
@@ -71,17 +74,39 @@ class RegistrationPage extends StatelessWidget {
                   obscureText: true,
                   decoration: const InputDecoration(
                     labelText: 'Password',
-                    hintText: 'Enter your password',
+                    hintText: 'Password',
+                  ),
+                ),
+                TextFormField(
+                  controller: passwordController,
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Confirm Password',
+                    hintText: 'Confirm Password',
                   ),
                 ),
 
                 const SizedBox(height: 25),
 
                 // Register button
-                ElevatedButton(
-                  onPressed: registerUser,
-                  child: const Text('Register'),
-                ),
+                   ElevatedButton(
+              onPressed: () async {
+                final message = await AuthService().registration(
+                  email: emailController.text,
+                  password: passwordController.text,
+                );
+                if (message!.contains('Success')) {
+                  Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (context) => const BeforeHomePage()));
+                }
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(message),
+                  ),
+                );
+              },
+              child: const Text('Create Account'),
+            ),
 
                 const SizedBox(height: 50),
 
@@ -103,7 +128,7 @@ class RegistrationPage extends StatelessWidget {
                         );
                       },
                       child: const Text(
-                        'Login now',
+                        'Login in',
                         style: TextStyle(
                           color: Colors.blue,
                           fontWeight: FontWeight.bold,

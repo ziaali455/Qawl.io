@@ -1,5 +1,7 @@
+import 'package:first_project/screens/homepage.dart';
 import 'package:first_project/screens/own_registration_.dart';
 import 'package:flutter/material.dart';
+import 'package:first_project/own_auth_service.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
@@ -42,7 +44,7 @@ class LoginPage extends StatelessWidget {
                 controller: emailController,
                 obscureText: false,
                 decoration: InputDecoration(
-                //labelText: 'Email',
+                labelText: 'Email',
                 hintText: 'Email',
               ),
 
@@ -79,11 +81,30 @@ class LoginPage extends StatelessWidget {
               const SizedBox(height: 25),
 
               // sign in button
-              ElevatedButton(
-                onPressed: signUserIn, child: const Text(
-                  'Sign in',
-                ),
-              ),
+             ElevatedButton(
+              onPressed: () async {
+                final message = await AuthService().login(
+                  email: emailController.text,
+                  password: passwordController.text,
+                );
+                if (message!.contains('Success')) {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) => const HomePage(),
+                    ),
+                  );
+                } else {
+
+                
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Incorrect email or password provided'),
+                  ),
+                );
+               }
+              },
+              child: const Text('Login'),
+            ),
 
               const SizedBox(height: 50),
 

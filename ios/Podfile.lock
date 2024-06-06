@@ -1018,11 +1018,11 @@ PODS:
   - Firebase/Storage (10.22.0):
     - Firebase/CoreOnly
     - FirebaseStorage (~> 10.22.0)
-  - firebase_auth (4.16.0):
+  - firebase_auth (4.20.0):
     - Firebase/Auth (= 10.22.0)
     - firebase_core
     - Flutter
-  - firebase_core (2.24.2):
+  - firebase_core (2.32.0):
     - Firebase/CoreOnly (= 10.22.0)
     - Flutter
   - firebase_dynamic_links (5.4.8):
@@ -1368,8 +1368,8 @@ SPEC CHECKSUMS:
   DKPhotoGallery: b3834fecb755ee09a593d7c9e389d8b5d6deed60
   file_picker: 15fd9539e4eb735dc54bae8c0534a7a9511a03de
   Firebase: 797fd7297b7e1be954432743a0b3f90038e45a71
-  firebase_auth: 004b1a7d91f8f9f4aaa51ba4a32daea7599a2c53
-  firebase_core: f9d453e8f9e23d81d30a1887586ff4ad3d690de0
+  firebase_auth: 856913d71e83ff18f4b1595a0ecff6d6a0d18be9
+  firebase_core: 8501b87f46892251f54966b06c7a26e512ddfc2e
   firebase_dynamic_links: c29d67f81651efaf5bb17113c1e4358ab872ebf5
   firebase_storage: 789ada6101eff116776da88f0cdb4519376e134d
   FirebaseAnalytics: 8d0ff929c63b7f72260f332b86ccf569776b75d3
