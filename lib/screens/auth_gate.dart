@@ -103,7 +103,7 @@ class _UserSetupPageState extends State<UserSetupPage> {
   @override
   void initState() {
     super.initState();
-    _selectedGender = ""; // Ensure gender is not selected on startup
+    _selectedGender = 'm'; // Ensure gender is not selected on startup
     _nameController = TextEditingController(); // Initialize the controller for the name TextField
   }
 
@@ -135,13 +135,18 @@ class _UserSetupPageState extends State<UserSetupPage> {
     });
   }
 
-  void _checkButtonVisibility() {
+void _checkButtonVisibility() {
+    bool previousState = _isButtonTapped;
     setState(() {
       _isButtonTapped = _selectedCountry != null &&
           _selectedGender.isNotEmpty &&
-          _nameController.text.isNotEmpty; // Check if name is not empty
+          _nameController.text.isNotEmpty;
     });
-  }
+    if (_isButtonTapped != previousState) {
+        print("Button visibility changed: $_isButtonTapped");
+    }
+}
+
 
   bool _isButtonTapped = false;
 
@@ -205,7 +210,7 @@ class _UserSetupPageState extends State<UserSetupPage> {
                         selectedColor: Colors.green,
                         choices: {'m': '👨🏾‍🦱', 'f': '🧕🏽'},
                         onChange: onGenderSelected,
-                        initialKeyValue: 'm',
+                        initialKeyValue: _selectedGender,
                       ),
                     ],
                   ),

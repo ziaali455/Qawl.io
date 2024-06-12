@@ -1,22 +1,73 @@
+// import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:first_project/model/user.dart';
+import 'package:first_project/screens/auth_gate.dart';
 import 'package:first_project/screens/own_login_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:first_project/own_auth_service.dart';
-import 'package:first_project/screens/auth_gate.dart';
-
+import 'package:firebase_auth/firebase_auth.dart' as fba;
 
 class RegistrationPage extends StatelessWidget {
   RegistrationPage({super.key});
 
-  // Text editing controllers
-  // final nameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
 
-  // Method to handle user registration
-  void registerUser() {
-    // Implement registration logic
-    print('User registered with name: email: ${emailController.text}');
+   void registerUser(BuildContext context) async {
+  if (passwordController.text != confirmPasswordController.text) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Passwords do not match")),
+    );
+    return; // Exit if passwords do not match
   }
+
+  try {
+    UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      email: emailController.text,
+      password: passwordController.text,
+    );
+    await QawlUser.createQawlUser(userCredential.user); // Ensure this is awaited if asynchronous
+
+    debugPrint("User created with UID: ${userCredential.user?.uid}");
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => UserSetupPage()),
+    );
+  } catch (error) {
+    debugPrint("Registration failed: $error");
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Registration failed: $error")),
+    );
+  }
+}
+
+
+
+//   void registerUser(BuildContext context) async {
+//   if (passwordController.text == confirmPasswordController.text) {
+//     try {
+//       UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+//         email: emailController.text,
+//         password: passwordController.text,
+//       );
+
+//       await QawlUser.createQawlUser(userCredential.user!); // Ensure this is awaited if asynchronous
+//       debugPrint("User created with UID: ${userCredential.user!.uid}");
+
+//       Navigator.of(context).pushReplacement(
+//         MaterialPageRoute(builder: (context) => const BeforeHomePage()),
+//       );
+//     } catch (error) {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         SnackBar(content: Text("Registration failed: $error")),
+//       );
+//     }
+//   } else {
+//     ScaffoldMessenger.of(context).showSnackBar(
+//       SnackBar(content: Text("Passwords do not match")),
+//     );
+//   }
+// }
+
 
   @override
   Widget build(BuildContext context) {
@@ -29,88 +80,34 @@ class RegistrationPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const SizedBox(height: 50),
-                // You can add logo here or other icons
-                const Icon(
-                  Icons.person_add,
-                  size: 100,
-                ),
-
+                const Icon(Icons.person_add, size: 100),
                 const SizedBox(height: 50),
                 Text(
                   'Register on Qawl!',
-                  style: TextStyle(
-                    color: Colors.grey[700],
-                    fontSize: 16,
-                  ),
+                  style: TextStyle(color: Colors.grey[700], fontSize: 16),
                 ),
-
                 const SizedBox(height: 25),
-
-                // Name textfield
-                // TextFormField(
-                //   controller: nameController,
-                //   decoration: const InputDecoration(
-                //     labelText: 'Name',
-                //     hintText: 'Enter your name',
-                //   ),
-                // ),
-
-                const SizedBox(height: 10),
-
-                // Email textfield
                 TextFormField(
                   controller: emailController,
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
-                    hintText: 'Email',
-                  ),
+                  decoration: const InputDecoration(labelText: 'Email', hintText: 'Email'),
                 ),
-
                 const SizedBox(height: 10),
-
-                // Password textfield
                 TextFormField(
                   controller: passwordController,
                   obscureText: true,
-                  decoration: const InputDecoration(
-                    labelText: 'Password',
-                    hintText: 'Password',
-                  ),
+                  decoration: const InputDecoration(labelText: 'Password', hintText: 'Password'),
                 ),
                 TextFormField(
-                  controller: passwordController,
+                  controller: confirmPasswordController,
                   obscureText: true,
-                  decoration: const InputDecoration(
-                    labelText: 'Confirm Password',
-                    hintText: 'Confirm Password',
-                  ),
+                  decoration: const InputDecoration(labelText: 'Confirm Password', hintText: 'Confirm Password'),
                 ),
-
                 const SizedBox(height: 25),
-
-                // Register button
-                   ElevatedButton(
-              onPressed: () async {
-                final message = await AuthService().registration(
-                  email: emailController.text,
-                  password: passwordController.text,
-                );
-                if (message!.contains('Success')) {
-                  Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => const BeforeHomePage()));
-                }
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(message),
-                  ),
-                );
-              },
-              child: const Text('Create Account'),
-            ),
-
+                ElevatedButton(
+                  onPressed: () => registerUser(context),
+                  child: const Text('Create Account'),
+                ),
                 const SizedBox(height: 50),
-
-                // Link to login page
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -119,36 +116,21 @@ class RegistrationPage extends StatelessWidget {
                       style: TextStyle(color: Colors.grey[700]),
                     ),
                     const SizedBox(width: 4),
-                     InkWell(
+                    InkWell(
                       onTap: () {
-                        // Navigate to the registration page
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => LoginPage()),
                         );
                       },
                       child: const Text(
-                        'Login in',
+                        'Log in',
                         style: TextStyle(
                           color: Colors.blue,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),// InkWell(
-                    //   Navigator.push (
-                    //     context,
-                    //     MaterialPageRoute(builder: (context) => LoginPage()),
-                    //   ) {
-                    //     // Navigate to login page
-                    //   },
-                    //   child: const Text(
-                    //     'Login now',
-                    //     style: TextStyle(
-                    //       color: Colors.blue,
-                    //       fontWeight: FontWeight.bold,
-                    //     ),
-                    //   ),
-                    // ),
+                    ),
                   ],
                 )
               ],

@@ -124,7 +124,7 @@ class MyApp extends StatelessWidget {
         darkIsTrueBlack: true,
       ),
       home: LoginPage(), // *NEW*
-      // home: const AuthGate(), *OLD*
+      //home: const AuthGate(), //*OLD*
     );
   }
 }

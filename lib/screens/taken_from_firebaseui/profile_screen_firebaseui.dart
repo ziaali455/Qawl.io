@@ -9,6 +9,7 @@ import 'package:firebase_ui_oauth/firebase_ui_oauth.dart'
     hide OAuthProviderButtonBase;
 import 'package:firebase_ui_shared/firebase_ui_shared.dart';
 import 'package:first_project/screens/now_playing_content.dart';
+import 'package:first_project/screens/own_login_screen.dart';
 import 'package:first_project/screens/taken_from_firebaseui/multi_provider_screen_firebaseui.dart';
 import 'package:flutter/cupertino.dart' hide Title;
 import 'package:flutter/material.dart' hide Title;
@@ -970,11 +971,27 @@ class MyProfileScreen extends MultiProviderScreen {
         ),
 
         const SizedBox(height: 16),
-
-        SignOutButton(
-          auth: auth,
-          variant: ButtonVariant.outlined,
+        ElevatedButton(
+          onPressed: () async {
+            // Sign out the user 
+            await auth?.signOut();
+            print("clicked sign out");
+            // Navigate back to the sign-in page (a little weird gpt fix?)
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => LoginPage()),
+              (Route<dynamic> route) => false,
+            );
+          },
+          child: Text('Sign Out'),
+            style: ElevatedButton.styleFrom(
+      backgroundColor: Colors.red, // Text color
+      ),
+  
         ),
+        // SignOutButton(
+        //   auth: auth,
+        //   variant: ButtonVariant.outlined,
+        // ),
         const SizedBox(height: 8),
         DeleteAccountButton(
           auth: auth,
