@@ -1,10 +1,7 @@
 import 'package:first_project/model/playlist.dart';
-import 'package:flutter/material.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:first_project/model/track.dart';
 
-import 'package:audio_service/audio_service.dart';
-import 'package:provider/provider.dart';
+
 import 'package:first_project/model/audio_handler.dart';
 
 // AudioPlayer main_player = AudioPlayer();
@@ -72,13 +69,13 @@ Future<void> updateCurrentPlaylist(List<Track> tracks) async {
   await audioHandler.updatePlaylist(tracks);
 }
 
-// Function to play a specific track
-void playTrack(Track playedTrack) async {
-  currentTrack = playedTrack;
-  audioHandler.loadSingleTrack(playedTrack);
-  audioHandler.play();
-  playedTrack.increasePlays();
-}
+// // Function to play a specific track
+// void playTrack(Track playedTrack) async {
+//   currentTrack = playedTrack;
+//   audioHandler.loadSingleTrack(playedTrack);
+//   audioHandler.play();
+//   playedTrack.increasePlays();
+// }
 
 void playTrackWithList(
     Track playedTrack, QawlPlaylist destinationPlaylist) async {

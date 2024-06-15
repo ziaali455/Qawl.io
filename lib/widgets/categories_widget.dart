@@ -6,6 +6,7 @@ import 'package:first_project/screens/country_explore_content.dart';
 import 'package:first_project/screens/explore_content.dart';
 import 'package:first_project/screens/now_playing_content.dart';
 import 'package:first_project/screens/playlist_screen_content.dart';
+import 'package:first_project/screens/profile_content.dart';
 import 'package:first_project/widgets/qari_card_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -102,7 +103,6 @@ class CategoryCard extends StatelessWidget {
             MaterialPageRoute(builder: (context) => const FollowingContent()),
             //PlaylistScreenContent(playlist: fake_playlist_data.following,)),
           );
-          
         }
       },
       child: SizedBox(
@@ -135,35 +135,36 @@ class CategoryCard extends StatelessWidget {
 }
 
 Future<List<QawlUser>> getFollowingUsers() async {
-    QawlUser? currentUser = await QawlUser.getCurrentQawlUser();
-    List<QawlUser> followingUsers = [];
+  QawlUser? currentUser = await QawlUser.getCurrentQawlUser();
+  List<QawlUser> followingUsers = [];
 
-    if (currentUser != null) {
-      List<String> followingUserIds = currentUser.following.toList();
+  if (currentUser != null) {
+    List<String> followingUserIds = currentUser.following.toList();
 
-      // Iterate over each userId in the following list
-      for (String userId in followingUserIds) {
-        // Skip adding the currentUser's id to the list of following users
-        if (userId == currentUser.id) {
-          continue;
-        }
+    // Iterate over each userId in the following list
+    for (String userId in followingUserIds) {
+      // Skip adding the currentUser's id to the list of following users
+      if (userId == currentUser.id) {
+        continue;
+      }
 
-        // Query Firestore to get the QawlUser with the current userId
-        DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
-            .collection('QawlUsers')
-            .doc(userId)
-            .get();
+      // Query Firestore to get the QawlUser with the current userId
+      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+          .collection('QawlUsers')
+          .doc(userId)
+          .get();
 
-        // If the document exists, convert it to a QawlUser object and add it to the list
-        if (userSnapshot.exists) {
-          QawlUser user = QawlUser.fromFirestore(userSnapshot);
-          followingUsers.add(user);
-        }
+      // If the document exists, convert it to a QawlUser object and add it to the list
+      if (userSnapshot.exists) {
+        QawlUser user = QawlUser.fromFirestore(userSnapshot);
+        followingUsers.add(user);
       }
     }
-
-    return followingUsers;
   }
+
+  return followingUsers;
+}
+
 class FollowingContent extends StatelessWidget {
   const FollowingContent({Key? key}) : super(key: key);
 
@@ -185,15 +186,16 @@ class FollowingContent extends StatelessWidget {
             if (users != null && users.isNotEmpty) {
               return GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10.0,
-                  mainAxisSpacing: 80.0,
+                  crossAxisCount: 2, // Adjust the number of items per row
+                  crossAxisSpacing: 20.0, // Adjust spacing as needed
+                  mainAxisSpacing: 20.0, // Adjust spacing as needed
+                  childAspectRatio: 0.75, // Adjust aspect ratio as needed
                 ),
                 itemCount: users.length,
                 itemBuilder: (context, index) {
-                  return QariCard(
+                  return QariColumnCard(
                     user: users[index],
-                    width: MediaQuery.of(context).size.width / 2 - 20, // Adjust width
+                    width: MediaQuery.of(context).size.width / 2 - 40, // Adjust width
                   );
                 },
               );
@@ -206,6 +208,90 @@ class FollowingContent extends StatelessWidget {
     );
   }
 }
+class QariColumnCard extends StatelessWidget {
+  const QariColumnCard({
+    super.key,
+    required this.width,
+    required this.user,
+  });
+
+  final double width;
+  final QawlUser user;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(getProportionateScreenWidth(10)),
+      child: SizedBox(
+        width: getProportionateScreenWidth(width),
+        child: GestureDetector(
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProfileContent(
+                user: user,
+                isPersonal: false,
+              ),
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AspectRatio(
+                aspectRatio: .75,
+                child: Container(
+                  padding: EdgeInsets.all(getProportionateScreenWidth(20)),
+                  decoration: BoxDecoration(
+                    color: kSecondaryColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Hero(
+                        tag: "user pfp",
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(15),
+                          child: AspectRatio(
+                            aspectRatio: 1,
+                            child: Image.network(
+                              user.imagePath,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                // Load default image when loading fails
+                                return Image.network(
+                                  'https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg',
+                                  fit: BoxFit.cover,
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Flexible(
+                        child: Text(
+                          user.name,
+                          style: TextStyle(
+                            fontSize: getProportionateScreenWidth(15),
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                          maxLines: 2,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 
 class PlaceholderContent extends StatelessWidget {
   @override
@@ -247,3 +333,4 @@ class PlaceholderContent extends StatelessWidget {
     );
   }
 }
+

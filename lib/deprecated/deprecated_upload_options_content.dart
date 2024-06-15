@@ -1,25 +1,11 @@
-import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:first_project/model/player.dart';
-import 'package:first_project/model/sound_recorder.dart';
+
 import 'package:first_project/screens/now_playing_content.dart';
 import 'package:first_project/screens/record_audio_content.dart';
 import 'package:first_project/screens/track_info_content.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_sound_lite/public/flutter_sound_recorder.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:record/record.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:path_provider/path_provider.dart';
+
 import 'package:file_picker/file_picker.dart';
-import 'dart:typed_data';
-import 'package:just_audio/just_audio.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_audio_waveforms/flutter_audio_waveforms.dart';
-import 'package:audio_waveforms/audio_waveforms.dart';
-import 'package:first_project/model/track.dart';
-import 'package:first_project/screens/record_audio_content.dart';
+
 
 var qawl_green_gradient = const BoxDecoration(
   gradient: LinearGradient(

@@ -1,18 +1,16 @@
 import 'package:audio_service/audio_service.dart';
-import 'package:audio_session/audio_session.dart';
+
 import 'package:first_project/model/audio_handler.dart';
 import 'package:first_project/screens/auth_gate.dart';
-import 'package:first_project/screens/login_content.dart';
+
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
-import 'screens/homepage.dart';
+
 import 'package:firebase_core/firebase_core.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'firebase_options.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:provider/provider.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 
 //sql-like queries that you can call in main()
 // void updateGendersToMale() async {
@@ -84,6 +82,15 @@ import 'package:first_project/model/audio_handler.dart'; // Make sure to import 
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  Future<void> main() async {
+  await JustAudioBackground.init(
+    androidNotificationChannelId: 'com.testing.qawl/audio_session',
+    androidNotificationChannelName: 'Audio playback',
+    androidNotificationOngoing: true,
+  );
+  runApp(MyApp());
+}
   await Firebase.initializeApp(
       // name: 'qawl-io',
       options: DefaultFirebaseOptions.currentPlatform,
@@ -95,6 +102,7 @@ Future<void> main() async {
       androidNotificationChannelId: 'com.example.app.channel.audio',
       androidNotificationChannelName: 'Audio Playback',
       androidNotificationOngoing: true,
+      androidStopForegroundOnPause: true,
     ),
   );
 

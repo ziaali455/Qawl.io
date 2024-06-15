@@ -10,15 +10,22 @@ import 'package:first_project/model/track.dart';
 class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   final AudioPlayer _audioPlayer = AudioPlayer();
   late ConcatenatingAudioSource _playlist;
-  static const methodChannel = const MethodChannel('com.testing.qawl/audio_session');
+  static const methodChannel =
+      const MethodChannel('com.testing.qawl/audio_session');
   Track? _currentTrack;
 
   PlaybackState _transformEvent(PlaybackEvent event) {
     return PlaybackState(
       controls: [
+        MediaControl.skipToPrevious,
         if (_audioPlayer.playing) MediaControl.pause else MediaControl.play,
+        MediaControl.stop,
+        MediaControl.skipToNext,
       ],
-      androidCompactActionIndices: [MediaAction.play.index, MediaAction.pause.index],
+      systemActions: const {
+        MediaAction.seek,
+      },
+      androidCompactActionIndices: [0, 1, 2],
       processingState: const {
         ProcessingState.idle: AudioProcessingState.idle,
         ProcessingState.loading: AudioProcessingState.loading,
@@ -27,8 +34,13 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         ProcessingState.completed: AudioProcessingState.completed,
       }[_audioPlayer.processingState]!,
       playing: _audioPlayer.playing,
+      updatePosition: _audioPlayer.position,
+      bufferedPosition: _audioPlayer.bufferedPosition,
+      speed: _audioPlayer.speed,
+      queueIndex: event.currentIndex,
     );
-}
+  }
+
   // ValueNotifier to notify listeners about current track changes
   ValueNotifier<Track?> currentTrackNotifier = ValueNotifier<Track?>(null);
 
@@ -44,8 +56,34 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     // });
   }
 
+  // MyAudioHandler() {
+  //   _init();
+  // }
   MyAudioHandler() {
     _init();
+    AudioService.init(
+      builder: () => this,
+      config: const AudioServiceConfig(
+        androidNotificationChannelName: 'YOUR_CHANNEL_NAME',
+        androidNotificationChannelDescription: 'YOUR_CHANNEL_DESCRIPTION',
+      ),
+    );
+    _audioPlayer.playbackEventStream.map(_transformEvent).pipe(playbackState);
+
+    _notifyAudioHandlerAboutPlaybackEvents();
+    _listenForDurationChanges();
+  }
+  void _listenForDurationChanges() {
+    audioPlayer.durationStream.listen((duration) {
+      final index = audioPlayer.currentIndex;
+      final newQueue = queue.value;
+      if (index == null || newQueue.isEmpty) return;
+      final oldMediaItem = newQueue[index];
+      final newMediaItem = oldMediaItem.copyWith(duration: duration);
+      newQueue[index] = newMediaItem;
+      queue.add(newQueue);
+      mediaItem.add(newMediaItem);
+    });
   }
 
   AudioPlayer get audioPlayer => _audioPlayer;
@@ -71,31 +109,31 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       }
     });
 
-    _audioPlayer.playbackEventStream.listen((event) {
+    _audioPlayer.playbackEventStream.listen((PlaybackEvent event) {
+      final playing = _audioPlayer.playing;
       playbackState.add(playbackState.value.copyWith(
         controls: [
-          MediaControl.play,
-          MediaControl.pause,
+          MediaControl.skipToPrevious,
+          if (playing) MediaControl.pause else MediaControl.play,
           MediaControl.stop,
+          MediaControl.skipToNext,
         ],
         systemActions: const {
           MediaAction.seek,
-          MediaAction.seekForward,
-          MediaAction.seekBackward,
         },
-        androidCompactActionIndices: const [0, 1, 2],
-        processingState: {
+        androidCompactActionIndices: const [0, 1, 3],
+        processingState: const {
           ProcessingState.idle: AudioProcessingState.idle,
           ProcessingState.loading: AudioProcessingState.loading,
           ProcessingState.buffering: AudioProcessingState.buffering,
           ProcessingState.ready: AudioProcessingState.ready,
           ProcessingState.completed: AudioProcessingState.completed,
         }[_audioPlayer.processingState]!,
-        playing: _audioPlayer.playing,
+        playing: playing,
         updatePosition: _audioPlayer.position,
         bufferedPosition: _audioPlayer.bufferedPosition,
         speed: _audioPlayer.speed,
-        queueIndex: _audioPlayer.currentIndex,
+        queueIndex: event.currentIndex,
       ));
     });
   }
@@ -127,32 +165,64 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     _playlist = ConcatenatingAudioSource(children: audioSources);
     await _audioPlayer.setAudioSource(_playlist);
     queue.add(tracks.map((track) => track.toMediaItem()).toList());
+    audioHandler
+        .addQueueItems(tracks.map((track) => track.toMediaItem()).toList());
   }
 
-  Future<void> loadSingleTrack(Track track) async {
-    final mediaItem = MediaItem(
-      id: track.id,
-      title: track.trackName,
-      artist: track.userId ?? '',
-      artUri: Uri.parse(track.coverImagePath),
-      extras: <String, dynamic>{
-        'surah': track.surahNumber,
-        'plays': track.plays,
-        'audioPath': track.audioPath,
-        'inPlaylists': track.inPlaylists,
-      },
-    );
-
-    final audioSource = AudioSource.uri(
-      Uri.parse(track.audioPath),
-      tag: mediaItem,
-    );
-    _currentTrack = track;
-    await _audioPlayer.setAudioSource(audioSource);
-    this.mediaItem.add(mediaItem);
-    this.queue.add([mediaItem]);
-    _updateNowPlayingInfo(track);
+  void _notifyAudioHandlerAboutPlaybackEvents() {
+    _audioPlayer.playbackEventStream.listen((PlaybackEvent event) {
+      final playing = _audioPlayer.playing;
+      playbackState.add(playbackState.value.copyWith(
+        controls: [
+          MediaControl.skipToPrevious,
+          if (playing) MediaControl.pause else MediaControl.play,
+          MediaControl.stop,
+          MediaControl.skipToNext,
+        ],
+        systemActions: const {
+          MediaAction.seek,
+        },
+        androidCompactActionIndices: const [0, 1, 3],
+        processingState: const {
+          ProcessingState.idle: AudioProcessingState.idle,
+          ProcessingState.loading: AudioProcessingState.loading,
+          ProcessingState.buffering: AudioProcessingState.buffering,
+          ProcessingState.ready: AudioProcessingState.ready,
+          ProcessingState.completed: AudioProcessingState.completed,
+        }[_audioPlayer.processingState]!,
+        playing: playing,
+        updatePosition: _audioPlayer.position,
+        bufferedPosition: _audioPlayer.bufferedPosition,
+        speed: _audioPlayer.speed,
+        queueIndex: event.currentIndex,
+      ));
+    });
   }
+
+  // Future<void> loadSingleTrack(Track track) async {
+  //   final mediaItem = MediaItem(
+  //     id: track.id,
+  //     title: track.trackName,
+  //     artist: track.userId ?? '',
+  //     artUri: Uri.parse(track.coverImagePath),
+  //     extras: <String, dynamic>{
+  //       'surah': track.surahNumber,
+  //       'plays': track.plays,
+  //       'audioPath': track.audioPath,
+  //       'inPlaylists': track.inPlaylists,
+  //     },
+  //   );
+
+  //   final audioSource = AudioSource.uri(
+  //     Uri.parse(track.audioPath),
+  //     tag: mediaItem,
+  //   );
+  //   _currentTrack = track;
+  //   await _audioPlayer.setAudioSource(audioSource);
+  //   this.mediaItem.add(mediaItem);
+  //   this.queue.add([mediaItem]);
+  //   _updateNowPlayingInfo(track);
+  // }
 
   @override
   Future<void> play() async {
@@ -227,7 +297,7 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         tag: MediaItem(
           id: track.id,
           title: track.trackName,
-          artist: track.userId ?? '',
+          artist: track.userId,
           artUri: Uri.parse(track.coverImagePath),
           extras: <String, dynamic>{
             'surah': track.surahNumber,

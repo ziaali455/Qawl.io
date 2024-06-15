@@ -99,6 +99,8 @@ class _HomePageContentState extends State<HomePageContent> {
                 } else {
                   // If data is successfully loaded, build your widget with the fetched playlist
                   QawlPlaylist? favoritesPlaylist = snapshot.data;
+                  favoritesPlaylist!.coverImagePath =
+                      "https://postimg.cc/N5YjLZ04";
                   if (favoritesPlaylist != null) {
                     // If playlist is not null, display it
                     return PlaylistListWidget(
