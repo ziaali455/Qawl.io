@@ -2,6 +2,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:first_project/model/user.dart';
 import 'package:first_project/screens/auth_gate.dart';
+import 'package:first_project/screens/homepage.dart';
 import 'package:first_project/screens/own_login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fba;
@@ -13,7 +14,34 @@ class RegistrationPage extends StatelessWidget {
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
-   void registerUser(BuildContext context) async {
+//    void registerUser(BuildContext context) async {
+//   if (passwordController.text != confirmPasswordController.text) {
+//     ScaffoldMessenger.of(context).showSnackBar(
+//       SnackBar(content: Text("Passwords do not match")),
+//     );
+//     return; // Exit if passwords do not match
+//   }
+
+//   try {
+//     UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+//       email: emailController.text,
+//       password: passwordController.text,
+//     );
+//     await QawlUser.createQawlUser(userCredential.user); // Ensure this is awaited if asynchronous
+
+//     debugPrint("User created with UID: ${userCredential.user?.uid}");
+//     Navigator.of(context).pushReplacement(
+//       MaterialPageRoute(builder: (context) => UserSetupPage()),
+//     );
+//   } catch (error) {
+//     debugPrint("Registration failed: $error");
+//     ScaffoldMessenger.of(context).showSnackBar(
+//       SnackBar(content: Text("Registration failed: $error")),
+//     );
+//   }
+// }
+
+void registerUser(BuildContext context) async {
   if (passwordController.text != confirmPasswordController.text) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text("Passwords do not match")),
@@ -28,16 +56,39 @@ class RegistrationPage extends StatelessWidget {
     );
     await QawlUser.createQawlUser(userCredential.user); // Ensure this is awaited if asynchronous
 
-    debugPrint("User created with UID: ${userCredential.user?.uid}");
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => UserSetupPage()),
-    );
+    // Navigate based on user details
+    checkUserDetailsAndNavigate(userCredential.user, context);
   } catch (error) {
     debugPrint("Registration failed: $error");
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text("Registration failed: $error")),
     );
   }
+}
+
+void checkUserDetailsAndNavigate(User? user, BuildContext context) {
+  Navigator.of(context).pushReplacement(
+    MaterialPageRoute(
+      builder: (context) => FutureBuilder<QawlUser?>(
+        future: QawlUser.getCurrentQawlUser(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            final gender = snapshot.data?.gender;
+            final country = snapshot.data?.country;
+            if (gender == null || gender == "" || gender.isEmpty || country == null || country.isEmpty) {
+              return UserSetupPage();
+            } else {
+              return const HomePage();
+            }
+          }
+        },
+      ),
+    ),
+  );
 }
 
 
