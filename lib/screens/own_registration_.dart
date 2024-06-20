@@ -80,8 +80,10 @@ void checkUserDetailsAndNavigate(User? user, BuildContext context) {
             final gender = snapshot.data?.gender;
             final country = snapshot.data?.country;
             if (gender == null || gender == "" || gender.isEmpty || country == null || country.isEmpty) {
+              print("here going to beforehomepage");
               return UserSetupPage();
             } else {
+              print("HERE GOING HOME PAGE");
               return const HomePage();
             }
           }

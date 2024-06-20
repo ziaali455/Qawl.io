@@ -112,7 +112,6 @@ Future<void> main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -123,8 +122,21 @@ class MyApp extends StatelessWidget {
         scheme: FlexScheme.hippieBlue,
         darkIsTrueBlack: true,
       ),
-      home: LoginPage(), // *NEW*
-      //home: const AuthGate(), //*OLD*
+      //  home: const AuthGate(), //*OLD*
+        // make sure to load data only if user is signed in
+        home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.active) {
+            if (snapshot.hasData) {
+              return HomePage(); // User is logged in
+            } else {
+              return LoginPage(); // User is not logged in
+            }
+          }
+          return CircularProgressIndicator(); // Waiting for auth state
+        },
+      ),
     );
   }
 }
