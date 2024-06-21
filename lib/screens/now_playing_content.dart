@@ -1,4 +1,7 @@
+import 'dart:async';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fba;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:first_project/model/audio_handler.dart';
 import 'package:first_project/model/player.dart';
 import 'package:first_project/model/user.dart';
@@ -32,13 +35,21 @@ class PositionData {
 class _NowPlayingContentState extends State<NowPlayingContent> {
   late Track myTrack;
   late AudioPlayer _audioPlayer;
-  
+  late StreamSubscription<User?> _authStateChangesSubscription; // used to detect when user signs out
+
 
   @override
   void initState() {
     super.initState();
     myTrack = widget.playedTrack;
     _audioPlayer = audioHandler.audioPlayer;
+     _authStateChangesSubscription = fba.FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      if (user == null) {
+        // User has signed out, pause the audio
+        _audioPlayer.pause();
+      }
+    });
+
   }
 
   void updateTrack(Track newTrack) {

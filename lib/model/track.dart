@@ -183,7 +183,7 @@ class Track {
 
   String getAudioFile() {
     return audioPath;
-  }
+  } 
 
   Set<QawlPlaylist> getInPlayLists() {
     return inPlaylists;

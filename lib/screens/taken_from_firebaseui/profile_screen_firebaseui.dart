@@ -10,6 +10,8 @@ import 'package:firebase_ui_localizations/firebase_ui_localizations.dart';
 import 'package:firebase_ui_oauth/firebase_ui_oauth.dart'
     hide OAuthProviderButtonBase;
 import 'package:firebase_ui_shared/firebase_ui_shared.dart';
+import 'package:first_project/model/audio_handler.dart';
+import 'package:first_project/model/player.dart';
 import 'package:first_project/screens/now_playing_content.dart';
 import 'package:first_project/screens/own_login_screen.dart';
 import 'package:first_project/screens/taken_from_firebaseui/multi_provider_screen_firebaseui.dart';
@@ -27,11 +29,14 @@ class _AvailableProvidersRow extends StatefulWidget {
   final fba.FirebaseAuth? auth;
   final List<AuthProvider> providers;
   final VoidCallback onProviderLinked;
+  final MyAudioHandler audioHandler;
+
 
   const _AvailableProvidersRow({
     this.auth,
     required this.providers,
-    required this.onProviderLinked,
+    required this.onProviderLinked, 
+    required this.audioHandler,
   });
 
   @override
@@ -1046,8 +1051,12 @@ class MyProfileScreen extends MultiProviderScreen {
         const SizedBox(height: 16),
         ElevatedButton(
           onPressed: () async {
+            audioHandler.pause;
+            fba.User? user = fba.FirebaseAuth.instance.currentUser;
+
             // Sign out the user
-            await auth?.signOut();
+            await fba.FirebaseAuth.instance.signOut();
+          // await auth?.signOut();
             print("clicked sign out");
             // Navigate back to the sign-in page (a little weird gpt fix?)
             Navigator.of(context).pushAndRemoveUntil(

@@ -1,4 +1,5 @@
 import 'package:first_project/screens/homepage.dart';
+import 'package:first_project/screens/own_forgot_password.dart';
 import 'package:first_project/screens/own_registration_.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -86,10 +87,22 @@ class LoginPage extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Text(
-                'Forgot Password?',
-                style: TextStyle(color: Colors.grey[600]),
-              ),
+              GestureDetector(
+                  child: Text(
+                    'Forgot Password?',
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ForgotPasswordPage()),
+                    );
+                  }
+                  // Text(
+                  //   'Forgot Password?',
+                  //   style: TextStyle(color: Colors.grey[600]),
+                  // ),
+                  )
             ],
           ),
         ),
