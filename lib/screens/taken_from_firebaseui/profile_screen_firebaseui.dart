@@ -2,13 +2,18 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fba;
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:firebase_ui_localizations/firebase_ui_localizations.dart';
 import 'package:firebase_ui_oauth/firebase_ui_oauth.dart'
     hide OAuthProviderButtonBase;
 import 'package:firebase_ui_shared/firebase_ui_shared.dart';
+import 'package:first_project/model/audio_handler.dart';
+import 'package:first_project/model/player.dart';
 import 'package:first_project/screens/now_playing_content.dart';
+import 'package:first_project/screens/own_login_screen.dart';
 import 'package:first_project/screens/taken_from_firebaseui/multi_provider_screen_firebaseui.dart';
 import 'package:flutter/cupertino.dart' hide Title;
 import 'package:flutter/material.dart' hide Title;
@@ -24,11 +29,14 @@ class _AvailableProvidersRow extends StatefulWidget {
   final fba.FirebaseAuth? auth;
   final List<AuthProvider> providers;
   final VoidCallback onProviderLinked;
+  final MyAudioHandler audioHandler;
+
 
   const _AvailableProvidersRow({
     this.auth,
     required this.providers,
-    required this.onProviderLinked,
+    required this.onProviderLinked, 
+    required this.audioHandler,
   });
 
   @override
@@ -827,6 +835,77 @@ class MyProfileScreen extends MultiProviderScreen {
     const snackBar = SnackBar(
       content: Text('Changes will take effect after refereshing the app'),
     );
+
+    void _showConfirmationDialog(BuildContext context) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Confirm Deletion'),
+            content: const Text(
+                'Are you sure you want to delete your account? This cannot be undone.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context)
+                      .pop(); // Dismiss the dialog without doing anything
+                },
+                child: Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  Navigator.of(context).pop(); // Dismiss the dialog
+                  fba.User? user = fba.FirebaseAuth.instance.currentUser;
+
+                  if (user != null) {
+                    final String uid = user.uid;
+                    print("USER ID IS: " + uid);
+
+                    try {
+                      print("now going back to login");
+                    //  await Navigator.of(context).pushAndRemoveUntil(
+                    //     MaterialPageRoute(builder: (context) => LoginPage()),
+                    //     (Route<dynamic> route) => false,
+                    //   );
+                      // First, delete the Firestore data
+                      await FirebaseFirestore.instance
+                          .collection('QawlUsers')
+                          .doc(uid)
+                          .delete();
+
+                      // Then delete the user from Firebase Authentication
+                       await user.delete();
+
+                      // Optionally sign out the user, though delete should handle this
+                     // await fba.FirebaseAuth.instance.signOut();
+                      print("going back to login page");
+                      // Finally, navigate to the login page
+
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => LoginPage()),
+                        (Route<dynamic> route) => false,
+                      );
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Account successfully deleted")),
+                      );
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content: Text(
+                                "Failed to delete account: ${e.toString()}")),
+                      );
+                    }
+                  }
+                },
+                child: Text('Confirm'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+
     // final avatarWidget = avatar ??
     //     Align(
     //       child: UserAvatar(
@@ -970,20 +1049,129 @@ class MyProfileScreen extends MultiProviderScreen {
         ),
 
         const SizedBox(height: 16),
+        ElevatedButton(
+          onPressed: () async {
+            audioHandler.pause;
+            fba.User? user = fba.FirebaseAuth.instance.currentUser;
 
-        SignOutButton(
-          auth: auth,
-          variant: ButtonVariant.outlined,
-        ),
-        const SizedBox(height: 8),
-        DeleteAccountButton(
-          auth: auth,
-          onSignInRequired: () {
-            return _reauthenticate(context);
+            // Sign out the user
+            await fba.FirebaseAuth.instance.signOut();
+          // await auth?.signOut();
+            print("clicked sign out");
+            // Navigate back to the sign-in page (a little weird gpt fix?)
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => LoginPage()),
+              (Route<dynamic> route) => false,
+            );
           },
+          child: Text('Sign Out'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.red, // Text color
+          ),
         ),
+        // SignOutButton(
+        //   auth: auth,
+        //   variant: ButtonVariant.outlined,
+        // ),
+        // steps for delete: get current user, navigate back to login, delete the user
+
+        const SizedBox(height: 8),
+         ElevatedButton(
+          onPressed: () async {
+            // Sign out the user
+            // await auth?.signOut();
+            print("clicked Delete");
+            fba.User? user = fba.FirebaseAuth.instance.currentUser;
+                  if (user != null) {
+                    final String uid = user.uid;
+                    print("USER ID IS: " + uid);
+
+                    try {
+                      print("now going back to login");
+                    //  await Navigator.of(context).pushAndRemoveUntil(
+                    //     MaterialPageRoute(builder: (context) => LoginPage()),
+                    //     (Route<dynamic> route) => false,
+                    //   );
+                      // First, delete the Firestore data
+                     await FirebaseFirestore.instance
+                         .collection('QawlUsers')
+                         .doc(uid)
+                         .delete();
+
+                      // Then delete the user from Firebase Authentication
+                      await user.delete();
+                      print("going back to login page");
+                      // Finally, navigate to the login page
+
+                     await Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => LoginPage()),
+                        (Route<dynamic> route) => false,
+                      );
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Account successfully deleted")),
+                      );
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content: Text(
+                                "Failed to delete account: ${e.toString()}")),
+                      );
+                    }
+                  }
+          },
+          child: Text('Delete Account'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.red, // Text color
+          ),
+        ),
+        // ElevatedButton(
+        //   onPressed: () => _showConfirmationDialog(context),
+        //   child: Text('Delete Account'),
+        //   style: ElevatedButton.styleFrom(
+        //     backgroundColor: Colors.red, // Background color
+        //   ),
+        // ),
+        // const SizedBox(height: 8),
+        // ElevatedButton(
+        //   onPressed: () async {
+        //     fba.User? user = fba.FirebaseAuth.instance.currentUser;
+
+        //     if (user != null) {
+        //       final String uid = user.uid;
+        //       print("USER ID IS: " + uid);
+
+        //       // delete firebase authentication
+        //       user.delete();
+        //       // delete from firestore collection
+        //       await FirebaseFirestore.instance
+        //           .collection('QawlUsers')
+        //           .doc(uid)
+        //           .delete();
+        //       //navigate back to login page
+        //       Navigator.of(context).pushAndRemoveUntil(
+        //         MaterialPageRoute(builder: (context) => LoginPage()),
+        //         (Route<dynamic> route) => false,
+        //       );
+        //     }
+        //     // Sign out the user
+        //     print("clicked delete");
+        //   },
+        //   child: Text('Delete Account'),
+        //   style: ElevatedButton.styleFrom(
+        //     backgroundColor: Colors.red, // Text color
+        //   ),
+        // ),
+
+        // DeleteAccountButton(
+        //   auth: auth,
+        //   onSignInRequired: () {
+        //     return _reauthenticate(context);
+        //   },
+        // ),
       ],
     );
+
     final body = Padding(
       padding: const EdgeInsets.all(16),
       child: Center(

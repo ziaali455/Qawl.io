@@ -88,8 +88,22 @@ flutter {
     source '../..'
 }
 
+plugins {
+  id("com.android.application")
+content_copy
+
+  // Add the Google services Gradle plugin
+  id("com.google.gms.google-services")
+content_copy
+
+  ...
+}
+
+
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+
 
     dependencies {
   // Import the Firebase BoM
@@ -108,4 +122,5 @@ dependencies {
   implementation 'com.google.firebase:firebase-functions'
 }
 }
+
 

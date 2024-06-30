@@ -3,6 +3,11 @@ import 'package:audio_service/audio_service.dart';
 import 'package:first_project/model/audio_handler.dart';
 import 'package:first_project/screens/auth_gate.dart';
 
+import 'package:first_project/screens/login_content.dart';
+import 'package:first_project/screens/own_login_screen.dart';
+
+
+
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 
@@ -118,7 +123,6 @@ Future<void> main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -130,7 +134,21 @@ class MyApp extends StatelessWidget {
         scheme: FlexScheme.hippieBlue,
         darkIsTrueBlack: true,
       ),
-      home: const AuthGate(),
+      //  home: const AuthGate(), //*OLD*
+        // make sure to load data only if user is signed in
+        home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.active) {
+            if (snapshot.hasData) {
+              return HomePage(); // User is logged in
+            } else {
+              return LoginPage(); // User is not logged in
+            }
+          }
+          return CircularProgressIndicator(); // Waiting for auth state
+        },
+      ),
     );
   }
 }
