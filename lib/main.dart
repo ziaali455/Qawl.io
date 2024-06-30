@@ -84,11 +84,11 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   Future<void> main() async {
-  await JustAudioBackground.init(
-    androidNotificationChannelId: 'com.testing.qawl/audio_session',
-    androidNotificationChannelName: 'Audio playback',
-    androidNotificationOngoing: true,
-  );
+  // await JustAudioBackground.init(
+  //   androidNotificationChannelId: 'com.testing.qawl/audio_session',
+  //   androidNotificationChannelName: 'Audio playback',
+  //   androidNotificationOngoing: true,
+  // );
   runApp(MyApp());
 }
   await Firebase.initializeApp(
@@ -99,10 +99,9 @@ Future<void> main() async {
   final audioHandler = await AudioService.init(
     builder: () => MyAudioHandler(),
     config: const AudioServiceConfig(
-      androidNotificationChannelId: 'com.example.app.channel.audio',
+      androidNotificationChannelId: 'com.example.first_project.channel.audio',
       androidNotificationChannelName: 'Audio Playback',
       androidNotificationOngoing: true,
-      androidStopForegroundOnPause: true,
     ),
   );
 
@@ -126,6 +125,7 @@ class MyApp extends StatelessWidget {
       title: 'Qawl',
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.dark,
+      theme: ThemeData(fontFamily: 'Cera'),
       darkTheme: FlexThemeData.dark(
         scheme: FlexScheme.hippieBlue,
         darkIsTrueBlack: true,
