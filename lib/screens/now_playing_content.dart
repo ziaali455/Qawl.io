@@ -1,4 +1,8 @@
+
 import 'dart:async';
+=======
+//NOW PLAYING CONTENT THAT USES AUDIO HANDLER METHODS
+
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fba;
 import 'package:firebase_auth/firebase_auth.dart';
@@ -20,7 +24,6 @@ class NowPlayingContent extends StatefulWidget {
   final Track playedTrack;
   const NowPlayingContent({Key? key, required this.playedTrack})
       : super(key: key);
-
   @override
   State<NowPlayingContent> createState() => _NowPlayingContentState();
 }
@@ -35,8 +38,11 @@ class PositionData {
 class _NowPlayingContentState extends State<NowPlayingContent> {
   late Track myTrack;
   late AudioPlayer _audioPlayer;
+
   late StreamSubscription<User?> _authStateChangesSubscription; // used to detect when user signs out
 
+
+=======
 
   @override
   void initState() {
@@ -65,7 +71,6 @@ class _NowPlayingContentState extends State<NowPlayingContent> {
           _audioPlayer.durationStream,
           (position, bufferedPosition, duration) => PositionData(
               position, bufferedPosition, duration ?? Duration.zero));
-
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -74,7 +79,9 @@ class _NowPlayingContentState extends State<NowPlayingContent> {
           const SizedBox(height: 20),
           const QawlBackButton(),
           const SizedBox(height: 20),
-          CoverContent2(audioHandler: audioHandler,),
+          CoverContent2(
+            audioHandler: audioHandler,
+          ),
           Padding(
             padding: const EdgeInsets.only(left: 10.0, right: 10.0),
             child: QawlProgressBar(
@@ -97,9 +104,7 @@ class CoverContent2 extends StatelessWidget {
     Key? key,
     required this.audioHandler,
   }) : super(key: key);
-
   final MyAudioHandler audioHandler;
-
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<Track?>(
@@ -113,7 +118,7 @@ class CoverContent2 extends StatelessWidget {
               NeuBox(
                 child: Column(
                   children: [
-                    // Track image
+// Track image
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ClipRRect(
@@ -124,7 +129,7 @@ class CoverContent2 extends StatelessWidget {
                             myTrack.coverImagePath,
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) {
-                              // Load default image when loading fails
+// Load default image when loading fails
                               return Image.network(
                                 'https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg',
                                 fit: BoxFit.cover,
@@ -134,13 +139,14 @@ class CoverContent2 extends StatelessWidget {
                         ),
                       ),
                     ),
-                    // Author name
+// Author name
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: FutureBuilder<String?>(
                         future: myTrack.getAuthor(),
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
                             return CircularProgressIndicator(); // Example loading indicator
                           } else if (snapshot.hasError) {
                             return Text('Error: ${snapshot.error}');
@@ -153,7 +159,8 @@ class CoverContent2 extends StatelessWidget {
                                   children: [
                                     GestureDetector(
                                       child: Text(
-                                        snapshot.data ?? '', // Display author if available
+                                        snapshot.data ??
+                                            '', // Display author if available
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 18,
@@ -163,14 +170,16 @@ class CoverContent2 extends StatelessWidget {
                                       onTap: () async {
                                         String? author = snapshot.data;
                                         if (author != null) {
-                                          QawlUser? user = await QawlUser.getQawlUser(myTrack.userId);
+                                          QawlUser? user =
+                                              await QawlUser.getQawlUser(
+                                                  myTrack.userId);
                                           if (user != null) {
                                             Navigator.pop(context);
-
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                builder: (context) => ProfileContent(
+                                                builder: (context) =>
+                                                    ProfileContent(
                                                   user: user,
                                                   isPersonal: false,
                                                 ),
@@ -182,7 +191,8 @@ class CoverContent2 extends StatelessWidget {
                                     ),
                                     const SizedBox(height: 6),
                                     Text(
-                                      SurahMapper.getSurahNameByNumber(myTrack.surahNumber),
+                                      SurahMapper.getSurahNameByNumber(
+                                          myTrack.surahNumber),
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 20,
@@ -197,8 +207,10 @@ class CoverContent2 extends StatelessWidget {
                                   onPressed: () {
                                     showMaterialModalBottomSheet(
                                       context: context,
-                                      builder: (context) => SingleChildScrollView(
-                                        controller: ModalScrollController.of(context),
+                                      builder: (context) =>
+                                          SingleChildScrollView(
+                                        controller:
+                                            ModalScrollController.of(context),
                                         child: AddToLibraryWidget(
                                           track: myTrack,
                                         ),
@@ -226,12 +238,8 @@ class CoverContent2 extends StatelessWidget {
   }
 }
 
-
-
-
 class CoverContent extends StatefulWidget {
   const CoverContent({Key? key}) : super(key: key);
-
   @override
   _CoverContentState createState() => _CoverContentState();
 }
@@ -240,7 +248,7 @@ class _CoverContentState extends State<CoverContent> {
   @override
   void initState() {
     super.initState();
-    // myTrack = widget.myTrack;
+// myTrack = widget.myTrack;
   }
 
   @override
@@ -260,7 +268,7 @@ class _CoverContentState extends State<CoverContent> {
                 aspectRatio: 1,
                 child: Image.network(myTrack!.coverImagePath, fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
-                  // Load default image when loading fails
+// Load default image when loading fails
                   return Image.network(
                     'https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg',
                     fit: BoxFit.cover,
@@ -275,13 +283,13 @@ class _CoverContentState extends State<CoverContent> {
               future: myTrack.getAuthor(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  // Return a loading indicator or placeholder widget
+// Return a loading indicator or placeholder widget
                   return CircularProgressIndicator(); // Example loading indicator
                 } else if (snapshot.hasError) {
-                  // Handle error case
+// Handle error case
                   return Text('Error: ${snapshot.error}');
                 } else {
-                  // Data has been retrieved successfully
+// Data has been retrieved successfully
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -305,7 +313,6 @@ class _CoverContentState extends State<CoverContent> {
                                     await QawlUser.getQawlUser(myTrack.userId);
                                 if (user != null) {
                                   Navigator.pop(context);
-
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -367,16 +374,14 @@ class Controls extends StatelessWidget {
     required this.audioHandler,
     required this.onTrackChange,
   });
-
   final MyAudioHandler audioHandler;
   final void Function(Track) onTrackChange;
-
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        //prev
+//prev
         IconButton(
           splashColor: Colors.transparent,
           highlightColor: Colors.transparent,
@@ -389,14 +394,13 @@ class Controls extends StatelessWidget {
           color: Colors.white,
           icon: const Icon(Icons.skip_previous_rounded),
         ),
-        //play
+//play
         StreamBuilder<PlayerState>(
           stream: audioHandler.audioPlayer.playerStateStream,
           builder: (context, snapshot) {
             final playerState = snapshot.data;
             final processingState = playerState?.processingState;
             final playing = playerState?.playing ?? false;
-
             if (!playing) {
               return IconButton(
                 splashColor: Colors.transparent,
@@ -425,14 +429,14 @@ class Controls extends StatelessWidget {
             );
           },
         ),
-        //next
+//next
         IconButton(
           splashColor: Colors.transparent,
           highlightColor: Colors.transparent,
           hoverColor: Colors.transparent,
           onPressed: () {
             audioHandler.audioPlayer.seekToNext();
-            // final nextTrack = // Get next track
+// final nextTrack = // Get next track
             onTrackChange(getCurrentTrack());
           },
           iconSize: 60,
@@ -448,7 +452,6 @@ class QawlBackButton extends StatelessWidget {
   const QawlBackButton({
     super.key,
   });
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -480,10 +483,8 @@ class QawlProgressBar extends StatelessWidget {
     required AudioPlayer audioPlayer,
   })  : _positionDataStream = positionDataStream,
         _audioPlayer = audioPlayer;
-
   final Stream<PositionData> _positionDataStream;
   final AudioPlayer _audioPlayer;
-
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<PositionData>(
@@ -507,69 +508,3 @@ class QawlProgressBar extends StatelessWidget {
     );
   }
 }
-
-
-
-// class Controls extends StatelessWidget {
-//   const Controls({
-//     super.key,
-//     required this.audioPlayer,
-//   });
-//   final AudioPlayer audioPlayer;
-//   @override
-//   Widget build(BuildContext context) {
-//     return Row(
-//       mainAxisAlignment: MainAxisAlignment.center,
-//       children: [
-//         // IconButton(
-//         //     splashColor: Colors.transparent,
-//         //     highlightColor: Colors.transparent,
-//         //     hoverColor: Colors.transparent,
-//         //     onPressed: audioPlayer.seekToPrevious,
-//         //     iconSize: 60,
-//         //     color: Colors.white,
-//         //     icon: const Icon(Icons.skip_previous_rounded)),
-//         StreamBuilder<PlayerState>(
-//           stream: audioPlayer.playerStateStream,
-//           builder: (context, snapshot) {
-//             final playerState = snapshot.data;
-//             final processingState = playerState?.processingState;
-//             final playing = playerState?.playing;
-//             if (!(main_player.playing ?? false)) {
-//               return IconButton(
-//                   splashColor: Colors.transparent,
-//                   highlightColor: Colors.transparent,
-//                   hoverColor: Colors.transparent,
-//                   onPressed: audioPlayer.play,
-//                   iconSize: 80,
-//                   color: Colors.white,
-//                   icon: const Icon(Icons.play_arrow));
-//             } else if (processingState != ProcessingState.completed) {
-//               return IconButton(
-//                   splashColor: Colors.transparent,
-//                   highlightColor: Colors.transparent,
-//                   hoverColor: Colors.transparent,
-//                   onPressed: audioPlayer.pause,
-//                   iconSize: 80,
-//                   color: Colors.white,
-//                   icon: const Icon(Icons.pause_rounded));
-//             }
-//             return const Icon(
-//               Icons.play_arrow_rounded,
-//               size: 80,
-//               color: Colors.white,
-//             );
-//           },
-//         ),
-//         // IconButton(
-//         //     splashColor: Colors.transparent,
-//         //     highlightColor: Colors.transparent,
-//         //     hoverColor: Colors.transparent,
-//         //     onPressed: audioPlayer.seekToNext,
-//         //     iconSize: 60,
-//         //     color: Colors.white,
-//         //     icon: const Icon(Icons.skip_next_rounded)),
-//       ],
-//     );
-//   }
-// }
