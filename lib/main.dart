@@ -1,7 +1,9 @@
 import 'package:audio_service/audio_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:first_project/model/audio_handler.dart';
 import 'package:first_project/screens/auth_gate.dart';
+import 'package:first_project/screens/homepage.dart';
 
 import 'package:first_project/screens/login_content.dart';
 import 'package:first_project/screens/own_login_screen.dart';
