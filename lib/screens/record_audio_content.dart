@@ -29,10 +29,11 @@ class RecordAudioContent extends StatefulWidget {
 
 class _RecordAudioContentState extends State<RecordAudioContent> {
   FirebaseFirestore db = FirebaseFirestore.instance;
-  final record = Record();
+  //final record = Record();
   String? _recordedFilePath;
   DateTime? recordingStartTime;
-
+  late final RecorderController recorderController; // new recorder for waves
+  late final PlayerController playerController;
   AudioPlayer main_player = AudioPlayer();
 
   bool isCapturing = false;
@@ -42,22 +43,64 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
   bool showCheck = false;
   bool doneRecording = false;
 
+  @override
+  void initState() {
+    super.initState();
+    _initialiseController();
+    initRecorder();
+  }
+
+  void _initialiseController() {
+    recorderController = RecorderController()
+      ..androidEncoder = AndroidEncoder.aac
+      ..androidOutputFormat = AndroidOutputFormat.mpeg4
+      ..iosEncoder = IosEncoder.kAudioFormatMPEG4AAC
+      ..sampleRate = 16000;
+    playerController = PlayerController();
+  }
+
+  Future<void> initRecorder() async {
+    var status = await Permission.microphone.status;
+    if (!status.isGranted) {
+      status = await Permission.microphone.request();
+      if (!status.isGranted) {
+        print('Mic permission not granted'); // Debug print
+        //throw 'Mic permission not granted';
+      } else {
+        print('Mic permission granted'); // Debug print
+      }
+    } else {
+      print('Mic permission already granted'); // Debug print
+    }
+  }
+
 //using a temporary filepath to store the file locally, then delete the path after stopping the recording
   Future<void> start() async {
-    if (await record.hasPermission()) {
-      // Delete the previous recording if it exists
-      if (_recordedFilePath != null) {
-        File previousRecording = File(_recordedFilePath!);
-        if (await previousRecording.exists()) {
-          await deleteLocalFile(previousRecording);
-        }
+    // if (await Permission.microphone.isGranted) {
+    // Delete the previous recording if it exists
+    if (_recordedFilePath != null) {
+      File previousRecording = File(_recordedFilePath!);
+      if (await previousRecording.exists()) {
+        await deleteLocalFile(previousRecording);
       }
-
-      recordingStartTime = DateTime.now();
-      _recordedFilePath = await getTemporaryFilePath(); // Set the new file path
-      await record.start(path: _recordedFilePath);
-      debugPrint("Recording started");
     }
+
+    recordingStartTime = DateTime.now();
+    _recordedFilePath = await getTemporaryFilePath(); // Set the new file path
+    // await record.start(path: _recordedFilePath);
+    await recorderController.record(path: _recordedFilePath!);
+
+    setState(() {
+      showWaveforms = true;
+      isCapturing = true;
+    });
+    debugPrint("Recording started");
+    // }  else {
+    //    await initRecorder();
+    //    if (await Permission.microphone.isGranted) {
+    //      await start();
+    //    }
+    //}
   }
 
 // user id plus milliseconds
@@ -81,13 +124,20 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
 
 // Get the state of the recorder
   Future<bool> isRecording() async {
-    bool isRecording = await record.isRecording();
+    // bool isRecording = await record.isRecording();
+    bool isRecording = await recorderController.isRecording;
     return isRecording;
   }
 
   void stopRecording() async {
-    await record.stop();
+    await recorderController.stop();
+    //await record.stop();
     debugPrint("Recording stopped");
+    setState(() {
+      showWaveforms = false;
+      isCapturing = false;
+      doneRecording = true;
+    });
 
     //popup for surah name and then call upload storeUrlInFirestore to add with surah name
     if (_recordedFilePath != null) {
@@ -102,58 +152,83 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
     }
   }
 
-  Future initRecorder() async {
-    final status = await Permission.microphone.request();
-    if (status != PermissionStatus.granted) {
-      throw 'Mic permission not granted';
-    }
-    //await  recordopenAudioSession();
-  }
-
   Future<void> playAudio() async {
     if (_recordedFilePath == null) {
-        debugPrint("No recording has been made yet");
-        return;
+      debugPrint("No recording has been made yet");
+      return;
     }
     try {
-        await main_player.setFilePath(_recordedFilePath!); // Set the local file path
-        await main_player.play(); // Play the audio
+      await main_player
+          .setFilePath(_recordedFilePath!); // Set the local file path
+      await playerController.preparePlayer(
+        path: _recordedFilePath!,
+        noOfSamples: 100,
+      ); // Prepare the player controller with the file path
 
-        // Listen to the player state
-        main_player.playerStateStream.listen((state) async {
-            // Check if the player has finished playing
-            if (state.processingState == ProcessingState.completed) {
-                // Playback has finished
-                setState(() {
-                    isPlaying = false; // Reset isPlaying flag
-                });
-            }
-        });
+      // Listen to the player state
+      main_player.playerStateStream.listen((state) async {
+        // Check if the player has finished playing
+        if (state.processingState == ProcessingState.completed) {
+          // Playback has finished
+          setState(() {
+            isPlaying = false; // Reset isPlaying flag
+          });
+        }
+      });
+
+      await main_player.play(); // Play the audio
+      playerController
+          .startPlayer(); // Start the player controller to sync waveform
+      setState(() {
+        isPlaying = true;
+      });
     } catch (e) {
-        debugPrint("Error playing audio: $e");
+      debugPrint("Error playing audio: $e");
     }
-}
-
-  
+  }
 
 //temp widget for waveform
   Widget QawlWaveforms() {
     if (showWaveforms) {
+      return AudioWaveforms(
+        enableGesture: true,
+        size: Size(MediaQuery.of(context).size.width, 100),
+        recorderController: recorderController,
+        waveStyle: const WaveStyle(
+          waveColor: Colors.green,
+          extendWaveform: true,
+          waveThickness: 4.0,
+          scaleFactor: 125.0,
+          showMiddleLine: false,
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12.0),
+          color: const Color(0xFF1E1B26),
+        ),
+        padding: const EdgeInsets.only(left: 18),
+        margin: const EdgeInsets.symmetric(horizontal: 15),
+      );
+    }
+    if (!showWaveforms && doneRecording) {
       return AudioFileWaveforms(
-        size: Size(MediaQuery.of(context).size.width, 100.0),
-        playerController: controller,
-        enableSeekGesture: true,
+        size: Size(MediaQuery.of(context).size.width, 200),
+        playerController: playerController,
         waveformType: WaveformType.long,
         waveformData: [],
         playerWaveStyle: const PlayerWaveStyle(
           fixedWaveColor: Colors.green,
           liveWaveColor: Colors.blueAccent,
           spacing: 6,
+          waveThickness: 4.0,
         ),
       );
-    } else {
-      return Container(height: 0);
     }
+       else {
+      return Container(
+        height: 0,
+      );
+
+     }
   }
 
   @override
@@ -171,8 +246,12 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
                     padding: const EdgeInsets.only(bottom: 250.0),
                     child: QawlBackButton(),
                   ),
-                  //Waveforms
-                  //QawlWaveforms(),
+                  // AudioFileWaveforms(
+                  //   size: Size(MediaQuery.of(context).size.width, 100.0),
+                  //   playerController: playerController,
+                  // ),
+
+                  QawlWaveforms(),
                   SizedBox(height: 10),
                   Center(
                     child: Padding(
@@ -352,22 +431,29 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
             //   size: 50.0,
             // ),
             onPressed: () async {
-              setState(() {
-                isCapturing = !isCapturing;
-              });
-              if (await isRecording()) {
-                // popup for surah name,
+              if (isCapturing) {
                 stopRecording();
-                doneRecording = !doneRecording;
-                showCheck = !showCheck;
-
-                //VERIFICATION BUTTON
-                //uploadRecording();
               } else {
                 await start();
-                Icons.stop;
               }
             },
+            // onPressed: () async {
+            //   setState(() {
+            //     isCapturing = !isCapturing;
+            //   });
+            //   if (await isRecording()) {
+            //     // popup for surah name,
+            //     stopRecording();
+            //     doneRecording = !doneRecording;
+            //     showCheck = !showCheck;
+
+            //     //VERIFICATION BUTTON
+            //     //uploadRecording();
+            //   } else {
+            //     await start();
+            //     Icons.stop;
+            //   }
+            // },
             style: ElevatedButton.styleFrom(
               shadowColor: Colors.transparent,
               backgroundColor: Colors.transparent,
@@ -398,8 +484,8 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
                 ),
                 ElevatedButton(
                     child: isPlaying
-                        ? Icon(Icons.pause, size: 80.0)
-                        : Icon(Icons.play_arrow, size: 80.0),
+                        ? Icon(Icons.pause, size: 60.0)
+                        : Icon(Icons.play_arrow, size: 60.0),
                     onPressed: () async {
                       setState(() {
                         showWaveforms = !showWaveforms;
