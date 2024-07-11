@@ -13,7 +13,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:typed_data';
-import 'package:just_audio/just_audio.dart';
+import 'package:just_audio/just_audio.dart' hide PlayerState;
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_waveforms/flutter_audio_waveforms.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
@@ -155,29 +155,36 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
       return;
     }
     try {
-      await main_player.setFilePath(_recordedFilePath!);
+      //await main_player.setFilePath(_recordedFilePath!);
       await playerController.preparePlayer(path: _recordedFilePath!);
       //main_player.play();
       playerController.startPlayer();
 
-      main_player.positionStream.listen((position) {
-        playerController.seekTo(position.inMilliseconds);
-      });
+      // main_player.positionStream.listen((position) {
+      //   playerController.seekTo(position.inMilliseconds);
+      // });
 
-      main_player.playerStateStream.listen((state) {
-        if (state.processingState == ProcessingState.completed) {
-          setState(() {
-            isPlaying = false;
-          });
-          debugPrint("Playback completed");
-        }
-      });
+      // main_player.playerStateStream.listen((state) {
+      //   if (state.processingState == ProcessingState.completed) {
+      //     setState(() {
+      //       isPlaying = false;
+      //     });
+      //     debugPrint("Playback completed");
+      //   }
+      // });
 
+      //await main_player.play();
       setState(() {
         isPlaying = true;
       });
-
       debugPrint("Playback started");
+
+      playerController.onCompletion.listen((event) {
+        setState(() {
+          isPlaying = false;
+          debugPrint("Playback completed");
+        });
+      });
     } catch (e) {
       debugPrint("Error during playback: $e");
     }
@@ -209,11 +216,17 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
         size: Size(MediaQuery.of(context).size.width, 100),
         playerController: playerController,
         playerWaveStyle: const PlayerWaveStyle(
-          scaleFactor: 150.0,
+          scaleFactor: 200.0,
           fixedWaveColor: Colors.green,
           liveWaveColor: Colors.green,
           waveCap: StrokeCap.butt,
         ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12.0),
+          color: const Color(0xFF1E1B26),
+        ),
+        padding: const EdgeInsets.only(left: 18),
+        margin: const EdgeInsets.symmetric(horizontal: 15),
       );
     } else {
       return Container(
@@ -224,123 +237,60 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
 
   @override
   Widget build(BuildContext context) {
+    bool _visible = true;
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: SingleChildScrollView(
-        // Use SingleChildScrollView to handle overflow
-        child: Column(
+        backgroundColor: Colors.black,
+        body: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            const SizedBox(height: 20),
-            buildTopBar(), // Extracted widget for top bar controls
-            buildWaveformDisplay(), // Waveform display
-            const SizedBox(height: 20),
-            buildControlButtons(), // Control buttons like record, play, etc.
-            const SizedBox(height: 40),
-            buildActionButtons(), // Actions like delete, confirm
+            Center(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 250.0),
+                    child: QawlBackButton(),
+                  ),
+                  // AudioFileWaveforms(
+                  //   size: Size(MediaQuery.of(context).size.width, 100.0),
+                  //   playerController: playerController,
+                  // ),
+
+                  QawlWaveforms(),
+                  SizedBox(height: 10),
+                  Center(
+                    child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: QawlRecordButton()),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: QawlPlayBackButton(),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 100),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: QawlDeleteRecordingButton(),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: QawlConfirmRecordingButton(),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ],
-        ),
-      ),
-    );
+        ));
   }
-
-  Widget buildTopBar() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: QawlBackButton(),
-    );
-  }
-
-  Widget buildWaveformDisplay() {
-    return Column(
-      children: [
-        QawlWaveforms(),
-        const SizedBox(height: 10),
-      ],
-    );
-  }
-
-  Widget buildControlButtons() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            QawlRecordButton(),
-            const SizedBox(width: 10),
-            QawlPlayBackButton(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget buildActionButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        QawlDeleteRecordingButton(),
-        QawlConfirmRecordingButton(),
-      ],
-    );
-  }
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   bool _visible = true;
-  //   return Scaffold(
-  //       backgroundColor: Colors.black,
-  //       body: Column(
-  //         mainAxisSize: MainAxisSize.min,
-  //         children: [
-  //           Center(
-  //             child: Column(
-  //               children: [
-  //                 Padding(
-  //                   padding: const EdgeInsets.only(bottom: 250.0),
-  //                   child: QawlBackButton(),
-  //                 ),
-  //                 // AudioFileWaveforms(
-  //                 //   size: Size(MediaQuery.of(context).size.width, 100.0),
-  //                 //   playerController: playerController,
-  //                 // ),
-
-  //                 QawlWaveforms(),
-  //                 SizedBox(height: 10),
-  //                 Center(
-  //                   child: Padding(
-  //                       padding: const EdgeInsets.all(8.0),
-  //                       child: QawlRecordButton()),
-  //                 ),
-  //                 Row(
-  //                   mainAxisAlignment: MainAxisAlignment.center,
-  //                   children: [
-  //                     Padding(
-  //                       padding: const EdgeInsets.all(5.0),
-  //                       child: QawlPlayBackButton(),
-  //                     ),
-  //                   ],
-  //                 ),
-  //                 SizedBox(height: 100),
-  //                 Row(
-  //                   mainAxisAlignment: MainAxisAlignment.center,
-  //                   children: [
-  //                     Padding(
-  //                       padding: const EdgeInsets.all(5.0),
-  //                       child: QawlDeleteRecordingButton(),
-  //                     ),
-  //                     Padding(
-  //                       padding: const EdgeInsets.all(15.0),
-  //                       child: QawlConfirmRecordingButton(),
-  //                     ),
-  //                   ],
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //         ],
-  //       ));
-  // }
 
   Widget QawlDeleteRecordingButton() {
     if (doneRecording) {
@@ -431,15 +381,6 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
                   debugPrint("Recorded file path is null");
                 }
               },
-              // onPressed: () {
-              //   Navigator.push(
-              //       context,
-              //       MaterialPageRoute(
-              //         builder: (context) => TrackInfoContent(
-              //           trackPath: _recordedFilePath!,
-              //         ),
-              //       ));
-              // },
               child: Align(
                   alignment: Alignment.center,
                   child: Text(
@@ -486,28 +427,11 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
             // ),
             onPressed: () async {
               if (isCapturing) {
-               stopRecording();
+                stopRecording();
               } else {
                 await start();
               }
             },
-            // onPressed: () async {
-            //   setState(() {
-            //     isCapturing = !isCapturing;
-            //   });
-            //   if (await isRecording()) {
-            //     // popup for surah name,
-            //     stopRecording();
-            //     doneRecording = !doneRecording;
-            //     showCheck = !showCheck;
-
-            //     //VERIFICATION BUTTON
-            //     //uploadRecording();
-            //   } else {
-            //     await start();
-            //     Icons.stop;
-            //   }
-            // },
             style: ElevatedButton.styleFrom(
               shadowColor: Colors.transparent,
               backgroundColor: Colors.transparent,
@@ -518,76 +442,45 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
   }
 
   Widget QawlPlayBackButton() {
-    return ElevatedButton(
-        child: Icon(isPlaying ? Icons.pause : Icons.play_arrow, size: 60.0),
+  if (doneRecording) {
+    return Ink(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: <Color>[
+            Color.fromARGB(255, 13, 161, 99),
+            Color.fromARGB(255, 22, 181, 93),
+            Color.fromARGB(255, 32, 220, 85),
+          ],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+        ),
+        borderRadius: BorderRadius.circular(10), // Add some rounding to match button
+      ),
+      child: ElevatedButton(
+        child: Icon(isPlaying ? Icons.stop : Icons.play_arrow,
+            size: 60.0, color: Colors.white), // Changed color to white for contrast
         onPressed: () async {
           if (isPlaying) {
-            await main_player.stop();
+            await playerController.pausePlayer();
             setState(() {
               isPlaying = false;
             });
           } else {
-            // playerController.startPlayer();
             await playAudio();
-            // setState(() {
-            //   isPlaying = true;
-            // });
           }
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
           padding: EdgeInsets.symmetric(horizontal: 30, vertical: 30),
-        ));
-    //   return doneRecording
-    //       ? Row(
-    //           children: [
-    //             Stack(children: <Widget>[
-    //               Positioned.fill(
-    //                 child: Container(
-    //                   decoration: BoxDecoration(
-    //                     borderRadius: BorderRadius.circular(4),
-    //                     gradient: LinearGradient(
-    //                       colors: <Color>[
-    //                         Color.fromARGB(255, 13, 161, 99),
-    //                         Color.fromARGB(255, 22, 181, 93),
-    //                         Color.fromARGB(255, 32, 220, 85),
-    //                       ],
-    //                     ),
-    //                   ),
-    //                 ),
-    //               ),
-    //               ElevatedButton(
-    //                   child: isPlaying
-    //                       ? Icon(Icons.pause, size: 60.0)
-    //                       : Icon(Icons.play_arrow, size: 60.0),
-    //                   onPressed: () async {
-    //                     setState(() {
-    //                       showWaveforms = !showWaveforms;
-    //                       isPlaying = !isPlaying;
-    //                     });
-
-    //                     debugPrint(_recordedFilePath);
-    //                     //AudioWaveforms version of playback
-    //                     if (isPlaying) {
-    //                       await playAudio();
-    //                     } else {
-    //                       main_player
-    //                           .stop(); // Stop the player if already playing
-    //                     }
-    //                   },
-    //                   style: ElevatedButton.styleFrom(
-    //                     backgroundColor: Colors.transparent,
-    //                     shadowColor: Colors.transparent,
-    //                     padding:
-    //                         EdgeInsets.symmetric(horizontal: 30, vertical: 30),
-    //                   ))
-    //             ]),
-    //           ],
-    //         )
-    //       : Container(
-    //           height: 0,
-    //         );
-    // }
+          backgroundColor: Colors.transparent, // Make background transparent
+          shadowColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      ),
+    );
   }
+  return Container(height: 0);
+}
+
 }
