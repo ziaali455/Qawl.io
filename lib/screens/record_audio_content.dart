@@ -50,6 +50,14 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
     initRecorder();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    recorderController.dispose();
+    playerController.dispose();
+    main_player.dispose();
+  }
+
   void _initialiseController() {
     recorderController = RecorderController()
       ..androidEncoder = AndroidEncoder.aac
@@ -88,6 +96,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
     recordingStartTime = DateTime.now();
     _recordedFilePath = await getTemporaryFilePath(); // Set the new file path
     // await record.start(path: _recordedFilePath);
+    playerController.preparePlayer(path: _recordedFilePath!);
     await recorderController.record(path: _recordedFilePath!);
 
     setState(() {
@@ -138,18 +147,6 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
       isCapturing = false;
       doneRecording = true;
     });
-
-    //popup for surah name and then call upload storeUrlInFirestore to add with surah name
-    if (_recordedFilePath != null) {
-      // debugPrint("here");
-      // File audioFile = File(_recordedFilePath!);
-      // String? fileUrl = await uploadRecording(_recordedFilePath);
-      // if (fileUrl != null) {
-      //     await storeUrlInFirestore(fileUrl);
-      // await deleteLocalFile(audioFile); // Delete the local file
-      //   }
-      // _recordedFilePath = null; // Reset the file path?
-    }
   }
 
   Future<void> playAudio() async {
@@ -158,38 +155,37 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
       return;
     }
     try {
-      await main_player
-          .setFilePath(_recordedFilePath!); // Set the local file path
-      await playerController.preparePlayer(
-        path: _recordedFilePath!,
-        noOfSamples: 100,
-      ); // Prepare the player controller with the file path
+      await main_player.setFilePath(_recordedFilePath!);
+      await playerController.preparePlayer(path: _recordedFilePath!);
+      //main_player.play();
+      playerController.startPlayer();
 
-      // Listen to the player state
-      main_player.playerStateStream.listen((state) async {
-        // Check if the player has finished playing
+      main_player.positionStream.listen((position) {
+        playerController.seekTo(position.inMilliseconds);
+      });
+
+      main_player.playerStateStream.listen((state) {
         if (state.processingState == ProcessingState.completed) {
-          // Playback has finished
           setState(() {
-            isPlaying = false; // Reset isPlaying flag
+            isPlaying = false;
           });
+          debugPrint("Playback completed");
         }
       });
 
-      await main_player.play(); // Play the audio
-      playerController
-          .startPlayer(); // Start the player controller to sync waveform
       setState(() {
         isPlaying = true;
       });
+
+      debugPrint("Playback started");
     } catch (e) {
-      debugPrint("Error playing audio: $e");
+      debugPrint("Error during playback: $e");
     }
   }
 
 //temp widget for waveform
   Widget QawlWaveforms() {
-    if (showWaveforms) {
+    if (isCapturing) {
       return AudioWaveforms(
         enableGesture: true,
         size: Size(MediaQuery.of(context).size.width, 100),
@@ -208,85 +204,143 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
         padding: const EdgeInsets.only(left: 18),
         margin: const EdgeInsets.symmetric(horizontal: 15),
       );
-    }
-    if (!showWaveforms && doneRecording) {
+    } else if (isPlaying) {
       return AudioFileWaveforms(
-        size: Size(MediaQuery.of(context).size.width, 200),
+        size: Size(MediaQuery.of(context).size.width, 100),
         playerController: playerController,
-        waveformType: WaveformType.long,
-        waveformData: [],
         playerWaveStyle: const PlayerWaveStyle(
+          scaleFactor: 150.0,
           fixedWaveColor: Colors.green,
-          liveWaveColor: Colors.blueAccent,
-          spacing: 6,
-          waveThickness: 4.0,
+          liveWaveColor: Colors.green,
+          waveCap: StrokeCap.butt,
         ),
       );
-    }
-       else {
+    } else {
       return Container(
-        height: 0,
+        height: 100,
       );
-
-     }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    bool _visible = true;
     return Scaffold(
-        backgroundColor: Colors.black,
-        body: Column(
-          mainAxisSize: MainAxisSize.min,
+      backgroundColor: Colors.black,
+      body: SingleChildScrollView(
+        // Use SingleChildScrollView to handle overflow
+        child: Column(
           children: [
-            Center(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 250.0),
-                    child: QawlBackButton(),
-                  ),
-                  // AudioFileWaveforms(
-                  //   size: Size(MediaQuery.of(context).size.width, 100.0),
-                  //   playerController: playerController,
-                  // ),
-
-                  QawlWaveforms(),
-                  SizedBox(height: 10),
-                  Center(
-                    child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: QawlRecordButton()),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: QawlPlayBackButton(),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 100),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: QawlDeleteRecordingButton(),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: QawlConfirmRecordingButton(),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+            const SizedBox(height: 20),
+            buildTopBar(), // Extracted widget for top bar controls
+            buildWaveformDisplay(), // Waveform display
+            const SizedBox(height: 20),
+            buildControlButtons(), // Control buttons like record, play, etc.
+            const SizedBox(height: 40),
+            buildActionButtons(), // Actions like delete, confirm
           ],
-        ));
+        ),
+      ),
+    );
   }
+
+  Widget buildTopBar() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: QawlBackButton(),
+    );
+  }
+
+  Widget buildWaveformDisplay() {
+    return Column(
+      children: [
+        QawlWaveforms(),
+        const SizedBox(height: 10),
+      ],
+    );
+  }
+
+  Widget buildControlButtons() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            QawlRecordButton(),
+            const SizedBox(width: 10),
+            QawlPlayBackButton(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildActionButtons() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        QawlDeleteRecordingButton(),
+        QawlConfirmRecordingButton(),
+      ],
+    );
+  }
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   bool _visible = true;
+  //   return Scaffold(
+  //       backgroundColor: Colors.black,
+  //       body: Column(
+  //         mainAxisSize: MainAxisSize.min,
+  //         children: [
+  //           Center(
+  //             child: Column(
+  //               children: [
+  //                 Padding(
+  //                   padding: const EdgeInsets.only(bottom: 250.0),
+  //                   child: QawlBackButton(),
+  //                 ),
+  //                 // AudioFileWaveforms(
+  //                 //   size: Size(MediaQuery.of(context).size.width, 100.0),
+  //                 //   playerController: playerController,
+  //                 // ),
+
+  //                 QawlWaveforms(),
+  //                 SizedBox(height: 10),
+  //                 Center(
+  //                   child: Padding(
+  //                       padding: const EdgeInsets.all(8.0),
+  //                       child: QawlRecordButton()),
+  //                 ),
+  //                 Row(
+  //                   mainAxisAlignment: MainAxisAlignment.center,
+  //                   children: [
+  //                     Padding(
+  //                       padding: const EdgeInsets.all(5.0),
+  //                       child: QawlPlayBackButton(),
+  //                     ),
+  //                   ],
+  //                 ),
+  //                 SizedBox(height: 100),
+  //                 Row(
+  //                   mainAxisAlignment: MainAxisAlignment.center,
+  //                   children: [
+  //                     Padding(
+  //                       padding: const EdgeInsets.all(5.0),
+  //                       child: QawlDeleteRecordingButton(),
+  //                     ),
+  //                     Padding(
+  //                       padding: const EdgeInsets.all(15.0),
+  //                       child: QawlConfirmRecordingButton(),
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         ],
+  //       ));
+  // }
 
   Widget QawlDeleteRecordingButton() {
     if (doneRecording) {
@@ -432,7 +486,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
             // ),
             onPressed: () async {
               if (isCapturing) {
-                stopRecording();
+               stopRecording();
               } else {
                 await start();
               }
@@ -464,54 +518,76 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
   }
 
   Widget QawlPlayBackButton() {
-    return doneRecording
-        ? Row(
-            children: [
-              Stack(children: <Widget>[
-                Positioned.fill(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4),
-                      gradient: LinearGradient(
-                        colors: <Color>[
-                          Color.fromARGB(255, 13, 161, 99),
-                          Color.fromARGB(255, 22, 181, 93),
-                          Color.fromARGB(255, 32, 220, 85),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                ElevatedButton(
-                    child: isPlaying
-                        ? Icon(Icons.pause, size: 60.0)
-                        : Icon(Icons.play_arrow, size: 60.0),
-                    onPressed: () async {
-                      setState(() {
-                        showWaveforms = !showWaveforms;
-                        isPlaying = !isPlaying;
-                      });
+    return ElevatedButton(
+        child: Icon(isPlaying ? Icons.pause : Icons.play_arrow, size: 60.0),
+        onPressed: () async {
+          if (isPlaying) {
+            await main_player.stop();
+            setState(() {
+              isPlaying = false;
+            });
+          } else {
+            // playerController.startPlayer();
+            await playAudio();
+            // setState(() {
+            //   isPlaying = true;
+            // });
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+        ));
+    //   return doneRecording
+    //       ? Row(
+    //           children: [
+    //             Stack(children: <Widget>[
+    //               Positioned.fill(
+    //                 child: Container(
+    //                   decoration: BoxDecoration(
+    //                     borderRadius: BorderRadius.circular(4),
+    //                     gradient: LinearGradient(
+    //                       colors: <Color>[
+    //                         Color.fromARGB(255, 13, 161, 99),
+    //                         Color.fromARGB(255, 22, 181, 93),
+    //                         Color.fromARGB(255, 32, 220, 85),
+    //                       ],
+    //                     ),
+    //                   ),
+    //                 ),
+    //               ),
+    //               ElevatedButton(
+    //                   child: isPlaying
+    //                       ? Icon(Icons.pause, size: 60.0)
+    //                       : Icon(Icons.play_arrow, size: 60.0),
+    //                   onPressed: () async {
+    //                     setState(() {
+    //                       showWaveforms = !showWaveforms;
+    //                       isPlaying = !isPlaying;
+    //                     });
 
-                      debugPrint(_recordedFilePath);
-                      //AudioWaveforms version of playback
-                      if (isPlaying) {
-                        await playAudio();
-                      } else {
-                        main_player
-                            .stop(); // Stop the player if already playing
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 30, vertical: 30),
-                    ))
-              ]),
-            ],
-          )
-        : Container(
-            height: 0,
-          );
+    //                     debugPrint(_recordedFilePath);
+    //                     //AudioWaveforms version of playback
+    //                     if (isPlaying) {
+    //                       await playAudio();
+    //                     } else {
+    //                       main_player
+    //                           .stop(); // Stop the player if already playing
+    //                     }
+    //                   },
+    //                   style: ElevatedButton.styleFrom(
+    //                     backgroundColor: Colors.transparent,
+    //                     shadowColor: Colors.transparent,
+    //                     padding:
+    //                         EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+    //                   ))
+    //             ]),
+    //           ],
+    //         )
+    //       : Container(
+    //           height: 0,
+    //         );
+    // }
   }
 }
