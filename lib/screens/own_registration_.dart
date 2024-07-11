@@ -41,59 +41,64 @@ class RegistrationPage extends StatelessWidget {
 //   }
 // }
 
-void registerUser(BuildContext context) async {
-  if (passwordController.text != confirmPasswordController.text) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Passwords do not match")),
-    );
-    return; // Exit if passwords do not match
+  void registerUser(BuildContext context) async {
+    if (passwordController.text != confirmPasswordController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Passwords do not match")),
+      );
+      return; // Exit if passwords do not match
+    }
+
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+      await QawlUser.createQawlUser(
+          userCredential.user); // Ensure this is awaited if asynchronous
+
+      // Navigate based on user details
+      checkUserDetailsAndNavigate(userCredential.user, context);
+    } catch (error) {
+      debugPrint("Registration failed: $error");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Registration failed: $error")),
+      );
+    }
   }
 
-  try {
-    UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-      email: emailController.text,
-      password: passwordController.text,
-    );
-    await QawlUser.createQawlUser(userCredential.user); // Ensure this is awaited if asynchronous
-
-    // Navigate based on user details
-    checkUserDetailsAndNavigate(userCredential.user, context);
-  } catch (error) {
-    debugPrint("Registration failed: $error");
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Registration failed: $error")),
-    );
-  }
-}
-
-void checkUserDetailsAndNavigate(User? user, BuildContext context) {
-  Navigator.of(context).pushReplacement(
-    MaterialPageRoute(
-      builder: (context) => FutureBuilder<QawlUser?>(
-        future: QawlUser.getCurrentQawlUser(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else {
-            final gender = snapshot.data?.gender;
-            final country = snapshot.data?.country;
-            if (gender == null || gender == "" || gender.isEmpty || country == null || country.isEmpty) {
-              print("here going to beforehomepage");
-              return UserSetupPage();
+  void checkUserDetailsAndNavigate(User? user, BuildContext context) {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => FutureBuilder<QawlUser?>(
+          future: QawlUser.getCurrentQawlUser(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                  child: CircularProgressIndicator(color: Colors.green));
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
             } else {
-              print("HERE GOING HOME PAGE");
-              return const HomePage();
+              final gender = snapshot.data?.gender;
+              final country = snapshot.data?.country;
+              if (gender == null ||
+                  gender == "" ||
+                  gender.isEmpty ||
+                  country == null ||
+                  country.isEmpty) {
+                print("here going to beforehomepage");
+                return UserSetupPage();
+              } else {
+                print("HERE GOING HOME PAGE");
+                return const HomePage();
+              }
             }
-          }
-        },
+          },
+        ),
       ),
-    ),
-  );
-}
-
-
+    );
+  }
 
 //   void registerUser(BuildContext context) async {
 //   if (passwordController.text == confirmPasswordController.text) {
@@ -121,72 +126,125 @@ void checkUserDetailsAndNavigate(User? user, BuildContext context) {
 //   }
 // }
 
-
   @override
   Widget build(BuildContext context) {
+    String logoImagePath = 'images/qawl-lime.png';
+
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      backgroundColor: Colors.black,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(height: 50),
-                const Icon(Icons.person_add, size: 100),
-                const SizedBox(height: 50),
-                Text(
-                  'Register on Qawl!',
-                  style: TextStyle(color: Colors.grey[700], fontSize: 16),
-                ),
-                const SizedBox(height: 25),
-                TextFormField(
-                  controller: emailController,
-                  decoration: const InputDecoration(labelText: 'Email', hintText: 'Email'),
-                ),
-                const SizedBox(height: 10),
-                TextFormField(
-                  controller: passwordController,
-                  obscureText: true,
-                  decoration: const InputDecoration(labelText: 'Password', hintText: 'Password'),
-                ),
-                TextFormField(
-                  controller: confirmPasswordController,
-                  obscureText: true,
-                  decoration: const InputDecoration(labelText: 'Confirm Password', hintText: 'Confirm Password'),
-                ),
-                const SizedBox(height: 25),
-                ElevatedButton(
-                  onPressed: () => registerUser(context),
-                  child: const Text('Create Account'),
-                ),
-                const SizedBox(height: 50),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Already a Qawl User?',
-                      style: TextStyle(color: Colors.grey[700]),
-                    ),
-                    const SizedBox(width: 4),
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => LoginPage()),
-                        );
-                      },
-                      child: const Text(
-                        'Log in',
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontWeight: FontWeight.bold,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 50),
+                  SizedBox(
+                    width: 200.0, // specify the desired width
+                    height: 200.0, // specify the desired height
+                    child: Image.asset(logoImagePath),
+                  ),
+                  const SizedBox(height: 25),
+                  const Text(
+                    'Register on Qawl',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 25),
+                  TextFormField(
+                    controller: emailController,
+                    decoration: const InputDecoration(
+                      labelText: 'Email', hintText: 'Email',
+                      floatingLabelStyle: TextStyle(color: Colors.green),
+                      border: OutlineInputBorder(), // default border
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.green, // set the color to green
+                          width: 2.0, // set the width of the border
                         ),
                       ),
                     ),
-                  ],
-                )
-              ],
+                  ),
+                  const SizedBox(height: 10),
+                  TextFormField(
+                    controller: passwordController,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                      labelText: 'Password', hintText: 'Password',
+                      floatingLabelStyle: TextStyle(color: Colors.green),
+                      border: OutlineInputBorder(), // default border
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.green, // set the color to green
+                          width: 2.0, // set the width of the border
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  TextFormField(
+                    controller: confirmPasswordController,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                      labelText: 'Confirm Password',
+                      hintText: 'Confirm Password',
+                      floatingLabelStyle: TextStyle(color: Colors.green),
+                      border: OutlineInputBorder(), // default border
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.green, // set the color to green
+                          width: 2.0, // set the width of the border
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 25),
+                  ElevatedButton(
+                    style: const ButtonStyle(
+                      backgroundColor:
+                          WidgetStatePropertyAll<Color>(Colors.green),
+                    ),
+                    onPressed: () => registerUser(context),
+                    child:const Text(
+              'Create Account',
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            ),
+                  ),
+                  const SizedBox(height: 50),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Already a Qawl User?',
+                        style: TextStyle(
+                    color: Colors.green,
+                    fontWeight: FontWeight.bold,
+                  ),
+                      ),
+                      const SizedBox(width: 4),
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => LoginPage()),
+                          );
+                        },
+                        child: const Text(
+                          'Log in',
+                          style: TextStyle(
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
             ),
           ),
         ),

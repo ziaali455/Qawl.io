@@ -13,9 +13,9 @@ class ForgotPasswordPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text('Reset Password'),
+        title: const Text('Reset Password'),
         backgroundColor: Colors.green,
       ),
       body: SafeArea(
@@ -25,29 +25,40 @@ class ForgotPasswordPage extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
+                const Text(
                   "Enter your email address and we will send you a link to reset your password.",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 18),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 TextField(
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Email',
                     hintText: 'Enter your email',
-                    border: OutlineInputBorder(),
+                    floatingLabelStyle: TextStyle(color: Colors.green),
+
+                    border: OutlineInputBorder(), // default border
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.green, // set the color to green
+                        width: 2.0, // set the width of the border
+                      ),
+                    ),
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () => resetPassword(context),
-                  child: Text('Send Reset Link'),
+                  child: const Text(
+                    'Send Reset Link',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
                     backgroundColor: Colors.green,
-                    minimumSize: Size(double.infinity, 50),
+                    minimumSize: const Size(double.infinity, 50),
                   ),
                 ),
               ],
@@ -61,7 +72,7 @@ class ForgotPasswordPage extends StatelessWidget {
   void resetPassword(BuildContext context) async {
     if (emailController.text.isEmpty || !emailController.text.contains('@')) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Please enter a valid email address.'),
           backgroundColor: Colors.red,
         ),
@@ -73,7 +84,7 @@ class ForgotPasswordPage extends StatelessWidget {
       await FirebaseAuth.instance
           .sendPasswordResetEmail(email: emailController.text.trim());
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Password reset link sent! Check your email.'),
           backgroundColor: Colors.green,
         ),
@@ -81,7 +92,7 @@ class ForgotPasswordPage extends StatelessWidget {
       Navigator.pop(context); // Optionally pop back to the previous screen
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text(
               'Error sending password reset email. Make sure your email is registered.'),
           backgroundColor: Colors.red,

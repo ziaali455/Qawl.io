@@ -1,7 +1,9 @@
 import 'package:audio_service/audio_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:first_project/model/audio_handler.dart';
 import 'package:first_project/screens/auth_gate.dart';
+import 'package:first_project/screens/homepage.dart';
 
 import 'package:first_project/screens/login_content.dart';
 import 'package:first_project/screens/own_login_screen.dart';
@@ -100,7 +102,7 @@ Future<void> main() async {
       // name: 'qawl-io',
       options: DefaultFirebaseOptions.currentPlatform,
       );
-
+  
   final audioHandler = await AudioService.init(
     builder: () => MyAudioHandler(),
     config: const AudioServiceConfig(
@@ -146,7 +148,7 @@ class MyApp extends StatelessWidget {
               return LoginPage(); // User is not logged in
             }
           }
-          return CircularProgressIndicator(); // Waiting for auth state
+          return CircularProgressIndicator(color: Colors.green); // Waiting for auth state
         },
       ),
     );

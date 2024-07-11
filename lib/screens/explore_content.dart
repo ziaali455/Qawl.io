@@ -46,7 +46,7 @@ class _ExploreContentState extends State<ExploreContent> {
               future: _top100PlaylistFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator(); // Show loading indicator
+                  return const CircularProgressIndicator(color: Colors.green); // Show loading indicator
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}'); // Show error message
                 } else {
@@ -61,7 +61,7 @@ class _ExploreContentState extends State<ExploreContent> {
               future: _newReleasesPlaylistFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator(); // Show loading indicator
+                  return const CircularProgressIndicator(color: Colors.green); // Show loading indicator
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}'); // Show error message
                 } else {
@@ -117,7 +117,7 @@ class _QariCardRowState extends State<QariCardRow> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           // While data is loading
-          return const CircularProgressIndicator();
+          return const CircularProgressIndicator(color: Colors.green);
         } else if (snapshot.hasError) {
           // If an error occurs
           return Text('Error: ${snapshot.error}');

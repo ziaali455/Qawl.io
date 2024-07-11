@@ -55,7 +55,8 @@ class _ProfileContentState extends State<ProfileContent> {
       future: userFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+              child: CircularProgressIndicator(color: Colors.green));
         } else if (snapshot.hasError) {
           // Log the error for debugging
           debugPrint('Error loading user data: ${snapshot.error}');
@@ -91,7 +92,7 @@ class _ProfileContentState extends State<ProfileContent> {
 
   Widget _buildContent(QawlUser user) {
     final bool isPersonal = widget.isPersonal;
-
+    print("User image is " + user.imagePath);
     return Container(
       padding: const EdgeInsets.only(top: 50),
       child: Scaffold(
@@ -103,7 +104,7 @@ class _ProfileContentState extends State<ProfileContent> {
               physics: const BouncingScrollPhysics(),
               children: [
                 ProfilePictureWidget(
-                  imagePath: user.imagePath,
+                  imagePath: (user.imagePath.isEmpty) ? "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3" : user.imagePath,
                   country: user.country,
                   isPersonal: isPersonal,
                   user: user,
@@ -133,7 +134,8 @@ class _ProfileContentState extends State<ProfileContent> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return const CircularProgressIndicator();
+                          return const CircularProgressIndicator(
+                              color: Colors.green);
                         } else if (snapshot.hasError) {
                           return Text('Error: ${snapshot.error}');
                         } else {
@@ -229,7 +231,7 @@ class _ProfileContentState extends State<ProfileContent> {
       // Handle the case where there is no current user or displayName is null
       return const Column(
         children: [
-          Text("Anon User",
+          Text("Qawl User",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24))
         ],
       );

@@ -33,14 +33,14 @@ class PlaylistItem extends StatelessWidget {
   final QawlPlaylist playlist;
   String image;
   String noimage =
-      "https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg";
+      "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3";
 
   PlaylistItem({
     Key? key,
     required this.title,
     required this.playlist,
     this.image =
-        "https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg",
+        "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3",
   }) : super(key: key);
 
   @override
@@ -71,7 +71,7 @@ class PlaylistItem extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                         child: Image.network(
                           //playlist.list.elementAt(0).coverImagePath ?? 'https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg',
-                          'https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg',
+                          'https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3',
                           fit: BoxFit.cover,
                         )),
                   ),
