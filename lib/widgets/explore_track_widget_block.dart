@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:first_project/model/fake_track_data.dart';
+import 'package:first_project/deprecated/fake_track_data.dart';
 import 'package:first_project/model/player.dart';
 import 'package:first_project/screens/track_info_content.dart';
 import 'package:flutter/material.dart';
@@ -43,14 +43,13 @@ class ExploreTrackWidgetRow extends StatelessWidget {
                 future: getPlaybackContents(track),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator(); // Placeholder while loading
+                    return CircularProgressIndicator(color: Colors.green); // Placeholder while loading
                   } else if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   } else {
                     final data = snapshot.data;
                     final displayName = data?.item1 ?? 'Unknown';
-                    final coverImagePath =
-                        data?.item2 ?? "https://i.stack.imgur.com/l60Hf.png";
+                    String coverImagePath = data!.item2;
 
                     // Use displayName and coverImagePath as needed
                     return TrackCard(
@@ -78,8 +77,11 @@ Future<Tuple2<String, String>> getPlaybackContents(Track track) async {
       .doc(track.userId)
       .get();
   final displayName = userDoc.get('name') as String;
-  final coverImagePath = userDoc.get('imagePath') as String? ??
-      "https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg";
+  String coverImagePath = userDoc.get('imagePath') as String;
+  if (coverImagePath == "") {
+    coverImagePath =
+        "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3";
+  }
 
   return Tuple2(
     displayName,
@@ -95,7 +97,6 @@ class TrackCard extends StatelessWidget {
     required this.image,
     required this.author,
     required this.playlist,
-
   }) : super(key: key);
 
   final String title, image, author;
@@ -112,21 +113,29 @@ class TrackCard extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => NowPlayingContent(playedTrack: track)),
+              builder: (context) => NowPlayingContent(playedTrack: track),
+            ),
           );
         },
         child: SizedBox(
-          width: getProportionateScreenWidth(150),
-          height: getProportionateScreenWidth(150),
+          width: getProportionateScreenWidth(135),
+          height: getProportionateScreenWidth(135),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(15),
             child: Stack(
               children: [
                 Container(
-                  height: 150,
-                  width: 150,
+                  height: getProportionateScreenWidth(150),
+                  width: getProportionateScreenWidth(150),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    image: DecorationImage(
+                      image: NetworkImage(image),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                   foregroundDecoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(Radius.circular(12.0)),
+                    borderRadius: BorderRadius.circular(15),
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
@@ -136,20 +145,13 @@ class TrackCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(Radius.circular(12.0)),
-                    image: DecorationImage(
-                      image: NetworkImage(image),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
                 ),
                 Container(
                   alignment: Alignment.bottomLeft,
                   child: Padding(
                     padding: EdgeInsets.symmetric(
-                      horizontal: getProportionateScreenWidth(10.0),
-                      vertical: getProportionateScreenWidth(10),
+                      horizontal: getProportionateScreenWidth(12.0),
+                      vertical: getProportionateScreenWidth(12),
                     ),
                     child: Text.rich(
                       TextSpan(

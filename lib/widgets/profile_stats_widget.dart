@@ -47,7 +47,7 @@ class NumbersWidget extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           // Display a loading indicator while fetching data
-          return CircularProgressIndicator();
+          return CircularProgressIndicator(color: Colors.green);
         } else if (snapshot.hasError) {
           // Handle error state
           return Text('Error: ${snapshot.error}');
@@ -327,7 +327,7 @@ class _FollowButtonState extends State<FollowButton> {
               future: _isFollowing,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
+                  return CircularProgressIndicator(color: Colors.green);
                 } else {
                   return TextButton(
                     style: TextButton.styleFrom(

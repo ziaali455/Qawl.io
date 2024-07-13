@@ -102,7 +102,7 @@ Future<void> main() async {
       // name: 'qawl-io',
       options: DefaultFirebaseOptions.currentPlatform,
       );
-
+  
   final audioHandler = await AudioService.init(
     builder: () => MyAudioHandler(),
     config: const AudioServiceConfig(
@@ -148,7 +148,7 @@ class MyApp extends StatelessWidget {
               return LoginPage(); // User is not logged in
             }
           }
-          return CircularProgressIndicator(); // Waiting for auth state
+          return CircularProgressIndicator(color: Colors.green); // Waiting for auth state
         },
       ),
     );

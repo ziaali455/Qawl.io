@@ -1010,63 +1010,69 @@ class MyProfileScreen extends MultiProviderScreen {
         //   ),
         // ...children,
         const SizedBox(height: 16),
-        GestureDetector(
-          onTap: () {
-            _pickImage();
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(4),
-              gradient: const LinearGradient(
-                colors: <Color>[
-                  Color.fromARGB(255, 13, 161, 99),
-                  Color.fromARGB(255, 22, 181, 93),
-                  Color.fromARGB(255, 32, 220, 85),
-                ],
-              ),
-            ),
-            width: 120,
-            height: 45,
-            child: const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.upload,
-                  color: Colors.white,
+        Padding(
+          padding: const EdgeInsets.only(left: 50.0, right: 50.0),
+          child: GestureDetector(
+            onTap: () {
+              _pickImage();
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4),
+                gradient: const LinearGradient(
+                  colors: <Color>[
+                    Color.fromARGB(255, 13, 161, 99),
+                    Color.fromARGB(255, 22, 181, 93),
+                    Color.fromARGB(255, 32, 220, 85),
+                  ],
                 ),
-                SizedBox(width: 5), // Adjust the spacing as needed
-                Text(
-                  "New Profile Photo",
-                  style: TextStyle(
-                    fontSize: 15.0,
-                    fontWeight: FontWeight.bold,
+              ),
+              width: 120,
+              height: 40,
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.upload,
                     color: Colors.white,
                   ),
-                ),
-              ],
+                  SizedBox(width: 5), // Adjust the spacing as needed
+                  Text(
+                    "New Profile Photo",
+                    style: TextStyle(
+                      fontSize: 15.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
 
         const SizedBox(height: 16),
-        ElevatedButton(
-          onPressed: () async {
-            audioHandler.pause;
-            fba.User? user = fba.FirebaseAuth.instance.currentUser;
-
-            // Sign out the user
-            await fba.FirebaseAuth.instance.signOut();
-          // await auth?.signOut();
-            print("clicked sign out");
-            // Navigate back to the sign-in page (a little weird gpt fix?)
-            Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => LoginPage()),
-              (Route<dynamic> route) => false,
-            );
-          },
-          child: Text('Sign Out'),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.red, // Text color
+        Padding(
+          padding: const EdgeInsets.only(left: 50.0,right: 50.0),
+          child: ElevatedButton(
+            onPressed: () async {
+              audioHandler.pause;
+              fba.User? user = fba.FirebaseAuth.instance.currentUser;
+          
+              // Sign out the user
+              await fba.FirebaseAuth.instance.signOut();
+            // await auth?.signOut();
+              print("clicked sign out");
+              // Navigate back to the sign-in page (a little weird gpt fix?)
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => LoginPage()),
+                (Route<dynamic> route) => false,
+              );
+            },
+            child: Text('Sign Out'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red, // Text color
+            ),
           ),
         ),
         // SignOutButton(
@@ -1076,55 +1082,58 @@ class MyProfileScreen extends MultiProviderScreen {
         // steps for delete: get current user, navigate back to login, delete the user
 
         const SizedBox(height: 8),
-         ElevatedButton(
-          onPressed: () async {
-            // Sign out the user
-            // await auth?.signOut();
-            print("clicked Delete");
-            fba.User? user = fba.FirebaseAuth.instance.currentUser;
-                  if (user != null) {
-                    final String uid = user.uid;
-                    print("USER ID IS: " + uid);
-
-                    try {
-                      print("now going back to login");
-                    //  await Navigator.of(context).pushAndRemoveUntil(
-                    //     MaterialPageRoute(builder: (context) => LoginPage()),
-                    //     (Route<dynamic> route) => false,
-                    //   );
-                      // First, delete the Firestore data
-                     await FirebaseFirestore.instance
-                         .collection('QawlUsers')
-                         .doc(uid)
-                         .delete();
-
-                      // Then delete the user from Firebase Authentication
-                      await user.delete();
-                      print("going back to login page");
-                      // Finally, navigate to the login page
-
-                     await Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) => LoginPage()),
-                        (Route<dynamic> route) => false,
-                      );
-
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Account successfully deleted")),
-                      );
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                            content: Text(
-                                "Failed to delete account: ${e.toString()}")),
-                      );
+         Padding(
+           padding: const EdgeInsets.only(left: 50.0, right: 50.0),
+           child: ElevatedButton(
+            onPressed: () async {
+              // Sign out the user
+              // await auth?.signOut();
+              print("clicked Delete");
+              fba.User? user = fba.FirebaseAuth.instance.currentUser;
+                    if (user != null) {
+                      final String uid = user.uid;
+                      print("USER ID IS: " + uid);
+           
+                      try {
+                        print("now going back to login");
+                      //  await Navigator.of(context).pushAndRemoveUntil(
+                      //     MaterialPageRoute(builder: (context) => LoginPage()),
+                      //     (Route<dynamic> route) => false,
+                      //   );
+                        // First, delete the Firestore data
+                       await FirebaseFirestore.instance
+                           .collection('QawlUsers')
+                           .doc(uid)
+                           .delete();
+           
+                        // Then delete the user from Firebase Authentication
+                        await user.delete();
+                        print("going back to login page");
+                        // Finally, navigate to the login page
+           
+                       await Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (context) => LoginPage()),
+                          (Route<dynamic> route) => false,
+                        );
+           
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Account successfully deleted")),
+                        );
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content: Text(
+                                  "Failed to delete account: ${e.toString()}")),
+                        );
+                      }
                     }
-                  }
-          },
-          child: Text('Delete Account'),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.red, // Text color
-          ),
-        ),
+            },
+            child: Text('Delete Account'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red, // Text color
+            ),
+                   ),
+         ),
         // ElevatedButton(
         //   onPressed: () => _showConfirmationDialog(context),
         //   child: Text('Delete Account'),

@@ -15,7 +15,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      backgroundColor: Colors.black,
       body: SafeArea(
         child: Center(
           child: StreamBuilder<User?>(
@@ -39,7 +39,7 @@ class LoginPage extends StatelessWidget {
 
               // Display a loading spinner when checking authentication state
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator();
+                return const CircularProgressIndicator(color: Colors.green);
               }
 
               return buildSignInForm(context);
@@ -51,111 +51,147 @@ class LoginPage extends StatelessWidget {
   }
 
   Widget buildSignInForm(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const SizedBox(height: 50),
-        const Icon(Icons.lock, size: 100),
-        const SizedBox(height: 50),
-        Text(
-          'Welcome to Qawl!',
-          style: TextStyle(
-            color: Colors.grey[700],
-            fontSize: 16,
+    String logoImagePath = 'images/qawl-lime.png';
+
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const SizedBox(height: 25),
+          SizedBox(
+            width: 200.0, // specify the desired width
+            height: 200.0, // specify the desired height
+            child: Image.asset(logoImagePath),
           ),
-        ),
-        const SizedBox(height: 25),
-        TextFormField(
-          controller: emailController,
-          decoration: InputDecoration(
-            labelText: 'Email',
-            hintText: 'Email',
-          ),
-        ),
-        const SizedBox(height: 10),
-        TextFormField(
-          controller: passwordController,
-          obscureText: true,
-          decoration: InputDecoration(
-            labelText: 'Password',
-            hintText: 'Password',
-          ),
-        ),
-        const SizedBox(height: 10),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 25.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              GestureDetector(
-                  child: Text(
-                    'Forgot Password?',
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ForgotPasswordPage()),
-                    );
-                  }
-                  // Text(
-                  //   'Forgot Password?',
-                  //   style: TextStyle(color: Colors.grey[600]),
-                  // ),
-                  )
-            ],
-          ),
-        ),
-        const SizedBox(height: 25),
-        ElevatedButton(
-          onPressed: () async {
-            final message = await AuthService().login(
-              email: emailController.text,
-              password: passwordController.text,
-            );
-            if (message!.contains('Success')) {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (context) => const HomePage(),
-                ),
-              );
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Incorrect email or password provided'),
-                ),
-              );
-            }
-          },
-          child: const Text('Login'),
-        ),
-        const SizedBox(height: 50),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'New User?',
-              style: TextStyle(color: Colors.grey[700]),
+          const SizedBox(height: 25),
+          const Text(
+            'Welcome to Qawl!',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
             ),
-            const SizedBox(width: 4),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => RegistrationPage()),
-                );
-              },
-              child: const Text(
-                'Register now',
-                style: TextStyle(
-                  color: Colors.blue,
-                  fontWeight: FontWeight.bold,
+          ),
+          const SizedBox(height: 25),
+          TextFormField(
+            controller: emailController,
+            decoration: const InputDecoration(
+              labelText: 'Email',
+              hintText: 'Email',
+              floatingLabelStyle: TextStyle(color: Colors.green),
+              border: OutlineInputBorder(), // default border
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.green, // set the color to green
+                  width: 2.0, // set the width of the border
                 ),
               ),
             ),
-          ],
-        )
-      ],
+          ),
+          const SizedBox(height: 10),
+          TextFormField(
+              controller: passwordController,
+              obscureText: true,
+              decoration: const InputDecoration(
+                labelText: 'Password',
+                hintText: 'Password',
+                floatingLabelStyle: TextStyle(color: Colors.green),
+                border: OutlineInputBorder(), // default border
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.green, // set the color to green
+                    width: 2.0, // set the width of the border
+                  ),
+                ),
+              )),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 25.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                GestureDetector(
+                    child: const Text(
+                      'Forgot Password?',
+                      style: TextStyle(
+                    color: Colors.green,
+                    fontWeight: FontWeight.bold,
+                  )
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ForgotPasswordPage()),
+                      );
+                    }
+                    // Text(
+                    //   'Forgot Password?',
+                    //   style: TextStyle(color: Colors.grey[600]),
+                    // ),
+                    )
+              ],
+            ),
+          ),
+          const SizedBox(height: 25),
+          ElevatedButton(
+            style: const ButtonStyle(
+              
+              backgroundColor: WidgetStatePropertyAll<Color>(Colors.green),
+            ),
+            onPressed: () async {
+              final message = await AuthService().login(
+                email: emailController.text,
+                password: passwordController.text,
+              );
+              if (message!.contains('Success')) {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => const HomePage(),
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Incorrect email or password provided'),
+                  ),
+                );
+              }
+            },
+            child: const Text(
+              'Login',
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            ),
+          ),
+          const SizedBox(height: 50),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'New User?',
+                style: TextStyle(color: Colors.white),
+              ),
+              const SizedBox(width: 4),
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => RegistrationPage()),
+                  );
+                },
+                child: const Text(
+                  'Register now',
+                  style: TextStyle(
+                    color: Colors.green,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
     );
   }
 }

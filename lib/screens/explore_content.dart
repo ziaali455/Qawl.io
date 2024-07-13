@@ -4,7 +4,7 @@ import 'package:first_project/widgets/search_field.dart';
 import 'package:first_project/widgets/explore_track_widget_block.dart';
 import 'package:first_project/widgets/section_title_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:first_project/model/fake_user_data.dart';
+import 'package:first_project/deprecated/fake_user_data.dart';
 import 'package:first_project/model/user.dart';
 import 'package:first_project/size_config.dart';
 
@@ -46,7 +46,7 @@ class _ExploreContentState extends State<ExploreContent> {
               future: _top100PlaylistFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator(); // Show loading indicator
+                  return const CircularProgressIndicator(color: Colors.green); // Show loading indicator
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}'); // Show error message
                 } else {
@@ -61,7 +61,7 @@ class _ExploreContentState extends State<ExploreContent> {
               future: _newReleasesPlaylistFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator(); // Show loading indicator
+                  return const CircularProgressIndicator(color: Colors.green); // Show loading indicator
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}'); // Show error message
                 } else {
@@ -117,7 +117,7 @@ class _QariCardRowState extends State<QariCardRow> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           // While data is loading
-          return const CircularProgressIndicator();
+          return const CircularProgressIndicator(color: Colors.green);
         } else if (snapshot.hasError) {
           // If an error occurs
           return Text('Error: ${snapshot.error}');

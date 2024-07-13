@@ -219,6 +219,27 @@ class QawlUser {
     return getQawlUser(currentUserID!);
   }
 
+ static Future<List<QawlUser>> getUsersByCountry(String countryName) async {
+    List<QawlUser> users = [];
+
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('QawlUsers')
+          .where('country', isEqualTo: countryName)
+          .get();
+
+      querySnapshot.docs.forEach((doc) {
+        users.add(QawlUser.fromFirestore(doc));
+      });
+    } catch (error) {
+      print("Error fetching users by country: $error");
+      // Handle error as necessary
+    }
+
+    // print("Users in $countryName are $users");
+    return users;
+  }
+
   static Future<void> updateUserUploads(String uploadId) async {
     try {
       QawlUser? currentUser = await getCurrentQawlUser();
@@ -267,6 +288,22 @@ class QawlUser {
       return null;
     }
   }
+
+  // static Future<void> updatePfp(String imagePath) async {
+  //   try {
+  //     // Update local QawlUser object
+  //     QawlUser? user = await getCurrentQawlUser();
+  //     user?.imagePath = imagePath;
+
+  //     // Update network document on Firebase
+  //     await FirebaseFirestore.instance
+  //         .collection('QawlUsers')
+  //         .doc(user?.id)
+  //         .update({'imagePath': imagePath});
+  //   } catch (e) {
+  //     print('Error updating pfp image: $e');
+  //   }
+  // }
 
   static Future<String?> getName(String uid) async {
     try {
@@ -353,32 +390,32 @@ class QawlUser {
       print('Error updating country: $e');
     }
   }
+
   static Future<void> updateName(String newName) async {
-  try {
-    // Get the current Firebase user
-    User? firebaseUser = FirebaseAuth.instance.currentUser;
+    try {
+      // Get the current Firebase user
+      User? firebaseUser = FirebaseAuth.instance.currentUser;
 
-    if (firebaseUser != null) {
-      // Update the display name of the Firebase user
-      await firebaseUser.updateDisplayName(newName);
+      if (firebaseUser != null) {
+        // Update the display name of the Firebase user
+        await firebaseUser.updateDisplayName(newName);
 
-      // Update local QawlUser object
-      QawlUser? user = await getCurrentQawlUser();
-      if (user != null) {
-        user.name = newName;
+        // Update local QawlUser object
+        QawlUser? user = await getCurrentQawlUser();
+        if (user != null) {
+          user.name = newName;
+        }
+
+        // Update network document on Firebase (optional)
+        await FirebaseFirestore.instance
+            .collection('QawlUsers')
+            .doc(firebaseUser.uid)
+            .update({'name': newName});
       }
-
-      // Update network document on Firebase (optional)
-      await FirebaseFirestore.instance
-          .collection('QawlUsers')
-          .doc(firebaseUser.uid)
-          .update({'name': newName});
+    } catch (e) {
+      print('Error updating name: $e');
     }
-  } catch (e) {
-    print('Error updating name: $e');
   }
-}
-
 
   Future<void> updateImagePath(String uid, String newPath) async {
     await FirebaseFirestore.instance.collection('QawlUsers').doc(uid).update({
@@ -425,7 +462,8 @@ class QawlUser {
   static Future<String?> createQawlUser(User? firebaseUser) async {
     firebaseUser != null
         ? QawlUser(
-            imagePath: "",
+            imagePath:
+                "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3",
             id: firebaseUser.uid,
             name: "",
             email: firebaseUser.email ?? "",

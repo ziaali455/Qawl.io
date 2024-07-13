@@ -12,66 +12,34 @@ class NowPlayingBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // bool loaded = main_player.processingState == ProcessingState.ready ||
-    //     main_player.processingState == ProcessingState.completed ||
-    //     main_player.processingState == ProcessingState.buffering;
     bool loaded2 = audioHandler.isLoaded;
     if (loaded2) {
-      return GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  NowPlayingContent(playedTrack: getCurrentTrack()),
-            ),
-          );
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(5.0),
-          child: FutureBuilder<String?>(
-            future: getCurrentTrack().getAuthor(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator(); // Show loading indicator while waiting for data
+      return Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: FutureBuilder<String?>(
+          future: getCurrentTrack().getAuthor(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return CircularProgressIndicator(); // Show loading indicator while waiting for data
+            } else {
+              if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
               } else {
-                if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  return Container(
-                    height: 45,
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      border: Border.all(
-                        color: Colors.green,
-                        width: 2, // Increased border width
+                return FloatingActionButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            NowPlayingContent(playedTrack: getCurrentTrack()),
                       ),
-                      borderRadius: BorderRadius.circular(10), // Rounded border
-                    ),
-                    child: Stack(
-                      children: [
-                        Positioned.fill(
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  SurahMapper.getSurahNameByNumber(
-                                      getCurrentTrack().surahNumber),
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                  snapshot.data ?? '',
-                                  style: const TextStyle(fontSize: 10),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Positioned(
+                    );
+                  },
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                  backgroundColor: Colors.green,
+                  child: Positioned(
                           right: 10,
                           top: 0,
                           bottom: 0,
@@ -80,13 +48,10 @@ class NowPlayingBarWidget extends StatelessWidget {
                             child: SoundWaveformWidget(),
                           ),
                         ),
-                      ],
-                    ),
-                  );
-                }
+                );
               }
-            },
-          ),
+            }
+          },
         ),
       );
     } else {
@@ -97,6 +62,99 @@ class NowPlayingBarWidget extends StatelessWidget {
   }
 }
 
+//old bar
+// class NowPlayingBarWidget extends StatelessWidget {
+//   const NowPlayingBarWidget({
+//     Key? key,
+//   }) : super(key: key);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     // bool loaded = main_player.processingState == ProcessingState.ready ||
+//     //     main_player.processingState == ProcessingState.completed ||
+//     //     main_player.processingState == ProcessingState.buffering;
+//     bool loaded2 = audioHandler.isLoaded;
+//     if (loaded2) {
+//       return GestureDetector(
+//         onTap: () {
+//           Navigator.push(
+//             context,
+//             MaterialPageRoute(
+//               builder: (context) =>
+//                   NowPlayingContent(playedTrack: getCurrentTrack()),
+//             ),
+//           );
+//         },
+//         child: Padding(
+//           padding: const EdgeInsets.all(5.0),
+//           child: FutureBuilder<String?>(
+//             future: getCurrentTrack().getAuthor(),
+//             builder: (context, snapshot) {
+//               if (snapshot.connectionState == ConnectionState.waiting) {
+//                 return CircularProgressIndicator(); // Show loading indicator while waiting for data
+//               } else {
+//                 if (snapshot.hasError) {
+//                   return Text('Error: ${snapshot.error}');
+//                 } else {
+//                   return Container(
+//                     height: 45,
+//                     decoration: BoxDecoration(
+//                       color: Colors.black,
+//                       border: Border.all(
+//                         color: Colors.green,
+//                         width: 2, // Increased border width
+//                       ),
+//                       borderRadius: BorderRadius.circular(10), // Rounded border
+//                     ),
+//                     child: Stack(
+//                       children: [
+//                         Positioned.fill(
+//                           child: Center(
+//                             child: Column(
+//                               mainAxisAlignment: MainAxisAlignment.center,
+//                               children: [
+//                                 Text(
+//                                   SurahMapper.getSurahNameByNumber(
+//                                       getCurrentTrack().surahNumber),
+//                                   textAlign: TextAlign.center,
+//                                   style: const TextStyle(
+//                                       fontWeight: FontWeight.bold),
+//                                 ),
+//                                 Text(
+//                                   snapshot.data ?? '',
+//                                   style: const TextStyle(fontSize: 10),
+//                                   textAlign: TextAlign.center,
+//                                 ),
+//                               ],
+//                             ),
+//                           ),
+//                         ),
+//                         Positioned(
+//                           right: 10,
+//                           top: 0,
+//                           bottom: 0,
+//                           child: Opacity(
+//                             opacity: trackIsPlaying()  ? 1.0 : 0.0,
+//                             child: SoundWaveformWidget(),
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//                   );
+//                 }
+//               }
+//             },
+//           ),
+//         ),
+//       );
+//     } else {
+//       return Container(
+//         height: 0,
+//       );
+//     }
+//   }
+// }
+
 class SoundWaveformWidget extends StatefulWidget {
   final int count;
   final double minHeight;
@@ -105,8 +163,8 @@ class SoundWaveformWidget extends StatefulWidget {
   const SoundWaveformWidget({
     Key? key,
     this.count = 3,
-    this.minHeight = 5,
-    this.maxHeight = 10,
+    this.minHeight = 8,
+    this.maxHeight = 15,
     this.durationInMilliseconds = 500,
   }) : super(key: key);
   @override
@@ -157,7 +215,7 @@ class _SoundWaveformWidgetState extends State<SoundWaveformWidget>
               height: i == current ? maxHeight : minHeight,
               width: 5,
               decoration: BoxDecoration(
-                color: Colors.green,
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(9999),
               ),
             ),

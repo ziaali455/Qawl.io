@@ -1,4 +1,4 @@
-import 'package:first_project/model/fake_playlists_data.dart';
+import 'package:first_project/deprecated/fake_playlists_data.dart';
 import 'package:first_project/model/playlist.dart';
 import 'package:first_project/widgets/playlist_list_widget.dart';
 import 'package:first_project/widgets/playlist_button_widget_block.dart';
@@ -92,7 +92,7 @@ class _HomePageContentState extends State<HomePageContent> {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   // While waiting for the data to load, display a loading indicator
-                  return const CircularProgressIndicator();
+                  return const CircularProgressIndicator(color: Colors.green);
                 } else if (snapshot.hasError) {
                   // If there's an error, display an error message
                   return Text('Error: ${snapshot.error}');
