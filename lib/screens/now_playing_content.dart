@@ -1,5 +1,6 @@
 
 import 'dart:async';
+
 //NOW PLAYING CONTENT THAT USES AUDIO HANDLER METHODS
 
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
@@ -39,7 +40,6 @@ class _NowPlayingContentState extends State<NowPlayingContent> {
   late AudioPlayer _audioPlayer;
 
   late StreamSubscription<User?> _authStateChangesSubscription; // used to detect when user signs out
-
 
 
   @override

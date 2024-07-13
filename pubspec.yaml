@@ -54,7 +54,7 @@ dependencies:
   path_provider: ^2.1.1
   file_picker: ^6.1.1
   flutter_audio_waveforms: ^1.2.1+8
-  audio_waveforms: ^1.0.4
+  audio_waveforms: ^1.0.5
   modal_bottom_sheet: ^2.1.2
   firebase_ui_auth: ^1.10.0
   image_picker: ^1.0.7

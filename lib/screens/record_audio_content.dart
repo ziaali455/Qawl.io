@@ -13,7 +13,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:typed_data';
-import 'package:just_audio/just_audio.dart';
+import 'package:just_audio/just_audio.dart' hide PlayerState;
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_waveforms/flutter_audio_waveforms.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
@@ -29,10 +29,11 @@ class RecordAudioContent extends StatefulWidget {
 
 class _RecordAudioContentState extends State<RecordAudioContent> {
   FirebaseFirestore db = FirebaseFirestore.instance;
-  final record = Record();
+  //final record = Record();
   String? _recordedFilePath;
   DateTime? recordingStartTime;
-
+  late final RecorderController recorderController; // new recorder for waves
+  late final PlayerController playerController;
   AudioPlayer main_player = AudioPlayer();
 
   bool isCapturing = false;
@@ -42,22 +43,73 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
   bool showCheck = false;
   bool doneRecording = false;
 
+  @override
+  void initState() {
+    super.initState();
+    _initialiseController();
+    initRecorder();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    recorderController.dispose();
+    playerController.dispose();
+    main_player.dispose();
+  }
+
+  void _initialiseController() {
+    recorderController = RecorderController()
+      ..androidEncoder = AndroidEncoder.aac
+      ..androidOutputFormat = AndroidOutputFormat.mpeg4
+      ..iosEncoder = IosEncoder.kAudioFormatMPEG4AAC
+      ..sampleRate = 16000;
+    playerController = PlayerController();
+  }
+
+  Future<void> initRecorder() async {
+    var status = await Permission.microphone.status;
+    if (!status.isGranted) {
+      status = await Permission.microphone.request();
+      if (!status.isGranted) {
+        print('Mic permission not granted'); // Debug print
+        //throw 'Mic permission not granted';
+      } else {
+        print('Mic permission granted'); // Debug print
+      }
+    } else {
+      print('Mic permission already granted'); // Debug print
+    }
+  }
+
 //using a temporary filepath to store the file locally, then delete the path after stopping the recording
   Future<void> start() async {
-    if (await record.hasPermission()) {
-      // Delete the previous recording if it exists
-      if (_recordedFilePath != null) {
-        File previousRecording = File(_recordedFilePath!);
-        if (await previousRecording.exists()) {
-          await deleteLocalFile(previousRecording);
-        }
+    // if (await Permission.microphone.isGranted) {
+    // Delete the previous recording if it exists
+    if (_recordedFilePath != null) {
+      File previousRecording = File(_recordedFilePath!);
+      if (await previousRecording.exists()) {
+        await deleteLocalFile(previousRecording);
       }
-
-      recordingStartTime = DateTime.now();
-      _recordedFilePath = await getTemporaryFilePath(); // Set the new file path
-      await record.start(path: _recordedFilePath);
-      debugPrint("Recording started");
     }
+
+    recordingStartTime = DateTime.now();
+    _recordedFilePath = await getTemporaryFilePath(); // Set the new file path
+    // await record.start(path: _recordedFilePath);
+    playerController.preparePlayer(path: _recordedFilePath!);
+    await recorderController.record(path: _recordedFilePath!);
+
+    setState(() {
+      showWaveforms = true;
+      isCapturing = true;
+    });
+    debugPrint("Recording started");
+    // }  else {
+    //    await initRecorder();
+    //    if (await Permission.microphone.isGranted) {
+    //      await start();
+    //    }
+    //}
   }
 
 // user id plus milliseconds
@@ -81,78 +133,105 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
 
 // Get the state of the recorder
   Future<bool> isRecording() async {
-    bool isRecording = await record.isRecording();
+    // bool isRecording = await record.isRecording();
+    bool isRecording = await recorderController.isRecording;
     return isRecording;
   }
 
   void stopRecording() async {
-    await record.stop();
+    await recorderController.stop();
+    //await record.stop();
     debugPrint("Recording stopped");
-
-    //popup for surah name and then call upload storeUrlInFirestore to add with surah name
-    if (_recordedFilePath != null) {
-      // debugPrint("here");
-      // File audioFile = File(_recordedFilePath!);
-      // String? fileUrl = await uploadRecording(_recordedFilePath);
-      // if (fileUrl != null) {
-      //     await storeUrlInFirestore(fileUrl);
-      // await deleteLocalFile(audioFile); // Delete the local file
-      //   }
-      // _recordedFilePath = null; // Reset the file path?
-    }
-  }
-
-  Future initRecorder() async {
-    final status = await Permission.microphone.request();
-    if (status != PermissionStatus.granted) {
-      throw 'Mic permission not granted';
-    }
-    //await  recordopenAudioSession();
+    setState(() {
+      showWaveforms = false;
+      isCapturing = false;
+      doneRecording = true;
+    });
   }
 
   Future<void> playAudio() async {
     if (_recordedFilePath == null) {
-        debugPrint("No recording has been made yet");
-        return;
+      debugPrint("No recording has been made yet");
+      return;
     }
     try {
-        await main_player.setFilePath(_recordedFilePath!); // Set the local file path
-        await main_player.play(); // Play the audio
+      //await main_player.setFilePath(_recordedFilePath!);
+      await playerController.preparePlayer(path: _recordedFilePath!);
+      //main_player.play();
+      playerController.startPlayer();
 
-        // Listen to the player state
-        main_player.playerStateStream.listen((state) async {
-            // Check if the player has finished playing
-            if (state.processingState == ProcessingState.completed) {
-                // Playback has finished
-                setState(() {
-                    isPlaying = false; // Reset isPlaying flag
-                });
-            }
+      // main_player.positionStream.listen((position) {
+      //   playerController.seekTo(position.inMilliseconds);
+      // });
+
+      // main_player.playerStateStream.listen((state) {
+      //   if (state.processingState == ProcessingState.completed) {
+      //     setState(() {
+      //       isPlaying = false;
+      //     });
+      //     debugPrint("Playback completed");
+      //   }
+      // });
+
+      //await main_player.play();
+      setState(() {
+        isPlaying = true;
+      });
+      debugPrint("Playback started");
+
+      playerController.onCompletion.listen((event) {
+        setState(() {
+          isPlaying = false;
+          debugPrint("Playback completed");
         });
+      });
     } catch (e) {
-        debugPrint("Error playing audio: $e");
+      debugPrint("Error during playback: $e");
     }
-}
-
-  
+  }
 
 //temp widget for waveform
   Widget QawlWaveforms() {
-    if (showWaveforms) {
-      return AudioFileWaveforms(
-        size: Size(MediaQuery.of(context).size.width, 100.0),
-        playerController: controller,
-        enableSeekGesture: true,
-        waveformType: WaveformType.long,
-        waveformData: [],
-        playerWaveStyle: const PlayerWaveStyle(
-          fixedWaveColor: Colors.green,
-          liveWaveColor: Colors.blueAccent,
-          spacing: 6,
+    if (isCapturing) {
+      return AudioWaveforms(
+        enableGesture: true,
+        size: Size(MediaQuery.of(context).size.width, 100),
+        recorderController: recorderController,
+        waveStyle: const WaveStyle(
+          waveColor: Colors.green,
+          extendWaveform: true,
+          waveThickness: 4.0,
+          scaleFactor: 125.0,
+          showMiddleLine: false,
         ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12.0),
+          color: const Color(0xFF1E1B26),
+        ),
+        padding: const EdgeInsets.only(left: 18),
+        margin: const EdgeInsets.symmetric(horizontal: 15),
+      );
+    } else if (isPlaying) {
+      return AudioFileWaveforms(
+        size: Size(MediaQuery.of(context).size.width, 100),
+        playerController: playerController,
+        playerWaveStyle: const PlayerWaveStyle(
+          scaleFactor: 200.0,
+          fixedWaveColor: Colors.green,
+          liveWaveColor: Colors.green,
+          waveCap: StrokeCap.butt,
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12.0),
+          color: const Color(0xFF1E1B26),
+        ),
+        padding: const EdgeInsets.only(left: 18),
+        margin: const EdgeInsets.symmetric(horizontal: 15),
       );
     } else {
-      return Container(height: 0);
+      return Container(
+        height: 100,
+      );
     }
   }
 
@@ -171,8 +250,12 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
                     padding: const EdgeInsets.only(bottom: 250.0),
                     child: QawlBackButton(),
                   ),
-                  //Waveforms
-                  //QawlWaveforms(),
+                  // AudioFileWaveforms(
+                  //   size: Size(MediaQuery.of(context).size.width, 100.0),
+                  //   playerController: playerController,
+                  // ),
+
+                  QawlWaveforms(),
                   SizedBox(height: 10),
                   Center(
                     child: Padding(
@@ -298,15 +381,6 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
                   debugPrint("Recorded file path is null");
                 }
               },
-              // onPressed: () {
-              //   Navigator.push(
-              //       context,
-              //       MaterialPageRoute(
-              //         builder: (context) => TrackInfoContent(
-              //           trackPath: _recordedFilePath!,
-              //         ),
-              //       ));
-              // },
               child: Align(
                   alignment: Alignment.center,
                   child: Text(
@@ -352,20 +426,10 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
             //   size: 50.0,
             // ),
             onPressed: () async {
-              setState(() {
-                isCapturing = !isCapturing;
-              });
-              if (await isRecording()) {
-                // popup for surah name,
+              if (isCapturing) {
                 stopRecording();
-                doneRecording = !doneRecording;
-                showCheck = !showCheck;
-
-                //VERIFICATION BUTTON
-                //uploadRecording();
               } else {
                 await start();
-                Icons.stop;
               }
             },
             style: ElevatedButton.styleFrom(
@@ -378,54 +442,45 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
   }
 
   Widget QawlPlayBackButton() {
-    return doneRecording
-        ? Row(
-            children: [
-              Stack(children: <Widget>[
-                Positioned.fill(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4),
-                      gradient: LinearGradient(
-                        colors: <Color>[
-                          Color.fromARGB(255, 13, 161, 99),
-                          Color.fromARGB(255, 22, 181, 93),
-                          Color.fromARGB(255, 32, 220, 85),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                ElevatedButton(
-                    child: isPlaying
-                        ? Icon(Icons.pause, size: 80.0)
-                        : Icon(Icons.play_arrow, size: 80.0),
-                    onPressed: () async {
-                      setState(() {
-                        showWaveforms = !showWaveforms;
-                        isPlaying = !isPlaying;
-                      });
-
-                      debugPrint(_recordedFilePath);
-                      //AudioWaveforms version of playback
-                      if (isPlaying) {
-                        await playAudio();
-                      } else {
-                        main_player
-                            .stop(); // Stop the player if already playing
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 30, vertical: 30),
-                    ))
-              ]),
-            ],
-          )
-        : Container(
-            height: 0,
-          );
+  if (doneRecording) {
+    return Ink(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: <Color>[
+            Color.fromARGB(255, 13, 161, 99),
+            Color.fromARGB(255, 22, 181, 93),
+            Color.fromARGB(255, 32, 220, 85),
+          ],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+        ),
+        borderRadius: BorderRadius.circular(10), // Add some rounding to match button
+      ),
+      child: ElevatedButton(
+        child: Icon(isPlaying ? Icons.stop : Icons.play_arrow,
+            size: 60.0, color: Colors.white), // Changed color to white for contrast
+        onPressed: () async {
+          if (isPlaying) {
+            await playerController.pausePlayer();
+            setState(() {
+              isPlaying = false;
+            });
+          } else {
+            await playAudio();
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+          backgroundColor: Colors.transparent, // Make background transparent
+          shadowColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      ),
+    );
   }
+  return Container(height: 0);
+}
+
 }
