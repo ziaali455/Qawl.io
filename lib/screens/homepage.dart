@@ -9,6 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import '../widgets/now_playing_bar.dart';
 
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -18,6 +22,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int currentIndex = 1; // Set initial index to 1 for ExploreContent
+  bool isPlaying = false; // Track whether audio is playing
 
   final List<Widget> screens = [
     const HomePageContent(),
@@ -26,13 +31,31 @@ class _HomePageState extends State<HomePage> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    // Start listening to track playing status when the widget initializes
+    _startListeningToTrackPlaying();
+  }
+
+  void _startListeningToTrackPlaying() {
+    // Periodically check the playing status and update UI
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      _updateIsPlaying();
+    });
+  }
+
+  Future<void> _updateIsPlaying() async {
+    bool playing = await trackIsPlaying();
+    setState(() {
+      isPlaying = playing;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    bool loaded2 = audioHandler.isLoaded;
     return Scaffold(
       body: screens[currentIndex], // Current tab content
-      floatingActionButton: loaded2
-          ? NowPlayingFloatingButtonWidget()
-          : null,
+      floatingActionButton: isPlaying ? NowPlayingFloatingButtonWidget() : null,
       bottomNavigationBar: GNav(
         backgroundColor: Colors.black,
         color: Colors.white,
@@ -53,6 +76,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
 
 class NowPlayingFloatingButtonWidget extends StatelessWidget {
   const NowPlayingFloatingButtonWidget({
