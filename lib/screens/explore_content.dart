@@ -4,7 +4,7 @@ import 'package:first_project/widgets/search_field.dart';
 import 'package:first_project/widgets/explore_track_widget_block.dart';
 import 'package:first_project/widgets/section_title_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:first_project/model/fake_user_data.dart';
+import 'package:first_project/deprecated/fake_user_data.dart';
 import 'package:first_project/model/user.dart';
 import 'package:first_project/size_config.dart';
 

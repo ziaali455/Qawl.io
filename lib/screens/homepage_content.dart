@@ -1,4 +1,4 @@
-import 'package:first_project/model/fake_playlists_data.dart';
+import 'package:first_project/deprecated/fake_playlists_data.dart';
 import 'package:first_project/model/playlist.dart';
 import 'package:first_project/widgets/playlist_list_widget.dart';
 import 'package:first_project/widgets/playlist_button_widget_block.dart';

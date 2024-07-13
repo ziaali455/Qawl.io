@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:first_project/model/fake_track_data.dart';
+import 'package:first_project/deprecated/fake_track_data.dart';
 import 'package:first_project/model/player.dart';
 import 'package:first_project/screens/track_info_content.dart';
 import 'package:flutter/material.dart';

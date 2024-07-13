@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:first_project/model/fake_playlists_data.dart';
+import 'package:first_project/deprecated/fake_playlists_data.dart';
 import 'package:first_project/model/playlist.dart';
 import 'package:first_project/model/user.dart';
 import 'package:first_project/screens/country_explore_content.dart';

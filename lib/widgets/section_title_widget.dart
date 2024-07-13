@@ -1,5 +1,5 @@
-import 'package:first_project/model/fake_playlists_data.dart';
-import 'package:first_project/model/fake_user_data.dart';
+import 'package:first_project/deprecated/fake_playlists_data.dart';
+import 'package:first_project/deprecated/fake_user_data.dart';
 import 'package:first_project/screens/playlist_screen_content.dart';
 import 'package:flutter/material.dart';
 

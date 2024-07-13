@@ -36,10 +36,10 @@ class _CountryExploreContentState extends State<CountryExploreContent> {
               children: List.generate(allcountries.countries.length, (index) {
                 return GestureDetector(
                   onTap: () {
-                    print("Passing in " +
-                        allcountries.countries[index]["countryName"] +
-                        " and " +
-                        allcountries.countries[index]["countryName"]);
+                    // print("Passing in " +
+                    //     allcountries.countries[index]["countryName"] +
+                    //     " and " +
+                    //     allcountries.countries[index]["countryName"]);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
