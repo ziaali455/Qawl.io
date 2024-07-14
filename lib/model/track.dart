@@ -286,7 +286,9 @@ class Track {
         id: id,
         title: SurahMapper.getSurahNameByNumber(surahNumber),
         artist: userId,
+        album: 'Qawl',
         artUri: Uri.parse(coverImagePath),
+        duration: Duration(seconds: 0), // Replace with actual duration if available
         extras: <String, dynamic>{
           'surah': surahNumber,
           'plays': plays,

@@ -197,7 +197,7 @@ class _ProfileContentState extends State<ProfileContent> {
                 //     icon: Icon(Icons.settings),
                 //   ),
                 // ),
-                if (!isPersonal)
+                if (isPersonal)
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: FutureBuilder<Widget>(
@@ -240,7 +240,7 @@ class _ProfileContentState extends State<ProfileContent> {
                       );
                     } else {
                       List<Track> uploadedTracks = snapshot.data ?? [];
-                      print("The tracks are " + uploadedTracks.toString());
+                      // print("The tracks are " + uploadedTracks.toString());
                       return PlaylistPreviewWidget(
                         playlist: QawlPlaylist(
                           id: '0',

@@ -296,7 +296,7 @@ class QariColumnCard extends StatelessWidget {
 class PlaceholderContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: Center(
         child: Stack(children: [
           Column(
@@ -309,14 +309,14 @@ class PlaceholderContent extends StatelessWidget {
                       'Coming Soon',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 24,
+                        fontSize: getProportionateScreenWidth(24),
                       ),
                     ),
                     SizedBox(height: 60),
                     Text(
                       '😊',
                       style: TextStyle(
-                        fontSize: 40,
+                        fontSize: getProportionateScreenWidth(40),
                       ),
                     ),
                   ],

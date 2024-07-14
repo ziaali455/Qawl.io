@@ -1,5 +1,6 @@
 import 'package:first_project/screens/homepage.dart';
 import 'package:first_project/screens/own_registration_.dart';
+import 'package:first_project/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:first_project/own_auth_service.dart';
@@ -25,10 +26,10 @@ class ForgotPasswordPage extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
+                Text(
                   "Enter your email address and we will send you a link to reset your password.",
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 18),
+                  style: TextStyle(fontSize: getProportionateScreenWidth(18)),
                 ),
                 const SizedBox(height: 20),
                 TextField(
