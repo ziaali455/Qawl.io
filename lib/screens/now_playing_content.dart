@@ -1,4 +1,3 @@
-
 import 'dart:async';
 
 //NOW PLAYING CONTENT THAT USES AUDIO HANDLER METHODS
@@ -10,6 +9,7 @@ import 'package:first_project/model/audio_handler.dart';
 import 'package:first_project/model/player.dart';
 import 'package:first_project/model/user.dart';
 import 'package:first_project/screens/profile_content.dart';
+import 'package:first_project/size_config.dart';
 import 'package:first_project/widgets/add_to_library_popup.dart';
 import 'package:first_project/widgets/explore_track_widget_block.dart';
 import 'package:flutter/material.dart';
@@ -39,21 +39,22 @@ class _NowPlayingContentState extends State<NowPlayingContent> {
   late Track myTrack;
   late AudioPlayer _audioPlayer;
 
-  late StreamSubscription<User?> _authStateChangesSubscription; // used to detect when user signs out
-
+  late StreamSubscription<User?>
+      _authStateChangesSubscription; // used to detect when user signs out
 
   @override
   void initState() {
     super.initState();
     myTrack = widget.playedTrack;
     _audioPlayer = audioHandler.audioPlayer;
-     _authStateChangesSubscription = fba.FirebaseAuth.instance.authStateChanges().listen((User? user) {
+    _authStateChangesSubscription =
+        fba.FirebaseAuth.instance.authStateChanges().listen((User? user) {
       if (user == null) {
         // User has signed out, pause the audio
         _audioPlayer.pause();
       }
     });
-
+    
   }
 
   void updateTrack(Track newTrack) {
@@ -145,7 +146,9 @@ class CoverContent2 extends StatelessWidget {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return CircularProgressIndicator(color: Colors.green,); // Example loading indicator
+                            return CircularProgressIndicator(
+                              color: Colors.green,
+                            ); // Example loading indicator
                           } else if (snapshot.hasError) {
                             return Text('Error: ${snapshot.error}');
                           } else {
@@ -161,7 +164,7 @@ class CoverContent2 extends StatelessWidget {
                                             '', // Display author if available
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 18,
+                                          fontSize: getProportionateScreenWidth(17),
                                           color: Colors.grey.shade700,
                                         ),
                                       ),
@@ -191,9 +194,9 @@ class CoverContent2 extends StatelessWidget {
                                     Text(
                                       SurahMapper.getSurahNameByNumber(
                                           myTrack.surahNumber),
-                                      style: const TextStyle(
+                                      style:  TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 20,
+                                        fontSize: getProportionateScreenWidth(17),
                                       ),
                                     ),
                                   ],
@@ -282,7 +285,9 @@ class _CoverContentState extends State<CoverContent> {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
 // Return a loading indicator or placeholder widget
-                  return CircularProgressIndicator(color: Colors.green,); // Example loading indicator
+                  return CircularProgressIndicator(
+                    color: Colors.green,
+                  ); // Example loading indicator
                 } else if (snapshot.hasError) {
 // Handle error case
                   return Text('Error: ${snapshot.error}');
@@ -300,7 +305,7 @@ class _CoverContentState extends State<CoverContent> {
                                   '', // Display author if available
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 18,
+                                fontSize: getProportionateScreenWidth(17),
                                 color: Colors.grey.shade700,
                               ),
                             ),
@@ -328,9 +333,9 @@ class _CoverContentState extends State<CoverContent> {
                           Text(
                             SurahMapper.getSurahNameByNumber(
                                 myTrack.surahNumber),
-                            style: const TextStyle(
+                            style:  TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 20,
+                              fontSize: getProportionateScreenWidth(19),
                             ),
                           ),
                         ],
@@ -506,3 +511,13 @@ class QawlProgressBar extends StatelessWidget {
     );
   }
 }
+
+var qawl_green_gradient = const BoxDecoration(
+  gradient: LinearGradient(
+    colors: <Color>[
+      Color.fromARGB(255, 13, 161, 99),
+      Color.fromARGB(255, 22, 181, 93),
+      Color.fromARGB(255, 32, 220, 85),
+    ],
+  ),
+);

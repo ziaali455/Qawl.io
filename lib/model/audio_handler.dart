@@ -45,7 +45,7 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   ValueNotifier<Track?> currentTrackNotifier = ValueNotifier<Track?>(null);
 
   void _updateNowPlayingInfo(Track track) {
-    final mediaItem = track.toMediaItem();
+    final _mediaItem = track.toMediaItem();
     // methodChannel.invokeMethod('updateNowPlayingInfo', {
     //   'id': mediaItem.id,
     //   'title': mediaItem.title,
@@ -54,18 +54,24 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     //   'duration': mediaItem.duration?.inSeconds,
     //   'position': _audioPlayer.position.inSeconds,
     // });
+    mediaItem.add(_mediaItem);
+    updateMediaItem(_mediaItem);
   }
 
   // MyAudioHandler() {
   //   _init();
   // }
+
   MyAudioHandler() {
     _init();
     AudioService.init(
       builder: () => this,
       config: const AudioServiceConfig(
-        androidNotificationChannelName: 'YOUR_CHANNEL_NAME',
-        androidNotificationChannelDescription: 'YOUR_CHANNEL_DESCRIPTION',
+        androidNotificationChannelName: 'Qawl Audio Playback',
+        androidNotificationChannelDescription: 'Audio playback controls',
+        androidNotificationIcon: 'drawable/ic_notification',
+        androidShowNotificationBadge: true,
+        notificationColor: Color(0xFF2196F3),
       ),
     );
     _audioPlayer.playbackEventStream.map(_transformEvent).pipe(playbackState);
@@ -91,11 +97,12 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   void _init() {
     _audioPlayer.currentIndexStream.listen((index) {
       if (index != null && _playlist.children.isNotEmpty) {
-        final mediaItem =
+        final _mediaItem =
             (_playlist.children[index] as UriAudioSource).tag as MediaItem;
-        final track = Track.fromMediaItem(mediaItem);
+        final track = Track.fromMediaItem(_mediaItem);
         _currentTrack = track;
         currentTrackNotifier.value = track; // Notify listeners
+        mediaItem.add(_mediaItem);
         _updateNowPlayingInfo(track);
       } else {
         _currentTrack = null;
@@ -229,6 +236,7 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     await _audioPlayer.play();
     if (_currentTrack != null) {
       _updateNowPlayingInfo(_currentTrack!);
+      mediaItem.add(_currentTrack!.toMediaItem());
     }
   }
 

@@ -1,4 +1,5 @@
 import 'package:first_project/model/playlist.dart';
+import 'package:first_project/size_config.dart';
 import 'package:flutter/material.dart';
 import '../screens/playlist_screen_content.dart';
 
@@ -39,8 +40,8 @@ class PlaylistButtonWidget extends StatelessWidget {
         ),
         child: Center(
             child: Text(playlist.getName(),
-                style: const TextStyle(
-                    fontWeight: FontWeight.bold, fontSize: 24))),
+                style:  TextStyle(
+                    fontWeight: FontWeight.bold, fontSize: getProportionateScreenWidth(24)))),
       ),
     );
   }

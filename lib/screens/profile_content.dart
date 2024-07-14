@@ -197,7 +197,7 @@ class _ProfileContentState extends State<ProfileContent> {
                 //     icon: Icon(Icons.settings),
                 //   ),
                 // ),
-                if (!isPersonal)
+                if (isPersonal)
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: FutureBuilder<Widget>(

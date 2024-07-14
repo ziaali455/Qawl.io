@@ -44,7 +44,7 @@ class QariCard extends StatelessWidget {
                   child: Column(
                     children: [
                       Hero(
-                        tag: "user pfp",
+                        tag: "user",
                         child: ClipRRect(
                             borderRadius: BorderRadius.circular(15),
                             child: AspectRatio(
