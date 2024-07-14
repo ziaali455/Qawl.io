@@ -67,7 +67,7 @@ class SeeMoreButton extends StatelessWidget {
         child: Text(
           "See More",
           style: TextStyle(
-              color: const Color.fromARGB(255, 255, 255, 255),
+              color: Colors.white70,
               fontSize: getProportionateScreenWidth(15)),
         ));
   }

@@ -29,6 +29,8 @@ class RecordAudioContent extends StatefulWidget {
 
 class _RecordAudioContentState extends State<RecordAudioContent> {
   FirebaseFirestore db = FirebaseFirestore.instance;
+  String messageText =
+      "Once you press the mic button, your recording will show up here.";
   //final record = Record();
   String? _recordedFilePath;
   DateTime? recordingStartTime;
@@ -150,6 +152,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
   }
 
   Future<void> playAudio() async {
+    
     if (_recordedFilePath == null) {
       debugPrint("No recording has been made yet");
       return;
@@ -183,6 +186,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
         setState(() {
           isPlaying = false;
           debugPrint("Playback completed");
+          messageText = "";
         });
       });
     } catch (e) {
@@ -231,6 +235,14 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
     } else {
       return Container(
         height: 100,
+        child: Align(
+          alignment: Alignment.center,
+          child: Text(
+            messageText,
+            textAlign: TextAlign
+                .center, // Optional: TextAlign.center for text alignment
+          ),
+        ),
       );
     }
   }
@@ -442,45 +454,46 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
   }
 
   Widget QawlPlayBackButton() {
-  if (doneRecording) {
-    return Ink(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: <Color>[
-            Color.fromARGB(255, 13, 161, 99),
-            Color.fromARGB(255, 22, 181, 93),
-            Color.fromARGB(255, 32, 220, 85),
-          ],
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
+    if (doneRecording) {
+      return Ink(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: <Color>[
+              Color.fromARGB(255, 13, 161, 99),
+              Color.fromARGB(255, 22, 181, 93),
+              Color.fromARGB(255, 32, 220, 85),
+            ],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ),
+          borderRadius:
+              BorderRadius.circular(10), // Add some rounding to match button
         ),
-        borderRadius: BorderRadius.circular(10), // Add some rounding to match button
-      ),
-      child: ElevatedButton(
-        child: Icon(isPlaying ? Icons.stop : Icons.play_arrow,
-            size: 60.0, color: Colors.white), // Changed color to white for contrast
-        onPressed: () async {
-          if (isPlaying) {
-            await playerController.pausePlayer();
-            setState(() {
-              isPlaying = false;
-            });
-          } else {
-            await playAudio();
-          }
-        },
-        style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 30),
-          backgroundColor: Colors.transparent, // Make background transparent
-          shadowColor: Colors.transparent,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+        child: ElevatedButton(
+          child: Icon(isPlaying ? Icons.stop : Icons.play_arrow,
+              size: 60.0,
+              color: Colors.white), // Changed color to white for contrast
+          onPressed: () async {
+            if (isPlaying) {
+              await playerController.pausePlayer();
+              setState(() {
+                isPlaying = false;
+              });
+            } else {
+              await playAudio();
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+            backgroundColor: Colors.transparent, // Make background transparent
+            shadowColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
         ),
-      ),
-    );
+      );
+    }
+    return Container(height: 0);
   }
-  return Container(height: 0);
-}
-
 }

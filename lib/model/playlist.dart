@@ -209,12 +209,12 @@ static Future<List<Track>> fetchTopTracks(String gender) async {
 static Future<List<Track>> fetchNewReleases(String gender) async {
   try {
     // Calculate the timestamp for two weeks ago
-    DateTime twoWeeksAgo = DateTime.now().subtract(Duration(days: 14));
+    DateTime threeWeeksAgo = DateTime.now().subtract(Duration(days: 28));
 
     // Query Firestore to get new releases published in the last two weeks
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('QawlTracks')
-        .where('timeStamp', isGreaterThan: twoWeeksAgo) // Filter tracks published in the last two weeks
+        .where('timeStamp', isGreaterThan: threeWeeksAgo) // Filter tracks published in the last two weeks
         .orderBy('timeStamp', descending: true) // Order by timestamp in descending order
         .limit(100) // Limit to the latest 100 tracks
         .get();

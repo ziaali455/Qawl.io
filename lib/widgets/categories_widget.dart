@@ -28,14 +28,15 @@ class Categories extends StatelessWidget {
         "text": "Nations"
       },
       {
+        "icon":
+            const Icon(Icons.spatial_tracking_outlined, color: Colors.red),
+        "text": "Styles"
+      },
+      {
         "icon": const Icon(Icons.trending_up, color: Colors.yellow),
         "text": "Trending"
       },
-      {
-        "icon":
-            const Icon(Icons.local_fire_department_outlined, color: Colors.red),
-        "text": "New"
-      },
+      
       {
         "icon": const Icon(Icons.supervised_user_circle_rounded,
             color: Colors.purple),
@@ -91,7 +92,7 @@ class CategoryCard extends StatelessWidget {
             MaterialPageRoute(builder: (context) => PlaceholderContent()),
             //PlaylistScreenContent(playlist: fake_playlist_data.following,)),
           );
-        } else if (text == "New") {
+        } else if (text == "Styles") {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => PlaceholderContent()),

@@ -58,7 +58,7 @@ class _QariNationContentState extends State<QariNationContent> {
                 },
               );
             } else {
-              return Center(child: Text('No users available'));
+              return Center(child: Text('No users yet!'));
             }
           }
         },

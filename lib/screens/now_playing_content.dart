@@ -165,7 +165,7 @@ class CoverContent2 extends StatelessWidget {
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: getProportionateScreenWidth(17),
-                                          color: Colors.grey.shade700,
+                                          color: Colors.green.shade300,
                                         ),
                                       ),
                                       onTap: () async {

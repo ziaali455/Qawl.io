@@ -5,6 +5,7 @@ import 'package:first_project/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:first_project/own_auth_service.dart';
+import 'package:widget_and_text_animator/widget_and_text_animator.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
@@ -60,10 +61,13 @@ class LoginPage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const SizedBox(height: 25),
-          SizedBox(
-            width: 200.0, // specify the desired width
-            height: 200.0, // specify the desired height
-            child: Image.asset(logoImagePath),
+          WidgetAnimator(
+            incomingEffect: WidgetTransitionEffects.incomingSlideInFromTop(),
+            child: SizedBox(
+              width: 200.0, // specify the desired width
+              height: 200.0, // specify the desired height
+              child: Image.asset(logoImagePath),
+            ),
           ),
           const SizedBox(height: 25),
            Text(

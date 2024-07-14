@@ -219,7 +219,7 @@ class QawlUser {
     return getQawlUser(currentUserID!);
   }
 
- static Future<List<QawlUser>> getUsersByCountry(String countryName) async {
+  static Future<List<QawlUser>> getUsersByCountry(String countryName) async {
     List<QawlUser> users = [];
 
     try {
@@ -235,9 +235,16 @@ class QawlUser {
       print("Error fetching users by country: $error");
       // Handle error as necessary
     }
+    List<QawlUser> res = [];
+    QawlUser? curr = await QawlUser.getCurrentQawlUser();
+    for (QawlUser user in users) {
+      if (user.gender == curr?.gender) {
+        res.add(user);
+      }
+    }
 
     // print("Users in $countryName are $users");
-    return users;
+    return res;
   }
 
   static Future<void> updateUserUploads(String uploadId) async {
