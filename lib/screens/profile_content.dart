@@ -240,7 +240,7 @@ class _ProfileContentState extends State<ProfileContent> {
                       );
                     } else {
                       List<Track> uploadedTracks = snapshot.data ?? [];
-                      print("The tracks are " + uploadedTracks.toString());
+                      // print("The tracks are " + uploadedTracks.toString());
                       return PlaylistPreviewWidget(
                         playlist: QawlPlaylist(
                           id: '0',
