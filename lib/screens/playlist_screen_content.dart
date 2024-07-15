@@ -4,7 +4,7 @@ import 'package:first_project/screens/now_playing_content.dart';
 import 'package:first_project/size_config.dart';
 import 'package:first_project/widgets/track_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:first_project/model/fake_track_data.dart';
+import 'package:first_project/deprecated/fake_track_data.dart';
 
 import '../neu_box.dart';
 

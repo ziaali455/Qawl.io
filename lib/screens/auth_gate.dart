@@ -3,6 +3,7 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:first_project/model/countries_data.dart';
 import 'package:first_project/model/user.dart';
 import 'package:first_project/screens/homepage.dart';
+import 'package:first_project/screens/profile_photo_picker_content.dart';
 import 'package:first_project/screens/taken_from_firebaseui/email_auth_provider_firebaseUI.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -72,13 +73,17 @@ class BeforeHomePage extends StatelessWidget {
         future: QawlUser.getCurrentQawlUser(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+                child: CircularProgressIndicator(color: Colors.green));
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
             final gender = snapshot.data?.gender;
             final country = snapshot.data?.country;
-            if (gender == null || gender.isEmpty || country == null || country.isEmpty ) {
+            if (gender == null ||
+                gender.isEmpty ||
+                country == null ||
+                country.isEmpty) {
               return UserSetupPage();
             } else {
               return const HomePage();
@@ -98,13 +103,15 @@ class UserSetupPage extends StatefulWidget {
 class _UserSetupPageState extends State<UserSetupPage> {
   String? _selectedCountry;
   late String _selectedGender;
-  late TextEditingController _nameController; // Add controller for the name TextField
+  late TextEditingController
+      _nameController; // Add controller for the name TextField
 
   @override
   void initState() {
     super.initState();
     _selectedGender = 'm'; // Ensure gender is not selected on startup
-    _nameController = TextEditingController(); // Initialize the controller for the name TextField
+    _nameController =
+        TextEditingController(); // Initialize the controller for the name TextField
   }
 
   @override
@@ -135,7 +142,7 @@ class _UserSetupPageState extends State<UserSetupPage> {
     });
   }
 
-void _checkButtonVisibility() {
+  void _checkButtonVisibility() {
     bool previousState = _isButtonTapped;
     setState(() {
       _isButtonTapped = _selectedCountry != null &&
@@ -143,15 +150,15 @@ void _checkButtonVisibility() {
           _nameController.text.isNotEmpty;
     });
     if (_isButtonTapped != previousState) {
-        print("Button visibility changed: $_isButtonTapped");
+      print("Button visibility changed: $_isButtonTapped");
     }
-}
-
+  }
 
   bool _isButtonTapped = false;
 
   @override
   Widget build(BuildContext context) {
+    int _groupValue = -1;
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
@@ -186,10 +193,11 @@ void _checkButtonVisibility() {
                   ),
                   const SizedBox(height: 25),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 50), // Adjust horizontal padding
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 50), // Adjust horizontal padding
                     child: TextField(
                       controller: _nameController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         hintText: 'Enter your name',
                       ),
                       onChanged: (value) {
@@ -198,37 +206,41 @@ void _checkButtonVisibility() {
                     ),
                   ),
                   const SizedBox(height: 50),
-                  const Text(
-                    'Gender',
-                    style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
-                  ),
+                  // const Text(
+                  //   'Gender',
+                  //   style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
+                  // ),
                   const SizedBox(height: 25),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       CupertinoRadioChoice(
+                        notSelectedColor: Colors.grey,
                         selectedColor: Colors.green,
                         choices: {'m': '👨🏾‍🦱', 'f': '🧕🏽'},
                         onChange: onGenderSelected,
-                        initialKeyValue: _selectedGender,
+                        initialKeyValue: 'm',
                       ),
                     ],
                   ),
                   const SizedBox(height: 50),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: CountryDropdownMenu(onCountrySelected: onCountrySelected),
+                    child: CountryDropdownMenu(
+                        onCountrySelected: onCountrySelected),
                   ),
                   const SizedBox(height: 50),
                   if (_isButtonTapped)
                     ElevatedButton(
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
-                        foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                        backgroundColor:
+                            WidgetStateProperty.all<Color>(Colors.green),
+                        foregroundColor:
+                            WidgetStateProperty.all<Color>(Colors.white),
+                        padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
                           const EdgeInsets.all(16.0),
                         ),
-                        textStyle: MaterialStateProperty.all<TextStyle>(
+                        textStyle: WidgetStateProperty.all<TextStyle>(
                           const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -238,11 +250,19 @@ void _checkButtonVisibility() {
                       onPressed: () {
                         QawlUser.updateCountry(_selectedCountry!);
                         QawlUser.updateGender(_selectedGender);
-                        QawlUser.updateName(_nameController.text); // Update user's name
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => const HomePage()),
-                        );
+                        QawlUser.updateName(
+                            _nameController.text); // Update user's name
+                        // QawlUser.updatePfp(
+                        //     "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3");
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (context) => ProfilePhotoScreen()));
+                        // Navigator.pushReplacement(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //       builder: (context) => const HomePage()),
+                        // );
                       },
                       child: const Text('Next'),
                     ),

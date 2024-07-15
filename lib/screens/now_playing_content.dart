@@ -42,8 +42,6 @@ class _NowPlayingContentState extends State<NowPlayingContent> {
   late StreamSubscription<User?> _authStateChangesSubscription; // used to detect when user signs out
 
 
-
-
   @override
   void initState() {
     super.initState();
@@ -131,7 +129,7 @@ class CoverContent2 extends StatelessWidget {
                             errorBuilder: (context, error, stackTrace) {
 // Load default image when loading fails
                               return Image.network(
-                                'https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg',
+                                'https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3',
                                 fit: BoxFit.cover,
                               );
                             },
@@ -147,7 +145,7 @@ class CoverContent2 extends StatelessWidget {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return CircularProgressIndicator(); // Example loading indicator
+                            return CircularProgressIndicator(color: Colors.green,); // Example loading indicator
                           } else if (snapshot.hasError) {
                             return Text('Error: ${snapshot.error}');
                           } else {
@@ -270,7 +268,7 @@ class _CoverContentState extends State<CoverContent> {
                     errorBuilder: (context, error, stackTrace) {
 // Load default image when loading fails
                   return Image.network(
-                    'https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg',
+                    'https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images/default_images/EDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3',
                     fit: BoxFit.cover,
                   );
                 }),
@@ -284,7 +282,7 @@ class _CoverContentState extends State<CoverContent> {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
 // Return a loading indicator or placeholder widget
-                  return CircularProgressIndicator(); // Example loading indicator
+                  return CircularProgressIndicator(color: Colors.green,); // Example loading indicator
                 } else if (snapshot.hasError) {
 // Handle error case
                   return Text('Error: ${snapshot.error}');

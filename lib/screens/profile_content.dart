@@ -55,7 +55,8 @@ class _ProfileContentState extends State<ProfileContent> {
       future: userFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+              child: CircularProgressIndicator(color: Colors.green));
         } else if (snapshot.hasError) {
           // Log the error for debugging
           debugPrint('Error loading user data: ${snapshot.error}');
@@ -91,7 +92,7 @@ class _ProfileContentState extends State<ProfileContent> {
 
   Widget _buildContent(QawlUser user) {
     final bool isPersonal = widget.isPersonal;
-
+    print("User image is " + user.imagePath);
     return Container(
       padding: const EdgeInsets.only(top: 50),
       child: Scaffold(
@@ -103,7 +104,9 @@ class _ProfileContentState extends State<ProfileContent> {
               physics: const BouncingScrollPhysics(),
               children: [
                 ProfilePictureWidget(
-                  imagePath: user.imagePath,
+                  imagePath: (user.imagePath.isEmpty)
+                      ? "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3"
+                      : user.imagePath,
                   country: user.country,
                   isPersonal: isPersonal,
                   user: user,
@@ -120,11 +123,80 @@ class _ProfileContentState extends State<ProfileContent> {
                     child: buildName(user),
                   ),
                 Padding(
-                  padding: const EdgeInsets.all(10.0),
+                  padding: const EdgeInsets.all(8.0),
                   child: NumbersWidget(
                     user: user,
                   ),
                 ),
+                if (isPersonal)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10, bottom: 10, left: 80, right:80),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute<MyProfileScreen>(
+                            builder: (context) => MyProfileScreen(
+                              actions: [
+                                SignedOutAction((context) {
+                                  Navigator.of(context).pop();
+                                })
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4),
+                          gradient: const LinearGradient(
+                            colors: <Color>[
+                              Color.fromARGB(255, 13, 161, 99),
+                              Color.fromARGB(255, 22, 181, 93),
+                              Color.fromARGB(255, 32, 220, 85),
+                            ],
+                          ),
+                        ),
+                        width: 80,
+                        height: 45,
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(width: 5), // Adjust the spacing as needed
+                            Text(
+                              "Edit Profile",
+                              style: TextStyle(
+                                fontSize: 15.0,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                // Positioned(
+                //   top: 40.0,
+                //   right: 30.0,
+                //   child: IconButton(
+                //     onPressed: () {
+                //       Navigator.push(
+                //         context,
+                //         MaterialPageRoute<MyProfileScreen>(
+                //           builder: (context) => MyProfileScreen(
+                //             actions: [
+                //               SignedOutAction((context) {
+                //                 Navigator.of(context).pop();
+                //               })
+                //             ],
+                //           ),
+                //         ),
+                //       );
+                //     },
+                //     icon: Icon(Icons.settings),
+                //   ),
+                // ),
                 if (!isPersonal)
                   Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -133,7 +205,8 @@ class _ProfileContentState extends State<ProfileContent> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return const CircularProgressIndicator();
+                          return const CircularProgressIndicator(
+                              color: Colors.green);
                         } else if (snapshot.hasError) {
                           return Text('Error: ${snapshot.error}');
                         } else {
@@ -158,7 +231,7 @@ class _ProfileContentState extends State<ProfileContent> {
                   future: Track.getTracksByUser(user),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
+                      return const Center(
                         child: CircularProgressIndicator(),
                       );
                     } else if (snapshot.hasError) {
@@ -182,33 +255,12 @@ class _ProfileContentState extends State<ProfileContent> {
                 ),
               ],
             ),
+            if(isPersonal) Positioned(top: 40, right: 30,child: QawlRecordButton()),
 
             if (!isPersonal) const QawlBackButton(),
-            if (isPersonal)
-              Positioned(
-                top: 40.0,
-                right: 30.0,
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute<MyProfileScreen>(
-                        builder: (context) => MyProfileScreen(
-                          actions: [
-                            SignedOutAction((context) {
-                              Navigator.of(context).pop();
-                            })
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                  icon: Icon(Icons.settings),
-                ),
-              ),
           ],
         ),
-        floatingActionButton: isPersonal ? const QawlRecordButton() : null,
+        // floatingActionButton: isPersonal ? const QawlRecordButton() : null,
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       ),
     );
@@ -229,7 +281,7 @@ class _ProfileContentState extends State<ProfileContent> {
       // Handle the case where there is no current user or displayName is null
       return const Column(
         children: [
-          Text("Anon User",
+          Text("Qawl User",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24))
         ],
       );
@@ -272,43 +324,41 @@ class _ProfileContentState extends State<ProfileContent> {
 
 class QawlRecordButton extends StatelessWidget {
   const QawlRecordButton({
-    super.key,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(3.0),
-      child: Container(
-        width: 60,
-        height: 60,
-        child: Container(
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: LinearGradient(
-              colors: <Color>[
-                Color.fromARGB(255, 13, 161, 99),
-                Color.fromARGB(255, 22, 181, 93),
-                Color.fromARGB(255, 32, 220, 85),
-              ],
+      child: GestureDetector(
+        onTap: () {
+          showMaterialModalBottomSheet(
+            context: context,
+            builder: (context) => SingleChildScrollView(
+              controller: ModalScrollController.of(context),
+              child: const UploadPopupWidget(), // Replace with your content widget
             ),
-          ),
-          child: FloatingActionButton(
-            backgroundColor: Colors.transparent,
-            splashColor: Colors.white,
-            onPressed: () {
-              showMaterialModalBottomSheet(
-                context: context,
-                builder: (context) => SingleChildScrollView(
-                  controller: ModalScrollController.of(context),
-                  child: const UploadPopupWidget(),
-                ),
-              );
-            },
-            tooltip: 'Enter the record page',
-            child: const Icon(
+          );
+        },
+        child: Container(
+          width: 30,
+          height: 30,
+          // decoration: const BoxDecoration(
+          //   shape: BoxShape.circle,
+          //   gradient: LinearGradient(
+          //     colors: <Color>[
+          //       Color.fromARGB(255, 13, 161, 99),
+          //       Color.fromARGB(255, 22, 181, 93),
+          //       Color.fromARGB(255, 32, 220, 85),
+          //     ],
+          //   ),
+          // ),
+          child: const Center(
+            child: Icon(
               Icons.add,
               size: 35,
+              color: Colors.green,
             ),
           ),
         ),
@@ -316,6 +366,54 @@ class QawlRecordButton extends StatelessWidget {
     );
   }
 }
+
+//old button that floats
+// class QawlRecordButton extends StatelessWidget {
+//   const QawlRecordButton({
+//     super.key,
+//   });
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: const EdgeInsets.all(3.0),
+//       child: Container(
+//         width: 60,
+//         height: 60,
+//         child: Container(
+//           decoration: const BoxDecoration(
+//             shape: BoxShape.circle,
+//             gradient: LinearGradient(
+//               colors: <Color>[
+//                 Color.fromARGB(255, 13, 161, 99),
+//                 Color.fromARGB(255, 22, 181, 93),
+//                 Color.fromARGB(255, 32, 220, 85),
+//               ],
+//             ),
+//           ),
+//           child: FloatingActionButton(
+//             backgroundColor: Colors.transparent,
+//             splashColor: Colors.white,
+//             onPressed: () {
+//               showMaterialModalBottomSheet(
+//                 context: context,
+//                 builder: (context) => SingleChildScrollView(
+//                   controller: ModalScrollController.of(context),
+//                   child: const UploadPopupWidget(),
+//                 ),
+//               );
+//             },
+//             tooltip: 'Enter the record page',
+//             child: const Icon(
+//               Icons.add,
+//               size: 35,
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
 // old implementation that doesnt work
 //  // FutureBuilder for PlaylistPreviewWidget
 //                 FutureBuilder<List<Track>>(

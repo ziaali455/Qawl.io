@@ -21,7 +21,7 @@ class Track {
   String audioPath;
   Set<QawlPlaylist> inPlaylists;
   String coverImagePath =
-      "https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg";
+      "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3";
   Track(
       {required this.userId,
       required this.id,
@@ -30,7 +30,7 @@ class Track {
       required this.plays,
       required this.surahNumber,
       required this.audioPath,
-      this.coverImagePath = "https://www.linkpicture.com/q/no_cover_1.jpg"});
+      this.coverImagePath = "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3"});
 
   factory Track.fromFirestore(Map<String, dynamic> data, String id) {
     return Track(
@@ -112,7 +112,7 @@ class Track {
             plays: 0,
             surahNumber: getSurahNumberByName(surah)!,
             audioPath: fileUrl,
-            coverImagePath: imagePath!,
+            coverImagePath: imagePath ?? "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3",
           )
         : null;
 
@@ -305,7 +305,7 @@ class Track {
       surahNumber: mediaItem.extras?['surah'] ?? 0,
       audioPath: mediaItem.extras?['audioPath'] ?? '',
       coverImagePath: mediaItem.artUri?.toString() ??
-          "https://www.linkpicture.com/q/no_cover_1.jpg",
+          "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3",
     );
   }
 }

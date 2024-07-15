@@ -302,7 +302,7 @@ class _ConfirmPostButtonState extends State<ConfirmPostButton> {
             ),
             onPressed: _postContent,
             child: _isLoading
-                ? const CircularProgressIndicator(color: Colors.white)
+                ? const CircularProgressIndicator(color: Colors.green)
                 : const Text("Post"),
           ),
         ],

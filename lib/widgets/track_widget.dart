@@ -21,7 +21,7 @@ class TrackWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("the user id is " + track.userId);
+    // print("the user id is " + track.userId);
     return Padding(
       padding: const EdgeInsets.only(left: 4.0, right: 4.0),
       child: InkWell(
@@ -37,7 +37,7 @@ class TrackWidget extends StatelessWidget {
           future: QawlUser.getQawlUser(track.userId),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator(); // Placeholder while loading
+              return const CircularProgressIndicator(color: Colors.green); // Placeholder while loading
             } else if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
             } else {
@@ -54,8 +54,12 @@ class TrackWidget extends StatelessWidget {
                               borderRadius: BorderRadius.circular(10),
                               child: AspectRatio(
                                 aspectRatio: 1,
-                                child: Image.network(user.imagePath,
-                                    fit: BoxFit.cover),
+                                child: Image.network(
+                                  user.imagePath.isNotEmpty
+                                      ? user.imagePath
+                                      : 'https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3',
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
                             selectedTileColor: Colors.green,

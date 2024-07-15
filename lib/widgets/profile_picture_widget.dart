@@ -54,7 +54,7 @@ class _ProfilePictureWidgetState extends State<ProfilePictureWidget> {
       children: [
         CircleAvatar(
           radius: 60, // Adjust the size as needed
-          backgroundImage: NetworkImage(user.imagePath),
+          backgroundImage: NetworkImage((user.imagePath.isEmpty) ? "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3" : user.imagePath),
           backgroundColor: Colors.green,
         ),
         if(emojiFlag != null)
