@@ -1057,13 +1057,10 @@ class MyProfileScreen extends MultiProviderScreen {
           child: ElevatedButton(
             onPressed: () async {
               audioHandler.pause;
-              fba.User? user = fba.FirebaseAuth.instance.currentUser;
-          
-              // Sign out the user
+              
               await fba.FirebaseAuth.instance.signOut();
-            // await auth?.signOut();
               print("clicked sign out");
-              // Navigate back to the sign-in page (a little weird gpt fix?)
+
               Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (context) => LoginPage()),
                 (Route<dynamic> route) => false,
