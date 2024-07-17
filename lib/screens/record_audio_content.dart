@@ -51,20 +51,18 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
   void initState() {
     super.initState();
     _initialiseController();
-    initRecorder();
-    playerController = PlayerController();
-
-    playerController.onCurrentDurationChanged.listen((position) {
-      _lastPosition = position; // Update the last known position
-      // debugPrint("Current position updated to: $_lastPosition ms");
-    });
-
-    playerController.onCompletion.listen((_) {
-      setState(() {
-        isPlaying = false;
-        debugPrint("Playback completed");
+    initRecorder().then((_) {
+      playerController = PlayerController();
+      playerController.onCurrentDurationChanged.listen((position) {
+        _lastPosition = position;
       });
-      preparePlayerForReplay();
+
+      playerController.onCompletion.listen((_) {
+        setState(() {
+          isPlaying = false;
+        });
+        preparePlayerForReplay();
+      });
     });
   }
 
@@ -92,13 +90,12 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
     // playerController = PlayerController();
   }
 
-  Future<void> initRecorder() async {
+    Future<void> initRecorder() async {
     var status = await Permission.microphone.status;
     if (!status.isGranted) {
       status = await Permission.microphone.request();
       if (!status.isGranted) {
         print('Mic permission not granted'); // Debug print
-        //throw 'Mic permission not granted';
       } else {
         print('Mic permission granted'); // Debug print
       }
@@ -106,6 +103,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
       print('Mic permission already granted'); // Debug print
     }
   }
+
 
 //using a temporary filepath to store the file locally, then delete the path after stopping the recording
   Future<void> start() async {
