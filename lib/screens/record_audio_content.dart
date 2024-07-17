@@ -56,7 +56,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
 
     playerController.onCurrentDurationChanged.listen((position) {
       _lastPosition = position; // Update the last known position
-      debugPrint("Current position updated to: $_lastPosition ms");
+      // debugPrint("Current position updated to: $_lastPosition ms");
     });
 
     playerController.onCompletion.listen((_) {
@@ -87,7 +87,8 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
       ..androidEncoder = AndroidEncoder.aac
       ..androidOutputFormat = AndroidOutputFormat.mpeg4
       ..iosEncoder = IosEncoder.kAudioFormatMPEG4AAC
-      ..sampleRate = 16000;
+      ..sampleRate = 48000
+      ..bitRate = 128000;
     // playerController = PlayerController();
   }
 
