@@ -240,7 +240,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
           liveWaveColor: Colors.green,
           waveCap: StrokeCap.butt,
         ),
-        enableSeekGesture: true,
+        enableSeekGesture: false,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12.0),
           color: const Color(0xFF1E1B26),
