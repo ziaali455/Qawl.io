@@ -64,7 +64,7 @@ class _HomePageState extends State<HomePage> {
           setState(() {
             currentIndex = index;
           });
-          print(currentIndex);
+          // print(currentIndex);
         },
         tabs: const [
           GButton(icon: Icons.home),

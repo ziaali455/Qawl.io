@@ -92,7 +92,7 @@ class _ProfileContentState extends State<ProfileContent> {
 
   Widget _buildContent(QawlUser user) {
     final bool isPersonal = widget.isPersonal;
-    print("User image is " + user.imagePath);
+    // print("User image is " + user.imagePath);
     return Container(
       padding: const EdgeInsets.only(top: 50),
       child: Scaffold(

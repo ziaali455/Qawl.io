@@ -44,7 +44,7 @@ class _ProfilePictureWidgetState extends State<ProfilePictureWidget> {
 
   final String? emojiFlag = countryToEmoji[country];
     User? firebaseUser = FirebaseAuth.instance.currentUser;
-    debugPrint("the current user is ${firebaseUser?.uid}");
+    // debugPrint("the current user is ${firebaseUser?.uid}");
     QawlUser user = widget.user;
 
     if (firebaseUser?.uid == null) {

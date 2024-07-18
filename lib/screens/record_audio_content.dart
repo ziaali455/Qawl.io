@@ -334,7 +334,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
                 Navigator.pop(context);
                 File file = File(_recordedFilePath!);
                 deleteLocalFile(file);
-                debugPrint(_recordedFilePath);
+                // debugPrint(_recordedFilePath);
               },
               child: Align(
                   alignment: Alignment.center,

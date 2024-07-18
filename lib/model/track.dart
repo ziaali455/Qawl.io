@@ -249,7 +249,7 @@ class Track {
       try {
         String fileName =
             'recordings/${DateTime.now().millisecondsSinceEpoch}.m4a';
-        debugPrint(fileName);
+        // debugPrint(fileName);
 
         TaskSnapshot uploadTask =
             await FirebaseStorage.instance.ref(fileName).putFile(file);

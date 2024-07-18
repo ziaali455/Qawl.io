@@ -87,10 +87,10 @@ class RegistrationPage extends StatelessWidget {
                   gender.isEmpty ||
                   country == null ||
                   country.isEmpty) {
-                print("here going to beforehomepage");
+                // print("here going to beforehomepage");
                 return UserSetupPage();
               } else {
-                print("HERE GOING HOME PAGE");
+                // print("HERE GOING HOME PAGE");
                 return const HomePage();
               }
             }
