@@ -5,6 +5,7 @@ import 'package:first_project/model/user.dart';
 import 'package:first_project/screens/homepage.dart';
 import 'package:first_project/screens/profile_photo_picker_content.dart';
 import 'package:first_project/screens/taken_from_firebaseui/email_auth_provider_firebaseUI.dart';
+import 'package:first_project/size_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
@@ -165,31 +166,31 @@ class _UserSetupPageState extends State<UserSetupPage> {
           child: Column(
             children: [
               const SizedBox(height: 100),
-              const Text(
+              Text(
                 'About You',
-                style: TextStyle(fontSize: 70, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: getProportionateScreenWidth(70), fontWeight: FontWeight.bold),
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const SizedBox(height: 50),
-                  const Column(
+                  Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         'We will use this information to better tailor your listening experience',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: getProportionateScreenWidth(16),
                           color: Colors.grey,
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 50),
-                  const Text(
+                   Text(
                     'Name', // Add the name section
-                    style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: getProportionateScreenWidth(35), fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 25),
                   Padding(
@@ -241,8 +242,8 @@ class _UserSetupPageState extends State<UserSetupPage> {
                           const EdgeInsets.all(16.0),
                         ),
                         textStyle: WidgetStateProperty.all<TextStyle>(
-                          const TextStyle(
-                            fontSize: 20,
+                           TextStyle(
+                            fontSize: getProportionateScreenWidth(20),
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -381,7 +382,7 @@ class _CupertinoRadioChoiceState extends State<CupertinoRadioChoice> {
             padding: const EdgeInsets.all(10.0),
             child: Text(
               value,
-              style: const TextStyle(fontSize: 50),
+              style:  TextStyle(fontSize: getProportionateScreenWidth(50)),
             ),
             onPressed: !widget.enabled || selected
                 ? null

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:first_project/model/user.dart';
 import 'package:first_project/deprecated/profile_content_DEPRECATED.dart';
+import 'package:first_project/size_config.dart';
 import 'package:flutter/material.dart';
 
 class NumbersWidget extends StatelessWidget {
@@ -65,12 +66,12 @@ class NumbersWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     Text('$followers',
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 24)),
+                        style:  TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: getProportionateScreenWidth(24))),
                     const SizedBox(height: 2),
                     Text('$label',
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 10)),
+                        style:  TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: getProportionateScreenWidth(10))),
                   ],
                 ),
               ),

@@ -42,7 +42,7 @@ void signUpWithCredential(fba.EmailAuthCredential credential) {
 
       // Check if firebaseUser is not null before proceeding
       if (firebaseUser != null) {
-        debugPrint("the UID is" + firebaseUser.uid);
+        // debugPrint("the UID is" + firebaseUser.uid);
         QawlUser.createQawlUser(firebaseUser);
       } else {
         debugPrint("Firebase user is null");
@@ -81,7 +81,7 @@ void signUpWithCredential(fba.EmailAuthCredential credential) {
         }
 
         signUpWithCredential(credential);
-        debugPrint("successfully singed up");
+        debugPrint("Successfully signed up");
 
         break;
       case AuthAction.link:

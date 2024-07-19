@@ -3,11 +3,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:first_project/screens/record_audio_content.dart';
 import 'package:first_project/screens/track_info_content.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:file_picker/file_picker.dart';
 import 'dart:typed_data';
 
 class UploadPopupWidget extends StatelessWidget {
@@ -60,7 +55,7 @@ class UploadPopupWidget extends StatelessWidget {
                   //         .putFile(file);
                 }
                 String? pickedFilePath = result.files.single.path;
-                debugPrint(pickedFilePath);
+                // debugPrint(pickedFilePath);
                 Navigator.push(
                     context,
                     MaterialPageRoute(

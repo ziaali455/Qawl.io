@@ -92,7 +92,7 @@ class _ProfileContentState extends State<ProfileContent> {
 
   Widget _buildContent(QawlUser user) {
     final bool isPersonal = widget.isPersonal;
-    print("User image is " + user.imagePath);
+    // print("User image is " + user.imagePath);
     return Container(
       padding: const EdgeInsets.only(top: 50),
       child: Scaffold(
@@ -197,7 +197,7 @@ class _ProfileContentState extends State<ProfileContent> {
                 //     icon: Icon(Icons.settings),
                 //   ),
                 // ),
-                if (!isPersonal)
+                if (isPersonal)
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: FutureBuilder<Widget>(
@@ -240,7 +240,7 @@ class _ProfileContentState extends State<ProfileContent> {
                       );
                     } else {
                       List<Track> uploadedTracks = snapshot.data ?? [];
-                      print("The tracks are " + uploadedTracks.toString());
+                      // print("The tracks are " + uploadedTracks.toString());
                       return PlaylistPreviewWidget(
                         playlist: QawlPlaylist(
                           id: '0',
@@ -322,6 +322,7 @@ class _ProfileContentState extends State<ProfileContent> {
   }
 }
 
+
 class QawlRecordButton extends StatelessWidget {
   const QawlRecordButton({
     Key? key,
@@ -342,23 +343,33 @@ class QawlRecordButton extends StatelessWidget {
           );
         },
         child: Container(
-          width: 30,
-          height: 30,
-          // decoration: const BoxDecoration(
-          //   shape: BoxShape.circle,
-          //   gradient: LinearGradient(
-          //     colors: <Color>[
-          //       Color.fromARGB(255, 13, 161, 99),
-          //       Color.fromARGB(255, 22, 181, 93),
-          //       Color.fromARGB(255, 32, 220, 85),
-          //     ],
-          //   ),
-          // ),
-          child: const Center(
-            child: Icon(
-              Icons.add,
-              size: 35,
-              color: Colors.green,
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.transparent, // Transparent background
+          ),
+          child: ShaderMask(
+            shaderCallback: (Rect bounds) {
+              return LinearGradient(
+                colors: <Color>[
+                  Color.fromARGB(255, 13, 161, 99),
+                  Color.fromARGB(255, 22, 181, 93),
+                  Color.fromARGB(255, 32, 220, 85),
+                ],
+              ).createShader(bounds);
+            },
+            blendMode: BlendMode.srcATop, // Ensures gradient only affects the icon
+            child: Row(
+              children: [
+                Center(
+                  child: Icon(
+                    Icons.add,
+                    size: 35,
+                    color: Colors.white, // Icon color
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -366,6 +377,8 @@ class QawlRecordButton extends StatelessWidget {
     );
   }
 }
+
+
 
 //old button that floats
 // class QawlRecordButton extends StatelessWidget {

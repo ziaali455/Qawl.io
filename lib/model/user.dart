@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:first_project/model/playlist.dart';
 import 'package:first_project/model/track.dart';
 import 'package:flutter/foundation.dart';
 
@@ -103,7 +102,7 @@ class QawlUser {
 
         // Iterate through each track ID in the uploads
         for (String trackId in userUploads) {
-          print('Fetching track with ID: $trackId'); // Add debug print
+          // print('Fetching track with ID: $trackId'); // Add debug print
           DocumentSnapshot trackSnapshot = await FirebaseFirestore.instance
               .collection('QawlTracks')
               .doc(trackId)
@@ -219,7 +218,7 @@ class QawlUser {
     return getQawlUser(currentUserID!);
   }
 
- static Future<List<QawlUser>> getUsersByCountry(String countryName) async {
+  static Future<List<QawlUser>> getUsersByCountry(String countryName) async {
     List<QawlUser> users = [];
 
     try {
@@ -235,9 +234,16 @@ class QawlUser {
       print("Error fetching users by country: $error");
       // Handle error as necessary
     }
+    List<QawlUser> res = [];
+    QawlUser? curr = await QawlUser.getCurrentQawlUser();
+    for (QawlUser user in users) {
+      if (user.gender == curr?.gender) {
+        res.add(user);
+      }
+    }
 
     // print("Users in $countryName are $users");
-    return users;
+    return res;
   }
 
   static Future<void> updateUserUploads(String uploadId) async {
@@ -421,7 +427,7 @@ class QawlUser {
     await FirebaseFirestore.instance.collection('QawlUsers').doc(uid).update({
       'imagePath': newPath,
     });
-    debugPrint("\nImage path: " + imagePath + '\n');
+    // debugPrint("\nImage path: " + imagePath + '\n');
     debugPrint("\n UPLOADING IMAGE TO STORAGE\n");
     Reference storageRef = FirebaseStorage.instance
         .ref()
@@ -433,8 +439,8 @@ class QawlUser {
       final url = await storageRef.getDownloadURL();
       imagePath = url;
       updateQawlUserImagePath(imagePath);
-      print("THE DOWNLOAD URL IS: " + imagePath + '\n');
-      print("Image uploaded successfully. URL: $url");
+      // print("THE DOWNLOAD URL IS: " + imagePath + '\n');
+      // print("Image uploaded successfully. URL: $url");
     } on FirebaseException catch (e) {
       print("Error uploading image: ${e.message}");
     }

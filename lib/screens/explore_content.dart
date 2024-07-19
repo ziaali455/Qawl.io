@@ -76,6 +76,7 @@ class _ExploreContentState extends State<ExploreContent> {
               title: "Popular Qaris",
               press: () {},
             ),
+            
             const QariCardRow(
               category: 'Featured',
             ),

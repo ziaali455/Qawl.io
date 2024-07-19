@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:first_project/model/user.dart';
+import 'package:first_project/size_config.dart';
 import 'package:flutter/material.dart';
 import "package:first_project/model/countries_data.dart";
 
@@ -43,7 +44,7 @@ class _ProfilePictureWidgetState extends State<ProfilePictureWidget> {
 
   final String? emojiFlag = countryToEmoji[country];
     User? firebaseUser = FirebaseAuth.instance.currentUser;
-    debugPrint("the current user is ${firebaseUser?.uid}");
+    // debugPrint("the current user is ${firebaseUser?.uid}");
     QawlUser user = widget.user;
 
     if (firebaseUser?.uid == null) {
@@ -76,7 +77,7 @@ class _ProfilePictureWidgetState extends State<ProfilePictureWidget> {
           all: 3,
           child: Padding(
             padding: const EdgeInsets.only(left: 3.0, right: 3.0),
-            child: Text(country, style: const TextStyle(fontSize: 25)),
+            child: Text(country, style:  TextStyle(fontSize: getProportionateScreenWidth(25))),
           ),
         ),
       );

@@ -859,7 +859,7 @@ class MyProfileScreen extends MultiProviderScreen {
 
                   if (user != null) {
                     final String uid = user.uid;
-                    print("USER ID IS: " + uid);
+                    // print("USER ID IS: " + uid);
 
                     try {
                       print("now going back to login");
@@ -1089,7 +1089,7 @@ class MyProfileScreen extends MultiProviderScreen {
               fba.User? user = fba.FirebaseAuth.instance.currentUser;
                     if (user != null) {
                       final String uid = user.uid;
-                      print("USER ID IS: " + uid);
+                      // print("USER ID IS: " + uid);
            
                       try {
                         print("now going back to login");

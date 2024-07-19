@@ -12,6 +12,53 @@ bool isNext = true;
 bool autoplay = true;
 var currentPlaylist;
 
+
+Track getCurrentTrack() {
+  return currentTrack;
+}
+
+void playTracks(List<Track> tracks) async {
+  await audioHandler.updatePlaylist(tracks);
+  audioHandler.play();
+}
+
+// Function to update the current playlist
+Future<void> updateCurrentPlaylist(List<Track> tracks) async {
+  await audioHandler.updatePlaylist(tracks);
+}
+
+
+
+void playTrackWithList(
+    Track playedTrack, QawlPlaylist destinationPlaylist) async {
+  currentTrack = playedTrack;
+  playedTrack.increasePlays();
+  audioHandler.playTrackWithPlaylist(playedTrack, destinationPlaylist.list);
+}
+
+// Function to check if a track is playing
+bool trackIsPlaying() {
+  return audioHandler.playbackState.value.playing;
+}
+
+// Function to get the current track
+
+// Function to pause the current track
+void pauseTrack() {
+  audioHandler.pause();
+}
+
+// Function to unpause the current track
+void unpauseTrack() {
+  audioHandler.play();
+}
+
+// Function to close the player
+void closePlayer() {
+  audioHandler.stop();
+}
+
+
 // void playTracks(List<Track> tracks) async {
 //   updateCurrentPlaylist(tracks);
 //   await main_player.setAudioSource(currentPlaylist);
@@ -54,54 +101,10 @@ var currentPlaylist;
 //   main_player.dispose();
 //   AudioService.stop();
 // }
-
-Track getCurrentTrack() {
-  return currentTrack;
-}
-
-void playTracks(List<Track> tracks) async {
-  await audioHandler.updatePlaylist(tracks);
-  audioHandler.play();
-}
-
-// Function to update the current playlist
-Future<void> updateCurrentPlaylist(List<Track> tracks) async {
-  await audioHandler.updatePlaylist(tracks);
-}
-
-// // Function to play a specific track
+//// // Function to play a specific track
 // void playTrack(Track playedTrack) async {
 //   currentTrack = playedTrack;
 //   audioHandler.loadSingleTrack(playedTrack);
 //   audioHandler.play();
 //   playedTrack.increasePlays();
 // }
-
-void playTrackWithList(
-    Track playedTrack, QawlPlaylist destinationPlaylist) async {
-  currentTrack = playedTrack;
-  playedTrack.increasePlays();
-  audioHandler.playTrackWithPlaylist(playedTrack, destinationPlaylist.list);
-}
-
-// Function to check if a track is playing
-bool trackIsPlaying() {
-  return audioHandler.playbackState.value.playing;
-}
-
-// Function to get the current track
-
-// Function to pause the current track
-void pauseTrack() {
-  audioHandler.pause();
-}
-
-// Function to unpause the current track
-void unpauseTrack() {
-  audioHandler.play();
-}
-
-// Function to close the player
-void closePlayer() {
-  audioHandler.stop();
-}

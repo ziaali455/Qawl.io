@@ -188,6 +188,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
   }
 
   Future<void> playAudio() async {
+    
     if (_recordedFilePath == null) {
       debugPrint("No recording has been made yet");
       return;
@@ -204,6 +205,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
         isPlaying = true;
       });
       debugPrint("Playback started from position: $_lastPosition ms");
+
     } catch (e) {
       debugPrint("Error during playback: $e");
     }
@@ -350,7 +352,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
                 Navigator.pop(context);
                 File file = File(_recordedFilePath!);
                 deleteLocalFile(file);
-                debugPrint(_recordedFilePath);
+                // debugPrint(_recordedFilePath);
               },
               child: Align(
                   alignment: Alignment.center,
@@ -481,12 +483,19 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
               BorderRadius.circular(10), // Add some rounding to match button
         ),
         child: ElevatedButton(
-          child: Icon(isPlaying ? Icons.pause : Icons.play_arrow,
+          child: Icon(isPlaying ? Icons.stop : Icons.play_arrow,
               size: 60.0,
               color: Colors.white), // Changed color to white for contrast
           onPressed: () async {
             if (isPlaying) {
+// <<<<<<< recording_updates
               pauseAudio();
+// =======
+//               await playerController.pausePlayer();
+//               setState(() {
+//                 isPlaying = false;
+//               });
+// >>>>>>> master
             } else {
               await playAudio();
             }
