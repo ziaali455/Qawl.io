@@ -44,7 +44,7 @@ class _CountryExploreContentState extends State<CountryExploreContent> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => QariNationContent(
-                            allcountries.countries[index]["countryName"]), // Navigate to blank page
+                            allcountries.countries[index]["countryName"]), 
                       ),
                     );
                   },

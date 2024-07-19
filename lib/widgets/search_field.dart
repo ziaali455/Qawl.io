@@ -4,14 +4,17 @@ import '../../../../constants.dart';
 import '../../../../size_config.dart';
 
 class SearchField extends StatelessWidget {
+  final ValueChanged<String> onChanged;
+
   const SearchField({
     Key? key,
+    required this.onChanged,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(10.0),
+      padding: const EdgeInsets.all(7.0),
       child: Container(
         width: SizeConfig.screenWidth,
         decoration: BoxDecoration(
@@ -19,15 +22,17 @@ class SearchField extends StatelessWidget {
           borderRadius: BorderRadius.circular(15),
         ),
         child: TextField(
-          onChanged: (value) => print(value),
+          cursorColor: Colors.green,
+          onChanged: onChanged,
           decoration: InputDecoration(
+              prefixIconColor: Colors.green,
               contentPadding: EdgeInsets.symmetric(
-                  horizontal: getProportionateScreenWidth(20),
+                  horizontal: getProportionateScreenWidth(5),
                   vertical: getProportionateScreenWidth(20)),
               border: InputBorder.none,
               focusedBorder: InputBorder.none,
               enabledBorder: InputBorder.none,
-              hintText: "Search",
+              hintText: "Search reciters",
               prefixIcon: const Icon(Icons.search)),
         ),
       ),

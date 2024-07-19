@@ -1,6 +1,8 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
+import 'package:first_project/model/player.dart';
 import 'package:first_project/model/playlist.dart';
 import 'package:first_project/model/track.dart';
 import 'package:first_project/screens/now_playing_content.dart';
@@ -117,6 +119,7 @@ class _ProfileContentState extends State<ProfileContent> {
                     padding: const EdgeInsets.all(8.0),
                     child: buildPersonalName(),
                   ),
+                
                 if (!isPersonal)
                   Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -451,3 +454,14 @@ class QawlRecordButton extends StatelessWidget {
 //                     }
 //                   },
 //                 ),
+
+//WORKING LOOP BUTTON
+// IconButton(
+//                             icon: Icon(Icons.loop),
+//                             iconSize: 20.0,
+//                             onPressed: () {
+//                               // Add your onPressed code here!
+//                               audioHandler
+//                                   .setRepeatMode(AudioServiceRepeatMode.one);
+//                             },
+//                           ),

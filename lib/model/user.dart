@@ -218,33 +218,68 @@ class QawlUser {
     return getQawlUser(currentUserID!);
   }
 
-  static Future<List<QawlUser>> getUsersByCountry(String countryName) async {
-    List<QawlUser> users = [];
+  // static Future<List<QawlUser>> getUsersByCountry(String countryName) async {
+  //   List<QawlUser> users = [];
 
-    try {
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection('QawlUsers')
-          .where('country', isEqualTo: countryName)
-          .get();
+  //   try {
+  //     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+  //         .collection('QawlUsers')
+  //         .where('country', isEqualTo: countryName)
+  //         .get();
 
-      querySnapshot.docs.forEach((doc) {
-        users.add(QawlUser.fromFirestore(doc));
-      });
-    } catch (error) {
-      print("Error fetching users by country: $error");
-      // Handle error as necessary
-    }
-    List<QawlUser> res = [];
-    QawlUser? curr = await QawlUser.getCurrentQawlUser();
-    for (QawlUser user in users) {
-      if (user.gender == curr?.gender) {
-        res.add(user);
-      }
-    }
+  //     querySnapshot.docs.forEach((doc) {
+  //       users.add(QawlUser.fromFirestore(doc));
+  //     });
+  //   } catch (error) {
+  //     print("Error fetching users by country: $error");
+  //     // Handle error as necessary
+  //   }
+  //   List<QawlUser> res = [];
+  //   QawlUser? curr = await QawlUser.getCurrentQawlUser();
+  //   for (QawlUser user in users) {
+  //     if (user.gender == curr?.gender) {
+  //       res.add(user);
+  //     }
+  //   }
 
-    // print("Users in $countryName are $users");
-    return res;
+  //   // print("Users in $countryName are $users");
+  //   return res;
+  // }
+  static Future<List<QawlUser>> getUsersByCountry(String countryName, {String query = ''}) async {
+  List<QawlUser> users = [];
+
+  try {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('QawlUsers')
+        .where('country', isEqualTo: countryName)
+        .get();
+
+    querySnapshot.docs.forEach((doc) {
+      users.add(QawlUser.fromFirestore(doc));
+    });
+  } catch (error) {
+    print("Error fetching users by country: $error");
+    // Handle error as necessary
   }
+
+  List<QawlUser> res = [];
+  QawlUser? curr = await QawlUser.getCurrentQawlUser();
+  for (QawlUser user in users) {
+    if (user.gender == curr?.gender) {
+      res.add(user);
+    }
+  }
+
+  if (query.isNotEmpty) {
+    res = res.where((user) {
+      return user.name.toLowerCase().contains(query.toLowerCase()) ||
+             user.email.toLowerCase().contains(query.toLowerCase());
+    }).toList();
+  }
+
+  return res;
+}
+
 
   static Future<void> updateUserUploads(String uploadId) async {
     try {

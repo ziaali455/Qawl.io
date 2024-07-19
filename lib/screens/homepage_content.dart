@@ -5,6 +5,7 @@ import 'package:first_project/widgets/playlist_button_widget_block.dart';
 import 'package:first_project/widgets/search_field.dart';
 import 'package:first_project/widgets/section_title_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:widget_and_text_animator/widget_and_text_animator.dart';
 import '../../../../size_config.dart';
 
 class HomePageContent extends StatefulWidget {
@@ -83,9 +84,12 @@ class _HomePageContentState extends State<HomePageContent> {
             const SizedBox(
               height: 20,
             ),
-            SectionTitle(
-              title: "My Playlists",
-              press: () {},
+            WidgetAnimator(
+              incomingEffect: WidgetTransitionEffects.incomingSlideInFromTop(),
+              child: SectionTitle(
+                title: "My Playlists",
+                press: () {},
+              ),
             ),
             FutureBuilder<QawlPlaylist?>(
               future: QawlPlaylist.getFavorites(),

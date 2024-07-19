@@ -2,6 +2,7 @@ import 'dart:async';
 
 //NOW PLAYING CONTENT THAT USES AUDIO HANDLER METHODS
 
+import 'package:audio_service/audio_service.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fba;
 import 'package:firebase_auth/firebase_auth.dart';
@@ -54,7 +55,6 @@ class _NowPlayingContentState extends State<NowPlayingContent> {
         _audioPlayer.pause();
       }
     });
-    
   }
 
   void updateTrack(Track newTrack) {
@@ -164,7 +164,8 @@ class CoverContent2 extends StatelessWidget {
                                             '', // Display author if available
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          fontSize: getProportionateScreenWidth(17),
+                                          fontSize:
+                                              getProportionateScreenWidth(17),
                                           color: Colors.green.shade300,
                                         ),
                                       ),
@@ -194,9 +195,10 @@ class CoverContent2 extends StatelessWidget {
                                     Text(
                                       SurahMapper.getSurahNameByNumber(
                                           myTrack.surahNumber),
-                                      style:  TextStyle(
+                                      style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        fontSize: getProportionateScreenWidth(17),
+                                        fontSize:
+                                            getProportionateScreenWidth(17),
                                       ),
                                     ),
                                   ],
@@ -333,7 +335,7 @@ class _CoverContentState extends State<CoverContent> {
                           Text(
                             SurahMapper.getSurahNameByNumber(
                                 myTrack.surahNumber),
-                            style:  TextStyle(
+                            style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: getProportionateScreenWidth(19),
                             ),
@@ -381,72 +383,114 @@ class Controls extends StatelessWidget {
   final void Function(Track) onTrackChange;
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Column(
       children: [
-//prev
-        IconButton(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          hoverColor: Colors.transparent,
-          onPressed: () {
-            audioHandler.audioPlayer.seekToPrevious();
-            onTrackChange(getCurrentTrack());
-          },
-          iconSize: 60,
-          color: Colors.white,
-          icon: const Icon(Icons.skip_previous_rounded),
-        ),
-//play
-        StreamBuilder<PlayerState>(
-          stream: audioHandler.audioPlayer.playerStateStream,
-          builder: (context, snapshot) {
-            final playerState = snapshot.data;
-            final processingState = playerState?.processingState;
-            final playing = playerState?.playing ?? false;
-            if (!playing) {
-              return IconButton(
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                hoverColor: Colors.transparent,
-                onPressed: audioHandler.play,
-                iconSize: 80,
-                color: Colors.white,
-                icon: const Icon(Icons.play_arrow),
-              );
-            } else if (processingState != ProcessingState.completed) {
-              return IconButton(
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                hoverColor: Colors.transparent,
-                onPressed: audioHandler.pause,
-                iconSize: 80,
-                color: Colors.white,
-                icon: const Icon(Icons.pause_rounded),
-              );
-            }
-            return const Icon(
-              Icons.play_arrow_rounded,
-              size: 80,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            //prev
+            IconButton(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              hoverColor: Colors.transparent,
+              onPressed: () {
+                audioHandler.audioPlayer.seekToPrevious();
+                onTrackChange(getCurrentTrack());
+              },
+              iconSize: 60,
               color: Colors.white,
+              icon: const Icon(Icons.skip_previous_rounded),
+            ),
+            //play
+            StreamBuilder<PlayerState>(
+              stream: audioHandler.audioPlayer.playerStateStream,
+              builder: (context, snapshot) {
+                final playerState = snapshot.data;
+                final processingState = playerState?.processingState;
+                final playing = playerState?.playing ?? false;
+                if (!playing) {
+                  return IconButton(
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    hoverColor: Colors.transparent,
+                    onPressed: audioHandler.play,
+                    iconSize: 80,
+                    color: Colors.white,
+                    icon: const Icon(Icons.play_arrow),
+                  );
+                } else if (processingState != ProcessingState.completed) {
+                  return IconButton(
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    hoverColor: Colors.transparent,
+                    onPressed: audioHandler.pause,
+                    iconSize: 80,
+                    color: Colors.white,
+                    icon: const Icon(Icons.pause_rounded),
+                  );
+                }
+                return const Icon(
+                  Icons.play_arrow_rounded,
+                  size: 80,
+                  color: Colors.white,
+                );
+              },
+            ),
+            //next
+            IconButton(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              hoverColor: Colors.transparent,
+              onPressed: () {
+                audioHandler.audioPlayer.seekToNext();
+                // final nextTrack = // Get next track
+                onTrackChange(getCurrentTrack());
+              },
+              iconSize: 60,
+              color: Colors.white,
+              icon: const Icon(Icons.skip_next_rounded),
+            ),
+          ],
+        ),
+        // RepeatButton(),
+      ],
+    );
+  }
+}
+
+class RepeatButton extends StatefulWidget {
+
+  RepeatButton();
+
+  @override
+  _RepeatButtonState createState() => _RepeatButtonState();
+}
+
+class _RepeatButtonState extends State<RepeatButton> {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<AudioServiceRepeatMode>(
+      stream: audioHandler.playbackState
+          .map((state) => state.repeatMode)
+          .distinct(),
+      builder: (context, snapshot) {
+        final repeatMode = snapshot.data ?? AudioServiceRepeatMode.none;
+
+        return IconButton(
+          icon: Icon(Icons.loop),
+          color: repeatMode == AudioServiceRepeatMode.one
+              ? Colors.green
+              : Colors.white,
+          iconSize: 30.0,
+          onPressed: () {
+            audioHandler.setRepeatMode(
+              repeatMode == AudioServiceRepeatMode.one
+                  ? AudioServiceRepeatMode.none
+                  : AudioServiceRepeatMode.one,
             );
           },
-        ),
-//next
-        IconButton(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          hoverColor: Colors.transparent,
-          onPressed: () {
-            audioHandler.audioPlayer.seekToNext();
-// final nextTrack = // Get next track
-            onTrackChange(getCurrentTrack());
-          },
-          iconSize: 60,
-          color: Colors.white,
-          icon: const Icon(Icons.skip_next_rounded),
-        ),
-      ],
+        );
+      },
     );
   }
 }
