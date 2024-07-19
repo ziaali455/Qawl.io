@@ -37,6 +37,8 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
   late final RecorderController recorderController; // new recorder for waves
   late final PlayerController playerController;
   AudioPlayer main_player = AudioPlayer();
+  int _lastPosition =
+      0; // This will hold the last playback position in milliseconds
 
   bool isCapturing = false;
   bool isPlaying = false;
@@ -49,7 +51,19 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
   void initState() {
     super.initState();
     _initialiseController();
-    initRecorder();
+    initRecorder().then((_) {
+      playerController = PlayerController();
+      playerController.onCurrentDurationChanged.listen((position) {
+        _lastPosition = position;
+      });
+
+      playerController.onCompletion.listen((_) {
+        setState(() {
+          isPlaying = false;
+        });
+        preparePlayerForReplay();
+      });
+    });
   }
 
   @override
@@ -60,22 +74,28 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
     main_player.dispose();
   }
 
+  Future<void> preparePlayerForReplay() async {
+    if (_recordedFilePath != null) {
+      await playerController.preparePlayer(path: _recordedFilePath!);
+    }
+  }
+
   void _initialiseController() {
     recorderController = RecorderController()
       ..androidEncoder = AndroidEncoder.aac
       ..androidOutputFormat = AndroidOutputFormat.mpeg4
       ..iosEncoder = IosEncoder.kAudioFormatMPEG4AAC
-      ..sampleRate = 16000;
-    playerController = PlayerController();
+      ..sampleRate = 48000
+      ..bitRate = 128000;
+    // playerController = PlayerController();
   }
 
-  Future<void> initRecorder() async {
+    Future<void> initRecorder() async {
     var status = await Permission.microphone.status;
     if (!status.isGranted) {
       status = await Permission.microphone.request();
       if (!status.isGranted) {
         print('Mic permission not granted'); // Debug print
-        //throw 'Mic permission not granted';
       } else {
         print('Mic permission granted'); // Debug print
       }
@@ -83,6 +103,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
       print('Mic permission already granted'); // Debug print
     }
   }
+
 
 //using a temporary filepath to store the file locally, then delete the path after stopping the recording
   Future<void> start() async {
@@ -142,13 +163,28 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
 
   void stopRecording() async {
     await recorderController.stop();
-    //await record.stop();
     debugPrint("Recording stopped");
+
+    // Prepare player controller with the recorded file path
+    if (_recordedFilePath != null) {
+      await playerController.preparePlayer(path: _recordedFilePath!);
+    }
+
     setState(() {
-      showWaveforms = false;
+      showWaveforms = true; // Keep waveform visible
       isCapturing = false;
       doneRecording = true;
+      isPlaying = false;
     });
+  }
+
+  Future<void> pauseAudio() async {
+    await playerController.pausePlayer();
+    setState(() {
+      isPlaying = false;
+      // isCapturing = false;
+    });
+    debugPrint("Playback paused at position: $_lastPosition ms");
   }
 
   Future<void> playAudio() async {
@@ -158,37 +194,18 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
       return;
     }
     try {
-      //await main_player.setFilePath(_recordedFilePath!);
-      await playerController.preparePlayer(path: _recordedFilePath!);
-      //main_player.play();
-      playerController.startPlayer();
-
-      // main_player.positionStream.listen((position) {
-      //   playerController.seekTo(position.inMilliseconds);
-      // });
-
-      // main_player.playerStateStream.listen((state) {
-      //   if (state.processingState == ProcessingState.completed) {
-      //     setState(() {
-      //       isPlaying = false;
-      //     });
-      //     debugPrint("Playback completed");
-      //   }
-      // });
-
-      //await main_player.play();
+      await playerController.seekTo(_lastPosition);
+      debugPrint("Seeking to position: $_lastPosition ms");
+      // if (playerController.playerState == PlayerState.paused) {
+      //   await playerController
+      //       .seekTo(_lastPosition); // Seek to the last known position
+      // }
+      await playerController.startPlayer();
       setState(() {
         isPlaying = true;
       });
-      debugPrint("Playback started");
+      debugPrint("Playback started from position: $_lastPosition ms");
 
-      playerController.onCompletion.listen((event) {
-        setState(() {
-          isPlaying = false;
-          debugPrint("Playback completed");
-          messageText = "";
-        });
-      });
     } catch (e) {
       debugPrint("Error during playback: $e");
     }
@@ -196,7 +213,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
 
 //temp widget for waveform
   Widget QawlWaveforms() {
-    if (isCapturing) {
+    if (isCapturing && !doneRecording) {
       return AudioWaveforms(
         enableGesture: true,
         size: Size(MediaQuery.of(context).size.width, 100),
@@ -215,7 +232,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
         padding: const EdgeInsets.only(left: 18),
         margin: const EdgeInsets.symmetric(horizontal: 15),
       );
-    } else if (isPlaying) {
+    } else if (doneRecording) {
       return AudioFileWaveforms(
         size: Size(MediaQuery.of(context).size.width, 100),
         playerController: playerController,
@@ -225,6 +242,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
           liveWaveColor: Colors.green,
           waveCap: StrokeCap.butt,
         ),
+        enableSeekGesture: false,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12.0),
           color: const Color(0xFF1E1B26),
@@ -430,13 +448,8 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
         ),
         ElevatedButton(
             child: isCapturing
-                ? Icon(Icons.stop, size: 80.0)
+                ? Icon(Icons.pause, size: 80.0)
                 : Icon(Icons.mic, size: 80.0),
-
-            // Icon(
-            //   Icons.mic,
-            //   size: 50.0,
-            // ),
             onPressed: () async {
               if (isCapturing) {
                 stopRecording();
@@ -475,10 +488,14 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
               color: Colors.white), // Changed color to white for contrast
           onPressed: () async {
             if (isPlaying) {
-              await playerController.pausePlayer();
-              setState(() {
-                isPlaying = false;
-              });
+// <<<<<<< recording_updates
+              pauseAudio();
+// =======
+//               await playerController.pausePlayer();
+//               setState(() {
+//                 isPlaying = false;
+//               });
+// >>>>>>> master
             } else {
               await playAudio();
             }
