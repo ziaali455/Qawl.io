@@ -52,9 +52,10 @@ class _ExploreContentState extends State<ExploreContent> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            WidgetAnimator( 
-              incomingEffect: WidgetTransitionEffects.incomingSlideInFromTop(),
-              child: SearchField(onChanged: _updateSearchQuery)),
+            WidgetAnimator(
+                incomingEffect:
+                    WidgetTransitionEffects.incomingSlideInFromTop(),
+                child: SearchField(onChanged: _updateSearchQuery)),
             if (_searchQuery.isEmpty) ...[
               Categories(
                 playlist:
@@ -64,9 +65,11 @@ class _ExploreContentState extends State<ExploreContent> {
                 future: _top100PlaylistFuture,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator(color: Colors.green); // Show loading indicator
+                    return const CircularProgressIndicator(
+                        color: Colors.green); // Show loading indicator
                   } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}'); // Show error message
+                    return Text(
+                        'Error: ${snapshot.error}'); // Show error message
                   } else {
                     return ExploreTrackWidgetRow(
                       title: "Top 100",
@@ -79,9 +82,11 @@ class _ExploreContentState extends State<ExploreContent> {
                 future: _newReleasesPlaylistFuture,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator(color: Colors.green); // Show loading indicator
+                    return const CircularProgressIndicator(
+                        color: Colors.green); // Show loading indicator
                   } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}'); // Show error message
+                    return Text(
+                        'Error: ${snapshot.error}'); // Show error message
                   } else {
                     return ExploreTrackWidgetRow(
                       title: "New Releases",
@@ -102,7 +107,8 @@ class _ExploreContentState extends State<ExploreContent> {
                 future: _searchResultsFuture,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator(color: Colors.green));
+                    return Center(
+                        child: CircularProgressIndicator(color: Colors.green));
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else {
@@ -110,7 +116,8 @@ class _ExploreContentState extends State<ExploreContent> {
                     if (users != null && users.isNotEmpty) {
                       return GridView.builder(
                         padding: EdgeInsets.all(20.0),
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           crossAxisSpacing: 20.0,
                           mainAxisSpacing: 20.0,
@@ -165,10 +172,10 @@ class _ExploreContentState extends State<ExploreContent> {
 //     print("Error fetching users by search query: $error");
 //   }
 //   return users;
-  
+
 //   //space efficient, case insensitive
 //   // List<QawlUser> users = [];
-  
+
 //   // try {
 //   //   QuerySnapshot querySnapshot = await FirebaseFirestore.instance
 //   //       .collection('QawlUsers')
@@ -199,9 +206,8 @@ Future<List<QawlUser>> getUsersBySearchQuery(String query) async {
     String currentUserGender = currentUser.gender;
 
     // Fetch all users (or a reasonable subset)
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('QawlUsers')
-        .get();
+    QuerySnapshot querySnapshot =
+        await FirebaseFirestore.instance.collection('QawlUsers').get();
 
     for (QueryDocumentSnapshot doc in querySnapshot.docs) {
       allUsers.add(QawlUser.fromFirestore(doc));
@@ -212,9 +218,10 @@ Future<List<QawlUser>> getUsersBySearchQuery(String query) async {
 
     // Filter users on client-side
     users = allUsers.where((user) {
+      bool notMe = user.name.toLowerCase() != currentUser.name;
       bool matchesQuery = user.name.toLowerCase().contains(lowercaseQuery);
       bool matchesGender = user.gender == currentUserGender;
-      return matchesQuery && matchesGender;
+      return matchesQuery && matchesGender && notMe;
     }).toList();
   } catch (error) {
     print("Error fetching users by search query: $error");
@@ -223,7 +230,7 @@ Future<List<QawlUser>> getUsersBySearchQuery(String query) async {
 
 //space efficient, case insensitive
   // List<QawlUser> users = [];
-  
+
   // try {
   //   QuerySnapshot querySnapshot = await FirebaseFirestore.instance
   //       .collection('QawlUsers')
@@ -239,9 +246,7 @@ Future<List<QawlUser>> getUsersBySearchQuery(String query) async {
   // }
 
   // return users;
-
 }
-
 
 class QariCardRow extends StatefulWidget {
   const QariCardRow({
