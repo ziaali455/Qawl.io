@@ -26,12 +26,13 @@ class QawlUser {
       required this.name,
       required this.email,
       required this.about,
-      required this.country,
+      this.country = '',
       required this.followers,
       required this.following,
       required this.privateLibrary,
       required this.uploads,
-      required this.gender});
+      this.gender = 'm'
+      });
 
   static String? getCurrentUserUid() {
     final currentUser = FirebaseAuth.instance.currentUser;
@@ -514,7 +515,7 @@ class QawlUser {
             following: Set<String>(),
             privateLibrary: Set<String>(),
             uploads: Set<String>(),
-            gender: '', //needs to be set later
+            gender: 'm', //needs to be set later
           )
         : null;
     DocumentReference docRef = FirebaseFirestore.instance
@@ -538,7 +539,7 @@ class QawlUser {
         'followers': 0,
         'following': [],
         'privateLibrary': [],
-        'gender': ""
+        'gender': "m"
         // 'publicLibrary': [uploads],
       });
     }

@@ -79,12 +79,14 @@ class BeforeHomePage extends StatelessWidget {
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
-            final gender = snapshot.data?.gender;
-            final country = snapshot.data?.country;
-            if (gender == null ||
-                gender.isEmpty ||
-                country == null ||
-                country.isEmpty) {
+            // final gender = snapshot.data?.gender;
+            // final country = snapshot.data?.country;
+            // if (gender == null ||
+            //     gender.isEmpty ||
+            //     country == null ||
+            //     country.isEmpty) {
+            final name = snapshot.data?.name;
+            if (name == null || name.isEmpty) {
               return UserSetupPage();
             } else {
               return const HomePage();
@@ -110,7 +112,7 @@ class _UserSetupPageState extends State<UserSetupPage> {
   @override
   void initState() {
     super.initState();
-    _selectedGender = 'm'; // Ensure gender is not selected on startup
+    _selectedGender = ''; // Ensure gender is not selected on startup
     _nameController =
         TextEditingController(); // Initialize the controller for the name TextField
   }
@@ -124,7 +126,7 @@ class _UserSetupPageState extends State<UserSetupPage> {
   void onGenderSelected(String genderKey) {
     setState(() {
       _selectedGender = genderKey;
-      _checkButtonVisibility();
+      // _checkButtonVisibility();
     });
   }
 
@@ -139,21 +141,21 @@ class _UserSetupPageState extends State<UserSetupPage> {
         _selectedCountry = country;
       }
 
-      _checkButtonVisibility();
+      // _checkButtonVisibility();
     });
   }
 
-  void _checkButtonVisibility() {
-    bool previousState = _isButtonTapped;
-    setState(() {
-      _isButtonTapped = _selectedCountry != null &&
-          _selectedGender.isNotEmpty &&
-          _nameController.text.isNotEmpty;
-    });
-    if (_isButtonTapped != previousState) {
-      print("Button visibility changed: $_isButtonTapped");
-    }
-  }
+  // void _checkButtonVisibility() {
+  //   bool previousState = _isButtonTapped;
+  //   setState(() {
+  //     // _isButtonTapped = _selectedCountry != null &&
+  //     //     _selectedGender.isNotEmpty &&
+  //         _nameController.text.isNotEmpty;
+  //   });
+  //   if (_isButtonTapped != previousState) {
+  //     print("Button visibility changed: $_isButtonTapped");
+  //   }
+  // }
 
   bool _isButtonTapped = false;
 
@@ -167,8 +169,10 @@ class _UserSetupPageState extends State<UserSetupPage> {
             children: [
               const SizedBox(height: 100),
               Text(
-                'About You',
-                style: TextStyle(fontSize: getProportionateScreenWidth(70), fontWeight: FontWeight.bold),
+                'About You (Optional)',
+                style: TextStyle(
+                    fontSize: getProportionateScreenWidth(70),
+                    fontWeight: FontWeight.bold),
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -188,9 +192,11 @@ class _UserSetupPageState extends State<UserSetupPage> {
                     ],
                   ),
                   const SizedBox(height: 50),
-                   Text(
+                  Text(
                     'Name', // Add the name section
-                    style: TextStyle(fontSize: getProportionateScreenWidth(35), fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        fontSize: getProportionateScreenWidth(35),
+                        fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 25),
                   Padding(
@@ -198,12 +204,10 @@ class _UserSetupPageState extends State<UserSetupPage> {
                         horizontal: 50), // Adjust horizontal padding
                     child: TextField(
                       controller: _nameController,
-                      decoration: const InputDecoration(
-                        hintText: 'Enter your name',
-                      ),
-                      onChanged: (value) {
-                        _checkButtonVisibility(); // Check button visibility on name change
-                      },
+                      decoration:
+                          const InputDecoration(hintText: 'Enter your name'),
+                      onChanged: (value) =>
+                          setState(() {}), // Update UI on change
                     ),
                   ),
                   const SizedBox(height: 50),
@@ -220,7 +224,7 @@ class _UserSetupPageState extends State<UserSetupPage> {
                         selectedColor: Colors.green,
                         choices: {'m': '👨🏾‍🦱', 'f': '🧕🏽'},
                         onChange: onGenderSelected,
-                        initialKeyValue: 'm',
+                        initialKeyValue: '',
                       ),
                     ],
                   ),
@@ -231,42 +235,39 @@ class _UserSetupPageState extends State<UserSetupPage> {
                         onCountrySelected: onCountrySelected),
                   ),
                   const SizedBox(height: 50),
-                  if (_isButtonTapped)
-                    ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor:
-                            WidgetStateProperty.all<Color>(Colors.green),
-                        foregroundColor:
-                            WidgetStateProperty.all<Color>(Colors.white),
-                        padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
-                          const EdgeInsets.all(16.0),
-                        ),
-                        textStyle: WidgetStateProperty.all<TextStyle>(
-                           TextStyle(
-                            fontSize: getProportionateScreenWidth(20),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      onPressed: () {
-                        QawlUser.updateCountry(_selectedCountry!);
-                        QawlUser.updateGender(_selectedGender);
-                        QawlUser.updateName(
-                            _nameController.text); // Update user's name
-                        // QawlUser.updatePfp(
-                        //     "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3");
-                        // Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //         builder: (context) => ProfilePhotoScreen()));
-                        // Navigator.pushReplacement(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //       builder: (context) => const HomePage()),
-                        // );
-                      },
-                      child: const Text('Next'),
+                  // if (_nameController.text.isNotEmpty)
+                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green, // Set the background color to green
                     ),
+                    onPressed: _nameController.text.isNotEmpty ? () {
+                      QawlUser.updateName(_nameController.text); // Mandatory
+                      if (_selectedCountry != null) QawlUser.updateCountry(_selectedCountry!); // Optional
+                      if (_selectedGender.isNotEmpty) QawlUser.updateGender(_selectedGender); // Optional
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage()));
+                    } : null,
+                    child: const Text('Next'),
+                  ),
+
+                  //   onPressed: () {
+                  //     QawlUser.updateCountry(_selectedCountry!);
+                  //     QawlUser.updateGender(_selectedGender);
+                  //     QawlUser.updateName(
+                  //         _nameController.text); // Update user's name
+                  //     // QawlUser.updatePfp(
+                  //     //     "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3");
+                  //     // Navigator.push(
+                  //     //     context,
+                  //     //     MaterialPageRoute(
+                  //     //         builder: (context) => ProfilePhotoScreen()));
+                  //     // Navigator.pushReplacement(
+                  //     //   context,
+                  //     //   MaterialPageRoute(
+                  //     //       builder: (context) => const HomePage()),
+                  //     // );
+                  //   },
+                  //   child: const Text('Next'),
+                  // ),
                 ],
               ),
             ],
@@ -382,7 +383,7 @@ class _CupertinoRadioChoiceState extends State<CupertinoRadioChoice> {
             padding: const EdgeInsets.all(10.0),
             child: Text(
               value,
-              style:  TextStyle(fontSize: getProportionateScreenWidth(50)),
+              style: TextStyle(fontSize: getProportionateScreenWidth(50)),
             ),
             onPressed: !widget.enabled || selected
                 ? null

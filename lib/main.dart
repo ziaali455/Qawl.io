@@ -128,7 +128,7 @@ class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    SizeConfig().init;
+    SizeConfig().init(context);
     return MaterialApp(
       title: 'Qawl',
       debugShowCheckedModeBanner: false,
@@ -138,7 +138,7 @@ class MyApp extends StatelessWidget {
         scheme: FlexScheme.hippieBlue,
         darkIsTrueBlack: true,
       ),
-      //  home: const AuthGate(), //*OLD*
+        // home: const AuthGate(), //*OLD*
         // make sure to load data only if user is signed in
         home: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
