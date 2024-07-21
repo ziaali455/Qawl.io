@@ -71,7 +71,7 @@ class _TrackInfoContentState extends State<TrackInfoContent> {
             children: [
               //Existing code...
               Padding(
-                padding: EdgeInsets.only(bottom: 200.0),
+                padding: EdgeInsets.only(bottom: 180.0),
                 child: Text(
                   "Recitation Info",
                   textAlign: TextAlign.center,
@@ -81,13 +81,26 @@ class _TrackInfoContentState extends State<TrackInfoContent> {
                   ),
                 ),
               ),
-              TextField(
-                controller: _trackNameController,
-                decoration: InputDecoration(
-                  labelText: 'Track Name',
-                  border: OutlineInputBorder(),
+              const SizedBox(height: 30),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  controller: _trackNameController,
+                  cursorColor: Colors.green,
+                  decoration: InputDecoration(
+                    floatingLabelStyle: TextStyle(color: Colors.green),
+                    labelText: 'Track Name',
+                    border: OutlineInputBorder(),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.green, // set the color to green
+                        width: 2.0, // set the width of the border
+                      ),
+                    ),
+                  ),
                 ),
               ),
+              const SizedBox(height: 30),
               QawlSubtitleText(title: "Surah Name"),
               // Dropdown for Surah selection
               Padding(

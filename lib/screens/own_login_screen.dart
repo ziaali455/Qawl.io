@@ -54,7 +54,7 @@ class LoginPage extends StatelessWidget {
 
   Widget buildSignInForm(BuildContext context) {
     String logoImagePath = 'images/qawl-lime.png';
-
+    SizeConfig().init(context);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(

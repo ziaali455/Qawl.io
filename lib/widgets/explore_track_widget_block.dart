@@ -105,6 +105,8 @@ class TrackCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
+
     return Padding(
       padding: EdgeInsets.all(getProportionateScreenWidth(10)),
       child: GestureDetector(

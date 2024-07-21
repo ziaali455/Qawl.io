@@ -140,11 +140,64 @@ class _ExploreContentState extends State<ExploreContent> {
   }
 }
 
+// Future<List<QawlUser>> getUsersBySearchQuery(String query) async {
+//   List<QawlUser> users = [];
+//   List<QawlUser> allUsers = [];
+
+//   try {
+//     // Fetch all users (or a reasonable subset)
+//     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+//         .collection('QawlUsers')
+//         .get();
+
+//     for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+//       allUsers.add(QawlUser.fromFirestore(doc));
+//     }
+
+//     // Convert query to lowercase
+//     String lowercaseQuery = query.toLowerCase();
+
+//     // Filter users on client-side
+//     users = allUsers.where((user) {
+//       return user.name.toLowerCase().contains(lowercaseQuery);
+//     }).toList();
+//   } catch (error) {
+//     print("Error fetching users by search query: $error");
+//   }
+//   return users;
+  
+//   //space efficient, case insensitive
+//   // List<QawlUser> users = [];
+  
+//   // try {
+//   //   QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+//   //       .collection('QawlUsers')
+//   //       .where('name', isGreaterThanOrEqualTo: query)
+//   //       .where('name', isLessThanOrEqualTo: query + '\uf8ff')
+//   //       .get();
+
+//   //   for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+//   //     users.add(QawlUser.fromFirestore(doc));
+//   //   }
+//   // } catch (error) {
+//   //   print("Error fetching users by search query: $error");
+//   // }
+
+//   // return users;
+// }
 Future<List<QawlUser>> getUsersBySearchQuery(String query) async {
   List<QawlUser> users = [];
   List<QawlUser> allUsers = [];
 
   try {
+    // Fetch the current user
+    QawlUser? currentUser = await QawlUser.getCurrentQawlUser();
+    if (currentUser == null) {
+      throw Exception("Current user not found");
+    }
+
+    String currentUserGender = currentUser.gender;
+
     // Fetch all users (or a reasonable subset)
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('QawlUsers')
@@ -159,14 +212,16 @@ Future<List<QawlUser>> getUsersBySearchQuery(String query) async {
 
     // Filter users on client-side
     users = allUsers.where((user) {
-      return user.name.toLowerCase().contains(lowercaseQuery);
+      bool matchesQuery = user.name.toLowerCase().contains(lowercaseQuery);
+      bool matchesGender = user.gender == currentUserGender;
+      return matchesQuery && matchesGender;
     }).toList();
   } catch (error) {
     print("Error fetching users by search query: $error");
   }
   return users;
-  
-  //space efficient, case insensitive
+
+//space efficient, case insensitive
   // List<QawlUser> users = [];
   
   // try {
@@ -184,6 +239,7 @@ Future<List<QawlUser>> getUsersBySearchQuery(String query) async {
   // }
 
   // return users;
+
 }
 
 

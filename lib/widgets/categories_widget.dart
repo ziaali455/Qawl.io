@@ -43,7 +43,10 @@ class Categories extends StatelessWidget {
         "text": "Following"
       },
     ];
+        SizeConfig().init(context);
+
     return Padding(
+      
       padding: EdgeInsets.all(getProportionateScreenWidth(20)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -78,6 +81,8 @@ class CategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+        SizeConfig().init(context);
+
     return GestureDetector(
       onTap: () {
         if (text == "Nations") {
