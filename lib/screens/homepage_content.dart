@@ -91,6 +91,9 @@ class _HomePageContentState extends State<HomePageContent> {
                 press: () {},
               ),
             ),
+            const SizedBox(
+              height: 20,
+            ),
             FutureBuilder<QawlPlaylist?>(
               future: QawlPlaylist.getFavorites(),
               builder: (context, snapshot) {
@@ -103,18 +106,39 @@ class _HomePageContentState extends State<HomePageContent> {
                 } else {
                   // If data is successfully loaded, build your widget with the fetched playlist
                   QawlPlaylist? favoritesPlaylist = snapshot.data;
-                  favoritesPlaylist!.coverImagePath =
-                      "https://postimg.cc/N5YjLZ04";
-                  if (favoritesPlaylist != null) {
+                  // favoritesPlaylist!.coverImagePath =
+                  //     "https://postimg.cc/N5YjLZ04";
+                  if (snapshot.data != null) {
                     // If playlist is not null, display it
                     return PlaylistListWidget(
-                        playlists_List: [favoritesPlaylist]);
+                        playlists_List: [favoritesPlaylist!]);
                   } else {
                     // If playlist is null, display a message indicating no favorites playlist found
-                    return const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                          'To start your library, add a track to your favorites!'),
+                    return WidgetAnimator(
+                      incomingEffect:
+                          WidgetTransitionEffects.incomingSlideInFromBottom(),
+                      child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: RichText(
+                          textAlign: TextAlign.center,
+                          text: const TextSpan(
+                            children: [
+                              TextSpan(
+                                text: "To start your library, add a track to your favorites with the ",
+                              ),
+                              WidgetSpan(
+                                child: Icon(Icons.library_add, size: 18),
+                              ),
+                              TextSpan(
+                                text: "button!",
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // Text(
+                        //     'To start your library, add a track to your favorites with the'),
+                      ),
                     );
                   }
                 }

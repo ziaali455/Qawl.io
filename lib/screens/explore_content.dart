@@ -215,7 +215,7 @@ Future<List<QawlUser>> getUsersBySearchQuery(String query) async {
 
     // Convert query to lowercase
     String lowercaseQuery = query.toLowerCase();
-
+    print("CURRENT GENDER IS " + currentUser.gender);
     // Filter users on client-side
     users = allUsers.where((user) {
       bool notMe = user.name.toLowerCase() != currentUser.name;

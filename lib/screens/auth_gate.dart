@@ -5,6 +5,7 @@ import 'package:first_project/model/user.dart';
 import 'package:first_project/screens/homepage.dart';
 import 'package:first_project/screens/profile_photo_picker_content.dart';
 import 'package:first_project/screens/taken_from_firebaseui/email_auth_provider_firebaseUI.dart';
+import 'package:first_project/screens/user_setup_page_content.dart';
 import 'package:first_project/size_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -98,185 +99,185 @@ class BeforeHomePage extends StatelessWidget {
   }
 }
 
-class UserSetupPage extends StatefulWidget {
-  @override
-  _UserSetupPageState createState() => _UserSetupPageState();
-}
+// class UserSetupPage extends StatefulWidget {
+//   @override
+//   _UserSetupPageState createState() => _UserSetupPageState();
+// }
 
-class _UserSetupPageState extends State<UserSetupPage> {
-  String? _selectedCountry;
-  late String _selectedGender;
-  late TextEditingController
-      _nameController; // Add controller for the name TextField
+// class _UserSetupPageState extends State<UserSetupPage> {
+//   String? _selectedCountry;
+//   late String _selectedGender;
+//   late TextEditingController
+//       _nameController; // Add controller for the name TextField
 
-  @override
-  void initState() {
-    super.initState();
-    _selectedGender = ''; // Ensure gender is not selected on startup
-    _nameController =
-        TextEditingController(); // Initialize the controller for the name TextField
-  }
+//   @override
+//   void initState() {
+//     super.initState();
+//     _selectedGender = ''; // Ensure gender is not selected on startup
+//     _nameController =
+//         TextEditingController(); // Initialize the controller for the name TextField
+//   }
 
-  @override
-  void dispose() {
-    _nameController.dispose(); // Dispose the name TextField controller
-    super.dispose();
-  }
+//   @override
+//   void dispose() {
+//     _nameController.dispose(); // Dispose the name TextField controller
+//     super.dispose();
+//   }
 
-  void onGenderSelected(String genderKey) {
-    setState(() {
-      _selectedGender = genderKey;
-      // _checkButtonVisibility();
-    });
-  }
+//   void onGenderSelected(String genderKey) {
+//     setState(() {
+//       _selectedGender = genderKey;
+//       // _checkButtonVisibility();
+//     });
+//   }
 
-  void onCountrySelected(String country) {
-    setState(() {
-      String emojiFlag = country.characters.first;
-      final Map<String, String> emojiToCountry = allcountries.emojiToCountry;
+//   void onCountrySelected(String country) {
+//     setState(() {
+//       String emojiFlag = country.characters.first;
+//       final Map<String, String> emojiToCountry = allcountries.emojiToCountry;
 
-      if (emojiToCountry.containsKey(emojiFlag)) {
-        _selectedCountry = emojiToCountry[emojiFlag];
-      } else {
-        _selectedCountry = country;
-      }
+//       if (emojiToCountry.containsKey(emojiFlag)) {
+//         _selectedCountry = emojiToCountry[emojiFlag];
+//       } else {
+//         _selectedCountry = country;
+//       }
 
-      // _checkButtonVisibility();
-    });
-  }
+//       // _checkButtonVisibility();
+//     });
+//   }
 
-  // void _checkButtonVisibility() {
-  //   bool previousState = _isButtonTapped;
-  //   setState(() {
-  //     // _isButtonTapped = _selectedCountry != null &&
-  //     //     _selectedGender.isNotEmpty &&
-  //         _nameController.text.isNotEmpty;
-  //   });
-  //   if (_isButtonTapped != previousState) {
-  //     print("Button visibility changed: $_isButtonTapped");
-  //   }
-  // }
+//   // void _checkButtonVisibility() {
+//   //   bool previousState = _isButtonTapped;
+//   //   setState(() {
+//   //     // _isButtonTapped = _selectedCountry != null &&
+//   //     //     _selectedGender.isNotEmpty &&
+//   //         _nameController.text.isNotEmpty;
+//   //   });
+//   //   if (_isButtonTapped != previousState) {
+//   //     print("Button visibility changed: $_isButtonTapped");
+//   //   }
+//   // }
 
-  bool _isButtonTapped = false;
+//   bool _isButtonTapped = false;
 
-  @override
-  Widget build(BuildContext context) {
-    int _groupValue = -1;
-    return Scaffold(
-      body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 100),
-              Text(
-                'About You (Optional)',
-                style: TextStyle(
-                    fontSize: getProportionateScreenWidth(70),
-                    fontWeight: FontWeight.bold),
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 50),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'We will use this information to better tailor your listening experience',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: getProportionateScreenWidth(16),
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 50),
-                  Text(
-                    'Name', // Add the name section
-                    style: TextStyle(
-                        fontSize: getProportionateScreenWidth(35),
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 25),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 50), // Adjust horizontal padding
-                    child: TextField(
-                      controller: _nameController,
-                      decoration:
-                          const InputDecoration(hintText: 'Enter your name'),
-                      onChanged: (value) =>
-                          setState(() {}), // Update UI on change
-                    ),
-                  ),
-                  const SizedBox(height: 50),
-                  // const Text(
-                  //   'Gender',
-                  //   style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
-                  // ),
-                  const SizedBox(height: 25),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CupertinoRadioChoice(
-                        notSelectedColor: Colors.grey,
-                        selectedColor: Colors.green,
-                        choices: {'m': '👨🏾‍🦱', 'f': '🧕🏽'},
-                        onChange: onGenderSelected,
-                        initialKeyValue: '',
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 50),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: CountryDropdownMenu(
-                        onCountrySelected: onCountrySelected),
-                  ),
-                  const SizedBox(height: 50),
-                  // if (_nameController.text.isNotEmpty)
-                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green, // Set the background color to green
-                    ),
-                    onPressed: _nameController.text.isNotEmpty ? () {
-                      QawlUser.updateName(_nameController.text); // Mandatory
-                      if (_selectedCountry != null) QawlUser.updateCountry(_selectedCountry!); // Optional
-                      if (_selectedGender.isNotEmpty) QawlUser.updateGender(_selectedGender); // Optional
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage()));
-                    } : null,
-                    child: const Text('Next'),
-                  ),
+//   @override
+//   Widget build(BuildContext context) {
+//     int _groupValue = -1;
+//     return Scaffold(
+//       body: Center(
+//         child: SingleChildScrollView(
+//           child: Column(
+//             children: [
+//               const SizedBox(height: 100),
+//               Text(
+//                 'About You (Optional)',
+//                 style: TextStyle(
+//                     fontSize: getProportionateScreenWidth(70),
+//                     fontWeight: FontWeight.bold),
+//               ),
+//               Column(
+//                 mainAxisAlignment: MainAxisAlignment.center,
+//                 children: [
+//                   const SizedBox(height: 50),
+//                   Column(
+//                     mainAxisAlignment: MainAxisAlignment.center,
+//                     children: [
+//                       Text(
+//                         'We will use this information to better tailor your listening experience',
+//                         textAlign: TextAlign.center,
+//                         style: TextStyle(
+//                           fontSize: getProportionateScreenWidth(16),
+//                           color: Colors.grey,
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                   const SizedBox(height: 50),
+//                   Text(
+//                     'Name', // Add the name section
+//                     style: TextStyle(
+//                         fontSize: getProportionateScreenWidth(35),
+//                         fontWeight: FontWeight.bold),
+//                   ),
+//                   const SizedBox(height: 25),
+//                   Padding(
+//                     padding: const EdgeInsets.symmetric(
+//                         horizontal: 50), // Adjust horizontal padding
+//                     child: TextField(
+//                       controller: _nameController,
+//                       decoration:
+//                           const InputDecoration(hintText: 'Enter your name'),
+//                       onChanged: (value) =>
+//                           setState(() {}), // Update UI on change
+//                     ),
+//                   ),
+//                   const SizedBox(height: 50),
+//                   // const Text(
+//                   //   'Gender',
+//                   //   style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
+//                   // ),
+//                   const SizedBox(height: 25),
+//                   Row(
+//                     mainAxisAlignment: MainAxisAlignment.center,
+//                     children: [
+//                       CupertinoRadioChoice(
+//                         notSelectedColor: Colors.grey,
+//                         selectedColor: Colors.green,
+//                         choices: {'m': '👨🏾‍🦱', 'f': '🧕🏽'},
+//                         onChange: onGenderSelected,
+//                         initialKeyValue: '',
+//                       ),
+//                     ],
+//                   ),
+//                   const SizedBox(height: 50),
+//                   Padding(
+//                     padding: const EdgeInsets.all(8.0),
+//                     child: CountryDropdownMenu(
+//                         onCountrySelected: onCountrySelected),
+//                   ),
+//                   const SizedBox(height: 50),
+//                   // if (_nameController.text.isNotEmpty)
+//                    ElevatedButton(
+//                     style: ElevatedButton.styleFrom(
+//                       backgroundColor: Colors.green, // Set the background color to green
+//                     ),
+//                     onPressed: _nameController.text.isNotEmpty ? () {
+//                       QawlUser.updateName(_nameController.text); // Mandatory
+//                       if (_selectedCountry != null) QawlUser.updateCountry(_selectedCountry!); // Optional
+//                       if (_selectedGender.isNotEmpty) QawlUser.updateGender(_selectedGender); // Optional
+//                       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage()));
+//                     } : null,
+//                     child: const Text('Next'),
+//                   ),
 
-                  //   onPressed: () {
-                  //     QawlUser.updateCountry(_selectedCountry!);
-                  //     QawlUser.updateGender(_selectedGender);
-                  //     QawlUser.updateName(
-                  //         _nameController.text); // Update user's name
-                  //     // QawlUser.updatePfp(
-                  //     //     "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3");
-                  //     // Navigator.push(
-                  //     //     context,
-                  //     //     MaterialPageRoute(
-                  //     //         builder: (context) => ProfilePhotoScreen()));
-                  //     // Navigator.pushReplacement(
-                  //     //   context,
-                  //     //   MaterialPageRoute(
-                  //     //       builder: (context) => const HomePage()),
-                  //     // );
-                  //   },
-                  //   child: const Text('Next'),
-                  // ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
+//                   //   onPressed: () {
+//                   //     QawlUser.updateCountry(_selectedCountry!);
+//                   //     QawlUser.updateGender(_selectedGender);
+//                   //     QawlUser.updateName(
+//                   //         _nameController.text); // Update user's name
+//                   //     // QawlUser.updatePfp(
+//                   //     //     "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3");
+//                   //     // Navigator.push(
+//                   //     //     context,
+//                   //     //     MaterialPageRoute(
+//                   //     //         builder: (context) => ProfilePhotoScreen()));
+//                   //     // Navigator.pushReplacement(
+//                   //     //   context,
+//                   //     //   MaterialPageRoute(
+//                   //     //       builder: (context) => const HomePage()),
+//                   //     // );
+//                   //   },
+//                   //   child: const Text('Next'),
+//                   // ),
+//                 ],
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 class CountryDropdownMenu extends StatefulWidget {
   final void Function(String) onCountrySelected;
@@ -407,6 +408,65 @@ class _CupertinoRadioChoiceState extends State<CupertinoRadioChoice> {
       children: buttonList,
       spacing: 10.0,
       runSpacing: 5.0,
+    );
+  }
+}
+
+class GenderChoiceChip extends StatefulWidget {
+  final void Function(String) onGenderSelected; // Callback to pass selected gender
+
+  GenderChoiceChip({Key? key, required this.onGenderSelected}) : super(key: key);
+
+  @override
+  _GenderChoiceChipState createState() => _GenderChoiceChipState();
+}
+
+class _GenderChoiceChipState extends State<GenderChoiceChip> {
+  String _selectedGender = '';
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Wrap(
+              spacing: 20.0,
+              children: <Widget>[
+                ChoiceChip(
+                  label: Text('👨🏾‍🦱', style: TextStyle(fontSize: 35),),
+                  selected: _selectedGender == 'm',
+                  onSelected: (selected) {
+                    if (selected) {
+                      setState(() {
+                        _selectedGender = 'm';
+                      });
+                      widget.onGenderSelected('m'); // Pass the selected gender to the parent
+                    }
+                  },
+                  selectedColor: Colors.green,
+                  backgroundColor: Colors.grey,
+                ),
+                ChoiceChip(
+                  label: Text('🧕🏽', style: TextStyle(fontSize: 35),),
+                  selected: _selectedGender == 'f',
+                  onSelected: (selected) {
+                    if (selected) {
+                      setState(() {
+                        _selectedGender = 'f';
+                      });
+                      widget.onGenderSelected('f'); // Pass the selected gender to the parent
+                    }
+                  },
+                  selectedColor: Colors.green,
+                  backgroundColor: Colors.grey,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

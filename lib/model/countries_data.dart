@@ -2,6 +2,8 @@ class allcountries {
   static List<String> countries_new = [
     '🇦🇺 Australia',
     '🇦🇹 Austria',
+    '🇦🇱 Albania',
+    '🇧🇩 Bangladesh',
     '🇧🇪 Belgium',
     '🇧🇷 Brazil',
     '🇨🇦 Canada',
@@ -95,6 +97,8 @@ class allcountries {
   static final Map<String, String> emojiToCountry = {
     '🇦🇺': 'Australia',
     '🇦🇹': 'Austria',
+    '🇦🇱': 'Albania',
+    '🇧🇩': 'Bangladesh',
     '🇧🇪': 'Belgium',
     '🇧🇷': 'Brazil',
     '🇨🇦': 'Canada',
@@ -188,8 +192,10 @@ class allcountries {
 
 
 static List<Map<String, dynamic>> countries = [
+  {"emoji": "🇦🇱",  "countryName": "Albania"},
     {"emoji": "🇦🇺", "countryName": "Australia"},
     {"emoji": "🇦🇹", "countryName": "Austria"},
+    {"emoji": "🇧🇩", "countryName": "Bangladesh"},
     {"emoji": "🇧🇪", "countryName": "Belgium"},
     {"emoji": "🇧🇷", "countryName": "Brazil"},
     {"emoji": "🇨🇦", "countryName": "Canada"},

@@ -1097,16 +1097,18 @@ class MyProfileScreen extends MultiProviderScreen {
                       //     MaterialPageRoute(builder: (context) => LoginPage()),
                       //     (Route<dynamic> route) => false,
                       //   );
-                        // First, delete the Firestore data
+                        
+           
+                        // First delete the user from Firebase Authentication
+                        await user.delete();
+                        print("going back to login page");
+                        // Finally, navigate to the login page
+                        
+                        // then, delete the Firestore data
                        await FirebaseFirestore.instance
                            .collection('QawlUsers')
                            .doc(uid)
                            .delete();
-           
-                        // Then delete the user from Firebase Authentication
-                        await user.delete();
-                        print("going back to login page");
-                        // Finally, navigate to the login page
            
                        await Navigator.of(context).pushAndRemoveUntil(
                           MaterialPageRoute(builder: (context) => LoginPage()),

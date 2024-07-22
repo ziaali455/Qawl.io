@@ -246,41 +246,41 @@ class QawlUser {
   //   // print("Users in $countryName are $users");
   //   return res;
   // }
-  static Future<List<QawlUser>> getUsersByCountry(String countryName, {String query = ''}) async {
-  List<QawlUser> users = [];
+  static Future<List<QawlUser>> getUsersByCountry(String countryName,
+      {String query = ''}) async {
+    List<QawlUser> users = [];
 
-  try {
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('QawlUsers')
-        .where('country', isEqualTo: countryName)
-        .get();
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('QawlUsers')
+          .where('country', isEqualTo: countryName)
+          .get();
 
-    querySnapshot.docs.forEach((doc) {
-      users.add(QawlUser.fromFirestore(doc));
-    });
-  } catch (error) {
-    print("Error fetching users by country: $error");
-    // Handle error as necessary
-  }
-
-  List<QawlUser> res = [];
-  QawlUser? curr = await QawlUser.getCurrentQawlUser();
-  for (QawlUser user in users) {
-    if (user.gender == curr?.gender) {
-      res.add(user);
+      querySnapshot.docs.forEach((doc) {
+        users.add(QawlUser.fromFirestore(doc));
+      });
+    } catch (error) {
+      print("Error fetching users by country: $error");
+      // Handle error as necessary
     }
+
+    List<QawlUser> res = [];
+    QawlUser? curr = await QawlUser.getCurrentQawlUser();
+    for (QawlUser user in users) {
+      if (user.gender == curr?.gender) {
+        res.add(user);
+      }
+    }
+
+    if (query.isNotEmpty) {
+      res = res.where((user) {
+        return user.name.toLowerCase().contains(query.toLowerCase()) ||
+            user.email.toLowerCase().contains(query.toLowerCase());
+      }).toList();
+    }
+
+    return res;
   }
-
-  if (query.isNotEmpty) {
-    res = res.where((user) {
-      return user.name.toLowerCase().contains(query.toLowerCase()) ||
-             user.email.toLowerCase().contains(query.toLowerCase());
-    }).toList();
-  }
-
-  return res;
-}
-
 
   static Future<void> updateUserUploads(String uploadId) async {
     try {
@@ -406,6 +406,7 @@ class QawlUser {
       // Update local QawlUser object
       QawlUser? user = await getCurrentQawlUser();
       user?.gender = newGender;
+      print("GENDER UPDATED TO: " + newGender);
 
       // Update network document on Firebase
       await FirebaseFirestore.instance
@@ -532,7 +533,8 @@ class QawlUser {
         'uid': firebaseUser.uid,
         'email': firebaseUser.email,
         'timestamp': DateTime.now(),
-        'imagePath': "",
+        'imagePath': "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3",
+
         'name': "",
         'about': "",
         'country': "",

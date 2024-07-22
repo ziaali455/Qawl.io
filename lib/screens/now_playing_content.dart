@@ -20,41 +20,41 @@ import 'package:flutter/widgets.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:rxdart/rxdart.dart';
-
-class NowPlayingContent extends StatefulWidget {
-  final Track playedTrack;
-  const NowPlayingContent({Key? key, required this.playedTrack})
-      : super(key: key);
-  @override
-  State<NowPlayingContent> createState() => _NowPlayingContentState();
-}
-
 class PositionData {
   const PositionData(this.position, this.bufferedPosition, this.duration);
   final Duration position;
   final Duration bufferedPosition;
   final Duration duration;
 }
+class NowPlayingContent extends StatefulWidget {
+  final Track playedTrack;
+  const NowPlayingContent({Key? key, required this.playedTrack}) : super(key: key);
+
+  @override
+  State<NowPlayingContent> createState() => _NowPlayingContentState();
+}
 
 class _NowPlayingContentState extends State<NowPlayingContent> {
   late Track myTrack;
   late AudioPlayer _audioPlayer;
-
-  late StreamSubscription<User?>
-      _authStateChangesSubscription; // used to detect when user signs out
+  late StreamSubscription<User?> _authStateChangesSubscription;
 
   @override
   void initState() {
     super.initState();
     myTrack = widget.playedTrack;
     _audioPlayer = audioHandler.audioPlayer;
-    _authStateChangesSubscription =
-        fba.FirebaseAuth.instance.authStateChanges().listen((User? user) {
+    _authStateChangesSubscription = fba.FirebaseAuth.instance.authStateChanges().listen((User? user) {
       if (user == null) {
-        // User has signed out, pause the audio
         _audioPlayer.pause();
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _authStateChangesSubscription.cancel();
+    super.dispose();
   }
 
   void updateTrack(Track newTrack) {
@@ -63,36 +63,41 @@ class _NowPlayingContentState extends State<NowPlayingContent> {
     });
   }
 
-  Stream<PositionData> get _positionDataStream =>
-      Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
-          _audioPlayer.positionStream,
-          _audioPlayer.bufferedPositionStream,
-          _audioPlayer.durationStream,
-          (position, bufferedPosition, duration) => PositionData(
-              position, bufferedPosition, duration ?? Duration.zero));
+  Stream<PositionData> get _positionDataStream => Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
+      _audioPlayer.positionStream,
+      _audioPlayer.bufferedPositionStream,
+      _audioPlayer.durationStream,
+      (position, bufferedPosition, duration) => PositionData(position, bufferedPosition, duration ?? Duration.zero)
+  );
+
   @override
   Widget build(BuildContext context) {
-    return Material(
-      child: Column(
-        children: [
-          const SizedBox(height: 20),
-          const QawlBackButton(),
-          const SizedBox(height: 20),
-          CoverContent2(
-            audioHandler: audioHandler,
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: SafeArea(
+          child: Column(
+            children: [
+              const SizedBox(height: 10),
+              const QawlBackButton(),
+              const SizedBox(height: 20),
+              CoverContent2(audioHandler: audioHandler),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: QawlProgressBar(
+                  positionDataStream: _positionDataStream,
+                  audioPlayer: _audioPlayer,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Controls(
+                audioHandler: audioHandler,
+                onTrackChange: updateTrack,
+              ),
+              const SizedBox(height: 20),
+            ],
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-            child: QawlProgressBar(
-                positionDataStream: _positionDataStream,
-                audioPlayer: _audioPlayer),
-          ),
-          const SizedBox(height: 20),
-          Controls(
-            audioHandler: audioHandler,
-            onTrackChange: updateTrack,
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -199,31 +204,32 @@ class CoverContent2 extends StatelessWidget {
                                         fontWeight: FontWeight.bold,
                                         fontSize:
                                             getProportionateScreenWidth(17),
+                                            overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                   ],
                                 ),
-                                IconButton(
-                                  splashColor: Colors.transparent,
-                                  highlightColor: Colors.transparent,
-                                  hoverColor: Colors.transparent,
-                                  onPressed: () {
-                                    showMaterialModalBottomSheet(
-                                      context: context,
-                                      builder: (context) =>
-                                          SingleChildScrollView(
-                                        controller:
-                                            ModalScrollController.of(context),
-                                        child: AddToLibraryWidget(
-                                          track: myTrack,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  iconSize: 35,
-                                  color: Colors.white,
-                                  icon: const Icon(Icons.library_add),
-                                ),
+                                // IconButton(
+                                //   splashColor: Colors.transparent,
+                                //   highlightColor: Colors.transparent,
+                                //   hoverColor: Colors.transparent,
+                                //   onPressed: () {
+                                //     showMaterialModalBottomSheet(
+                                //       context: context,
+                                //       builder: (context) =>
+                                //           SingleChildScrollView(
+                                //         controller:
+                                //             ModalScrollController.of(context),
+                                //         child: AddToLibraryWidget(
+                                //           track: myTrack,
+                                //         ),
+                                //       ),
+                                //     );
+                                //   },
+                                //   iconSize: 35,
+                                //   color: Colors.white,
+                                //   icon: const Icon(Icons.library_add),
+                                // ),
                               ],
                             );
                           }
@@ -453,6 +459,27 @@ class Controls extends StatelessWidget {
           ],
         ),
         // RepeatButton(),
+        IconButton(
+                                  splashColor: Colors.transparent,
+                                  highlightColor: Colors.transparent,
+                                  hoverColor: Colors.transparent,
+                                  onPressed: () {
+                                    showMaterialModalBottomSheet(
+                                      context: context,
+                                      builder: (context) =>
+                                          SingleChildScrollView(
+                                        controller:
+                                            ModalScrollController.of(context),
+                                        child: AddToLibraryWidget(
+                                          track: getCurrentTrack(),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  iconSize: 35,
+                                  color: Colors.white,
+                                  icon: const Icon(Icons.library_add),
+                                ),
       ],
     );
   }

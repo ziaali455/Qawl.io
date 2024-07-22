@@ -4,6 +4,7 @@ import 'package:first_project/model/user.dart';
 import 'package:first_project/screens/auth_gate.dart';
 import 'package:first_project/screens/homepage.dart';
 import 'package:first_project/screens/own_login_screen.dart';
+import 'package:first_project/screens/user_setup_page_content.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fba;
 
@@ -69,7 +70,7 @@ class RegistrationPage extends StatelessWidget {
   }
 
   void checkUserDetailsAndNavigate(User? user, BuildContext context) {
-    Navigator.of(context).pushReplacement(
+    Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => FutureBuilder<QawlUser?>(
           future: QawlUser.getCurrentQawlUser(),
@@ -87,6 +88,7 @@ class RegistrationPage extends StatelessWidget {
                   gender.isEmpty ||
                   country == null ||
                   country.isEmpty) {
+                
                 // print("here going to beforehomepage");
                 return UserSetupPage();
               } else {
@@ -209,10 +211,11 @@ class RegistrationPage extends StatelessWidget {
                           WidgetStatePropertyAll<Color>(Colors.green),
                     ),
                     onPressed: () => registerUser(context),
-                    child:const Text(
-              'Create Account',
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-            ),
+                    child: const Text(
+                      'Create Account',
+                      style:
+                          TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                    ),
                   ),
                   const SizedBox(height: 50),
                   Row(
@@ -221,16 +224,17 @@ class RegistrationPage extends StatelessWidget {
                       const Text(
                         'Already a Qawl User?',
                         style: TextStyle(
-                    color: Colors.green,
-                    fontWeight: FontWeight.bold,
-                  ),
+                          color: Colors.green,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(width: 4),
                       InkWell(
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => LoginPage()),
+                            MaterialPageRoute(
+                                builder: (context) => LoginPage()),
                           );
                         },
                         child: const Text(
