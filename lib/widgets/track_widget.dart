@@ -63,13 +63,12 @@ class TrackWidget extends StatelessWidget {
                               ),
                             ),
                             selectedTileColor: Colors.green,
+                          
                             title: Text(SurahMapper.getSurahNameByNumber(
-                                track.surahNumber)),
+                                track.surahNumber), style: TextStyle(overflow: TextOverflow.ellipsis),),
                             subtitle: Text(user.name),
-                          ),
-                        ],
-                      ),
-                      if (isPersonal)
+                            trailing:  
+                        
                         Positioned(
                           top: 10,
                           right: 0,
@@ -117,6 +116,10 @@ class TrackWidget extends StatelessWidget {
                             splashColor: Colors.transparent,
                           ),
                         ),
+                          ),
+                        ],
+                      ),
+                     
                     ],
                   ),
                 );
