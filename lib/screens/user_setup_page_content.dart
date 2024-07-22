@@ -74,8 +74,9 @@ class _UserSetupPageState extends State<UserSetupPage> {
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -89,7 +90,7 @@ class _UserSetupPageState extends State<UserSetupPage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 50),
+                const SizedBox(height: 15),
                 Center(
                   child: Text(
                     'We will use this information to better tailor your listening experience',
@@ -100,7 +101,7 @@ class _UserSetupPageState extends State<UserSetupPage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 50),
+                const SizedBox(height: 15),
                 Center(
                   child: Text(
                     'Name (required)',
@@ -131,7 +132,7 @@ class _UserSetupPageState extends State<UserSetupPage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 50),
+                const SizedBox(height: 40),
                 Center(
                   child: Text(
                     'Gender (optional)',
@@ -145,7 +146,7 @@ class _UserSetupPageState extends State<UserSetupPage> {
                 Center(
                   child: GenderChoiceChip(onGenderSelected: onGenderSelected),
                 ),
-                const SizedBox(height: 50),
+                const SizedBox(height: 40),
                 Center(
                   child: Text(
                     'Country (optional)',
@@ -160,7 +161,7 @@ class _UserSetupPageState extends State<UserSetupPage> {
                   child: CountryDropdownMenu(
                       onCountrySelected: onCountrySelected),
                 ),
-                const SizedBox(height: 50),
+                const SizedBox(height: 40),
                 if (_isButtonTapped)
                   Center(
                     child: ElevatedButton(
