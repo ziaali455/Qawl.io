@@ -204,6 +204,7 @@ Future<List<QawlUser>> getUsersBySearchQuery(String query) async {
     }
 
     String currentUserGender = currentUser.gender;
+    String currentUserId = currentUser.id;
 
     // Fetch all users (or a reasonable subset)
     QuerySnapshot querySnapshot =
@@ -215,13 +216,22 @@ Future<List<QawlUser>> getUsersBySearchQuery(String query) async {
 
     // Convert query to lowercase
     String lowercaseQuery = query.toLowerCase();
-    print("CURRENT GENDER IS " + currentUser.gender);
+
+    List<String> blockedByList = await QawlUser.getBlocked(currentUser.id);
+
     // Filter users on client-side
     users = allUsers.where((user) {
-      bool notMe = user.name.toLowerCase() != currentUser.name;
+      bool notMe = user.id != currentUserId;
       bool matchesQuery = user.name.toLowerCase().contains(lowercaseQuery);
-      bool matchesGender = user.gender == currentUserGender;
-      return matchesQuery && matchesGender && notMe;
+      bool matchesGender =
+          (user.gender == currentUserGender) || currentUserGender == 'f';
+
+      bool notBlocked =
+          blockedByList.isEmpty || !(blockedByList.contains(user.id));
+
+      // if (!notBlocked) print("Could NOT find " + user.name); //we cant find a certain person if they have blocked us
+
+      return matchesQuery && matchesGender && notMe && notBlocked;
     }).toList();
   } catch (error) {
     print("Error fetching users by search query: $error");

@@ -67,55 +67,7 @@ class TrackWidget extends StatelessWidget {
                             title: Text(SurahMapper.getSurahNameByNumber(
                                 track.surahNumber), style: TextStyle(overflow: TextOverflow.ellipsis),),
                             subtitle: Text(user.name),
-                            trailing:  
-                        
-                        Positioned(
-                          top: 10,
-                          right: 0,
-                          child: IconButton(
-                            icon: const Icon(Icons.delete_outline_rounded,
-                                color: Colors.green),
-                            onPressed: () {
-                              showCupertinoDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return CupertinoAlertDialog(
-                                    title: const Text("Confirm Deletion"),
-                                    content: const Text(
-                                        "Are you sure you want to delete?"),
-                                    actions: <Widget>[
-                                      CupertinoDialogAction(
-                                        child: const Text(
-                                          "No",
-                                          style: TextStyle(color: Colors.green),
-                                        ),
-                                        onPressed: () {
-                                          Navigator.of(context)
-                                              .pop(); // Close the dialog
-                                        },
-                                      ),
-                                      CupertinoDialogAction(
-                                        child: const Text(
-                                          "Yes",
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                        onPressed: () {
-                                          // Handle delete action here
-                                          // For example:
-                                          Track.deleteTrack(
-                                              track); // Assuming you have a deleteTrack method
-                                          Navigator.of(context)
-                                              .pop(); // Close the dialog
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                            splashColor: Colors.transparent,
-                          ),
-                        ),
+                            trailing:  isPersonal ? TrashButtonWidget(track: track) : const SizedBox(height: 0,),
                           ),
                         ],
                       ),
@@ -162,6 +114,66 @@ class TrackWidget extends StatelessWidget {
   }
 
   //boolean input not count
+}
+
+class TrashButtonWidget extends StatelessWidget {
+  const TrashButtonWidget({
+    super.key,
+    required this.track,
+  });
+
+  final Track track;
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      top: 10,
+      right: 0,
+      child: IconButton(
+        icon: const Icon(Icons.delete_outline_rounded,
+            color: Colors.green),
+        onPressed: () {
+          showCupertinoDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return CupertinoAlertDialog(
+                title: const Text("Confirm Deletion"),
+                content: const Text(
+                    "Are you sure you want to delete?"),
+                actions: <Widget>[
+                  CupertinoDialogAction(
+                    child: const Text(
+                      "No",
+                      style: TextStyle(color: Colors.green),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context)
+                          .pop(); // Close the dialog
+                    },
+                  ),
+                  CupertinoDialogAction(
+                    child: const Text(
+                      "Yes",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () {
+                      // Handle delete action here
+                      // For example:
+                      Track.deleteTrack(
+                          track); // Assuming you have a deleteTrack method
+                      Navigator.of(context)
+                          .pop(); // Close the dialog
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        },
+        splashColor: Colors.transparent,
+      ),
+    );
+  }
 }
 
 //potentially a better track widget visually?

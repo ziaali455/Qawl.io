@@ -222,14 +222,14 @@ class RegistrationPage extends StatelessWidget {
                           TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                     ),
                   ),
-                  const SizedBox(height: 50),
+                  const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Text(
                         'Already a Qawl User?',
                         style: TextStyle(
-                          color: Colors.green,
+                          color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

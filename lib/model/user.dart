@@ -19,6 +19,7 @@ class QawlUser {
   Set<String> privateLibrary;
   Set<String> uploads;
   String gender;
+  Set<String> blockedBy = {};
 
   QawlUser(
       {required this.imagePath,
@@ -31,8 +32,7 @@ class QawlUser {
       required this.following,
       required this.privateLibrary,
       required this.uploads,
-      this.gender = 'm'
-      });
+      this.gender = 'm'});
 
   static String? getCurrentUserUid() {
     final currentUser = FirebaseAuth.instance.currentUser;
@@ -54,6 +54,23 @@ class QawlUser {
       uploads: Set<String>.from(data['publicLibrary'] ?? []),
       gender: data['gender'] ?? '',
     );
+  }
+  Future<void> setBlocked(String userId) async {
+    blockedBy.add(userId);
+    await FirebaseFirestore.instance.collection('QawlUsers').doc(id).update({
+      'blockedBy': blockedBy.toList(),
+    });
+  }
+
+  static Future<List<String>> getBlocked(String uid) async {
+    DocumentSnapshot doc =
+        await FirebaseFirestore.instance.collection('QawlUsers').doc(uid).get();
+    if (doc.exists) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      return List<String>.from(data['blockedBy'] ?? []);
+    } else {
+      return [];
+    }
   }
 
   static Future<QawlUser?> getQawlUser(String uid) async {
@@ -533,7 +550,8 @@ class QawlUser {
         'uid': firebaseUser.uid,
         'email': firebaseUser.email,
         'timestamp': DateTime.now(),
-        'imagePath': "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3",
+        'imagePath':
+            "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3",
 
         'name': "",
         'about': "",
