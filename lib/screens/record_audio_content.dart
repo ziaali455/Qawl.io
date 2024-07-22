@@ -90,7 +90,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
     // playerController = PlayerController();
   }
 
-    Future<void> initRecorder() async {
+  Future<void> initRecorder() async {
     var status = await Permission.microphone.status;
     if (!status.isGranted) {
       status = await Permission.microphone.request();
@@ -103,7 +103,6 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
       print('Mic permission already granted'); // Debug print
     }
   }
-
 
 //using a temporary filepath to store the file locally, then delete the path after stopping the recording
   Future<void> start() async {
@@ -271,55 +270,59 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
     bool _visible = true;
     return Scaffold(
         backgroundColor: Colors.black,
-        body: Column(
+        body: SingleChildScrollView(
+          child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Center(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 50, bottom: 250.0),
-                    child: QawlBackButton(),
-                  ),
-                  // AudioFileWaveforms(
-                  //   size: Size(MediaQuery.of(context).size.width, 100.0),
-                  //   playerController: playerController,
-                  // ),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20, bottom: 100.0),
+                      child: QawlBackButton(),
+                    ),
+                    // AudioFileWaveforms(
+                    //   size: Size(MediaQuery.of(context).size.width, 100.0),
+                    //   playerController: playerController,
+                    // ),
 
-                  QawlWaveforms(),
-                  SizedBox(height: 10),
-                  Center(
-                    child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: QawlRecordButton()),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: QawlPlayBackButton(),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 100),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: QawlDeleteRecordingButton(),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: QawlConfirmRecordingButton(),
-                      ),
-                    ],
-                  ),
-                ],
+                    QawlWaveforms(),
+                    SizedBox(height: 10),
+                    Center(
+                      child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: QawlRecordButton()),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(3.0),
+                          child: QawlPlayBackButton(),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 100),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: QawlDeleteRecordingButton(),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: QawlConfirmRecordingButton(),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
+          )
         ));
   }
 

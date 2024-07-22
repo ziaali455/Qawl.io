@@ -105,25 +105,30 @@ class _TrackInfoContentState extends State<TrackInfoContent> {
               // Dropdown for Surah selection
               Padding(
                 padding: const EdgeInsets.only(bottom: 20.0),
-                child: DropdownButton<SurahLabel>(
-                  value: null, // Set the initial selected value if needed
-                  hint: selectedSurah != null
-                      ? Text(selectedSurah!)
-                      : Text('Select a Surah'),
-                  onChanged: (SurahLabel? newValue) {
-                    setState(() {
-                      selectedSurah = newValue?.label;
-                    });
-                    print('Selected Surah: $selectedSurah');
-                  },
-                  items: SurahLabel.values.map((SurahLabel surahLabel) {
-                    return DropdownMenuItem<SurahLabel>(
-                      value: surahLabel,
-                      child: Text(surahLabel.label),
-                    );
-                  }).toList(),
+                child: Flexible(
+                  // This will allow the dropdown to resize based on available space
+                  child: DropdownButton<SurahLabel>(
+                    isExpanded:
+                        true, // Ensures the dropdown fills the width of its parent
+                    value: null,
+                    hint: selectedSurah != null
+                        ? Text(selectedSurah!)
+                        : Text('Select a Surah'),
+                    onChanged: (SurahLabel? newValue) {
+                      setState(() {
+                        selectedSurah = newValue?.label;
+                      });
+                    },
+                    items: SurahLabel.values.map((SurahLabel surahLabel) {
+                      return DropdownMenuItem<SurahLabel>(
+                        value: surahLabel,
+                        child: Text(surahLabel.label),
+                      );
+                    }).toList(),
+                  ),
                 ),
               ),
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -141,7 +146,6 @@ class _TrackInfoContentState extends State<TrackInfoContent> {
                         surah: selectedSurah ?? "",
                         trackName: _trackNameController.text),
                     // Pass the track name here
-
                   ),
                 ],
               ),
@@ -311,7 +315,8 @@ class _ConfirmPostButtonState extends State<ConfirmPostButton> {
               fixedSize: const Size(125, 70),
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              textStyle:
+                  const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             onPressed: _postContent,
             child: _isLoading
@@ -332,7 +337,8 @@ class _ConfirmPostButtonState extends State<ConfirmPostButton> {
     if (fileUrl != null) {
       String? uid = QawlUser.getCurrentUserUid();
       if (uid != null) {
-        await Track.createQawlTrack(uid, widget.surah, fileUrl, widget.trackName);
+        await Track.createQawlTrack(
+            uid, widget.surah, fileUrl, widget.trackName);
       } else {
         print("Error: UID is null.");
       }
@@ -348,11 +354,11 @@ class _ConfirmPostButtonState extends State<ConfirmPostButton> {
     Navigator.pop(context);
 
     Alert(
-      image: const Icon(Icons.check, size: 100.0),
-      style: widget.alertStyle,
-      context: context,
-      title: "Posted!"
-    ).show();
+            image: const Icon(Icons.check, size: 100.0),
+            style: widget.alertStyle,
+            context: context,
+            title: "Posted!")
+        .show();
   }
 }
 
