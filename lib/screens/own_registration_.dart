@@ -2,6 +2,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:first_project/model/user.dart';
 import 'package:first_project/screens/auth_gate.dart';
+import 'package:first_project/screens/eula_screen.dart';
 import 'package:first_project/screens/homepage.dart';
 import 'package:first_project/screens/own_login_screen.dart';
 import 'package:first_project/screens/user_setup_page_content.dart';
@@ -83,14 +84,18 @@ class RegistrationPage extends StatelessWidget {
             } else {
               final gender = snapshot.data?.gender;
               final country = snapshot.data?.country;
-              if (gender == null ||
-                  gender == "" ||
-                  gender.isEmpty ||
-                  country == null ||
-                  country.isEmpty) {
+              final name = snapshot.data?.name;
+              // we only know they haven't seen setup page if name is empty, other fields optional
+              if (name == null || name.isEmpty 
+                // gender == null ||
+                //   gender == "" ||
+                //   gender.isEmpty ||
+                //   country == null ||
+                //   country.isEmpty
+                  ) {
                 
-                // print("here going to beforehomepage");
-                return UserSetupPage();
+                return AgreementScreen();  // see eula_screen.dart
+                // return UserSetupPage(); (old)
               } else {
                 // print("HERE GOING HOME PAGE");
                 return const HomePage();
