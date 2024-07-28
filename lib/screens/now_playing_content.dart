@@ -20,15 +20,18 @@ import 'package:flutter/widgets.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:rxdart/rxdart.dart';
+
 class PositionData {
   const PositionData(this.position, this.bufferedPosition, this.duration);
   final Duration position;
   final Duration bufferedPosition;
   final Duration duration;
 }
+
 class NowPlayingContent extends StatefulWidget {
   final Track playedTrack;
-  const NowPlayingContent({Key? key, required this.playedTrack}) : super(key: key);
+  const NowPlayingContent({Key? key, required this.playedTrack})
+      : super(key: key);
 
   @override
   State<NowPlayingContent> createState() => _NowPlayingContentState();
@@ -44,7 +47,8 @@ class _NowPlayingContentState extends State<NowPlayingContent> {
     super.initState();
     myTrack = widget.playedTrack;
     _audioPlayer = audioHandler.audioPlayer;
-    _authStateChangesSubscription = fba.FirebaseAuth.instance.authStateChanges().listen((User? user) {
+    _authStateChangesSubscription =
+        fba.FirebaseAuth.instance.authStateChanges().listen((User? user) {
       if (user == null) {
         _audioPlayer.pause();
       }
@@ -63,12 +67,13 @@ class _NowPlayingContentState extends State<NowPlayingContent> {
     });
   }
 
-  Stream<PositionData> get _positionDataStream => Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
-      _audioPlayer.positionStream,
-      _audioPlayer.bufferedPositionStream,
-      _audioPlayer.durationStream,
-      (position, bufferedPosition, duration) => PositionData(position, bufferedPosition, duration ?? Duration.zero)
-  );
+  Stream<PositionData> get _positionDataStream =>
+      Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
+          _audioPlayer.positionStream,
+          _audioPlayer.bufferedPositionStream,
+          _audioPlayer.durationStream,
+          (position, bufferedPosition, duration) => PositionData(
+              position, bufferedPosition, duration ?? Duration.zero));
 
   @override
   Widget build(BuildContext context) {
@@ -76,26 +81,28 @@ class _NowPlayingContentState extends State<NowPlayingContent> {
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: SafeArea(
-          child: Column(
-            children: [
-              const SizedBox(height: 10),
-              const QawlBackButton(),
-              const SizedBox(height: 20),
-              CoverContent2(audioHandler: audioHandler),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                child: QawlProgressBar(
-                  positionDataStream: _positionDataStream,
-                  audioPlayer: _audioPlayer,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(height: 10),
+                const QawlBackButton(),
+                const SizedBox(height: 20),
+                CoverContent2(audioHandler: audioHandler),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  child: QawlProgressBar(
+                    positionDataStream: _positionDataStream,
+                    audioPlayer: _audioPlayer,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              Controls(
-                audioHandler: audioHandler,
-                onTrackChange: updateTrack,
-              ),
-              const SizedBox(height: 20),
-            ],
+                const SizedBox(height: 10),
+                Controls(
+                  audioHandler: audioHandler,
+                  onTrackChange: updateTrack,
+                ),
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ),
@@ -197,14 +204,17 @@ class CoverContent2 extends StatelessWidget {
                                       },
                                     ),
                                     const SizedBox(height: 6),
-                                    Text(
-                                      SurahMapper.getSurahNameByNumber(
-                                          myTrack.surahNumber),
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            getProportionateScreenWidth(17),
-                                            overflow: TextOverflow.ellipsis,
+                                    SingleChildScrollView(
+                                      scrollDirection: Axis
+                                          .horizontal, // Set the scroll direction to horizontal
+                                      child: Text(
+                                        SurahMapper.getSurahNameByNumber(
+                                            myTrack.surahNumber),
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize:
+                                              getProportionateScreenWidth(17),
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -460,33 +470,30 @@ class Controls extends StatelessWidget {
         ),
         // RepeatButton(),
         IconButton(
-                                  splashColor: Colors.transparent,
-                                  highlightColor: Colors.transparent,
-                                  hoverColor: Colors.transparent,
-                                  onPressed: () {
-                                    showMaterialModalBottomSheet(
-                                      context: context,
-                                      builder: (context) =>
-                                          SingleChildScrollView(
-                                        controller:
-                                            ModalScrollController.of(context),
-                                        child: AddToLibraryWidget(
-                                          track: getCurrentTrack(),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  iconSize: 35,
-                                  color: Colors.white,
-                                  icon: const Icon(Icons.library_add),
-                                ),
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          hoverColor: Colors.transparent,
+          onPressed: () {
+            showMaterialModalBottomSheet(
+              context: context,
+              builder: (context) => SingleChildScrollView(
+                controller: ModalScrollController.of(context),
+                child: AddToLibraryWidget(
+                  track: getCurrentTrack(),
+                ),
+              ),
+            );
+          },
+          iconSize: 35,
+          color: Colors.white,
+          icon: const Icon(Icons.library_add),
+        ),
       ],
     );
   }
 }
 
 class RepeatButton extends StatefulWidget {
-
   RepeatButton();
 
   @override

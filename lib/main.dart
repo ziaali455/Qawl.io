@@ -124,11 +124,78 @@ Future<void> main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+// class MyApp extends StatelessWidget {
+//   const MyApp({Key? key}) : super(key: key);
+//   @override
+//   Widget build(BuildContext context) {
+//     SizeConfig().init(context);
+//     return MaterialApp(
+//       title: 'Qawl',
+//       debugShowCheckedModeBanner: false,
+//       themeMode: ThemeMode.dark,
+//       theme: ThemeData(fontFamily: 'Cera'),
+//       darkTheme: FlexThemeData.dark(
+//         scheme: FlexScheme.hippieBlue,
+//         darkIsTrueBlack: true,
+//       ),
+//         // home: const AuthGate(), //*OLD*
+//         // make sure to load data only if user is signed in
+//         home: StreamBuilder<User?>(
+//         stream: FirebaseAuth.instance.authStateChanges(),
+//         builder: (context, snapshot) {
+//           if (snapshot.connectionState == ConnectionState.active) {
+//             if (snapshot.hasData) {
+//               return HomePage(); // User is logged in
+//             } else {
+//               return LoginPage(); // User is not logged in
+//             }
+//           }
+//           return CircularProgressIndicator(color: Colors.green); // Waiting for auth state
+//         },
+//       ),
+//     );
+//   }
+// }
+
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  bool _isLoading = true;
+  bool _isAuthenticated = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkAuthState();
+  }
+
+  Future<void> _checkAuthState() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        _isAuthenticated = true;
+        _isLoading = false;
+      });
+    } else {
+      setState(() {
+        _isAuthenticated = false;
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+    if (_isLoading) {
+      return const SplashScreen();
+    }
+
     return MaterialApp(
       title: 'Qawl',
       debugShowCheckedModeBanner: false,
@@ -138,20 +205,22 @@ class MyApp extends StatelessWidget {
         scheme: FlexScheme.hippieBlue,
         darkIsTrueBlack: true,
       ),
-        // home: const AuthGate(), //*OLD*
-        // make sure to load data only if user is signed in
-        home: StreamBuilder<User?>(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.active) {
-            if (snapshot.hasData) {
-              return HomePage(); // User is logged in
-            } else {
-              return LoginPage(); // User is not logged in
-            }
-          }
-          return CircularProgressIndicator(color: Colors.green); // Waiting for auth state
-        },
+      home: _isAuthenticated ? const HomePage() : LoginPage(),
+    );
+  }
+}
+
+
+
+class SplashScreen extends StatelessWidget {
+  const SplashScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Center(
+        child: CircularProgressIndicator(color: Colors.purple),
       ),
     );
   }

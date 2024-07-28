@@ -5,11 +5,7 @@ import 'package:first_project/model/sound_recorder.dart';
 import 'package:first_project/screens/now_playing_content.dart';
 import 'package:first_project/screens/track_info_content.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_sound_lite/public/flutter_sound_recorder.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:record/record.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:typed_data';
@@ -90,7 +86,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
     // playerController = PlayerController();
   }
 
-    Future<void> initRecorder() async {
+  Future<void> initRecorder() async {
     var status = await Permission.microphone.status;
     if (!status.isGranted) {
       status = await Permission.microphone.request();
@@ -103,7 +99,6 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
       print('Mic permission already granted'); // Debug print
     }
   }
-
 
 //using a temporary filepath to store the file locally, then delete the path after stopping the recording
   Future<void> start() async {
@@ -271,55 +266,59 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
     bool _visible = true;
     return Scaffold(
         backgroundColor: Colors.black,
-        body: Column(
+        body: SingleChildScrollView(
+          child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Center(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 50, bottom: 250.0),
-                    child: QawlBackButton(),
-                  ),
-                  // AudioFileWaveforms(
-                  //   size: Size(MediaQuery.of(context).size.width, 100.0),
-                  //   playerController: playerController,
-                  // ),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(top: 20, bottom: 100.0),
+                      child: QawlBackButton(),
+                    ),
+                    // AudioFileWaveforms(
+                    //   size: Size(MediaQuery.of(context).size.width, 100.0),
+                    //   playerController: playerController,
+                    // ),
 
-                  QawlWaveforms(),
-                  SizedBox(height: 10),
-                  Center(
-                    child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: QawlRecordButton()),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: QawlPlayBackButton(),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 100),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: QawlDeleteRecordingButton(),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: QawlConfirmRecordingButton(),
-                      ),
-                    ],
-                  ),
-                ],
+                    QawlWaveforms(),
+                    const SizedBox(height: 10),
+                    Center(
+                      child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: QawlRecordButton()),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(3.0),
+                          child: QawlPlayBackButton(),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 100),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: QawlDeleteRecordingButton(),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: QawlConfirmRecordingButton(),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
+          )
         ));
   }
 
@@ -343,7 +342,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
             ),
             TextButton(
               style: TextButton.styleFrom(
-                fixedSize: Size(125, 70),
+                fixedSize: const Size(125, 70),
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.only(left: 10, right: 10),
                 textStyle: const TextStyle(fontSize: 50),
@@ -355,7 +354,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
                 deleteLocalFile(file);
                 debugPrint(_recordedFilePath);
               },
-              child: Align(
+              child: const Align(
                   alignment: Alignment.center,
                   child: Text(
                     "Delete",
@@ -391,7 +390,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
             ),
             TextButton(
               style: TextButton.styleFrom(
-                fixedSize: Size(125, 70),
+                fixedSize: const Size(125, 70),
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.only(left: 10, right: 10),
                 textStyle: const TextStyle(fontSize: 50),
@@ -412,7 +411,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
                   debugPrint("Recorded file path is null");
                 }
               },
-              child: Align(
+              child: const Align(
                   alignment: Alignment.center,
                   child: Text(
                     "Confirm",
@@ -437,7 +436,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(4),
-              gradient: LinearGradient(
+              gradient: const LinearGradient(
                 colors: <Color>[
                   Color.fromARGB(255, 13, 161, 99),
                   Color.fromARGB(255, 22, 181, 93),
@@ -449,8 +448,8 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
         ),
         ElevatedButton(
             child: isCapturing
-                ? Icon(Icons.pause, size: 80.0)
-                : Icon(Icons.mic, size: 80.0),
+                ? const Icon(Icons.pause, size: 80.0)
+                : const Icon(Icons.mic, size: 80.0),
             onPressed: () async {
               if (isCapturing) {
                 stopRecording();
@@ -461,7 +460,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
             style: ElevatedButton.styleFrom(
               shadowColor: Colors.transparent,
               backgroundColor: Colors.transparent,
-              padding: EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
             ))
       ]);
     }
@@ -471,7 +470,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
     if (doneRecording) {
       return Ink(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
+          gradient: const LinearGradient(
             colors: <Color>[
               Color.fromARGB(255, 13, 161, 99),
               Color.fromARGB(255, 22, 181, 93),
@@ -484,9 +483,6 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
               BorderRadius.circular(10), // Add some rounding to match button
         ),
         child: ElevatedButton(
-          child: Icon(isPlaying ? Icons.pause : Icons.play_arrow,
-              size: 60.0,
-              color: Colors.white), // Changed color to white for contrast
           onPressed: () async {
             if (isPlaying) {
               pauseAudio();
@@ -495,13 +491,16 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
             }
           },
           style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
             backgroundColor: Colors.transparent, // Make background transparent
             shadowColor: Colors.transparent,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
           ),
+          child: Icon(isPlaying ? Icons.pause : Icons.play_arrow,
+              size: 60.0,
+              color: Colors.white),
         ),
       );
     }

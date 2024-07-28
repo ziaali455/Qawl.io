@@ -20,62 +20,62 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
-  int currentIndex = 1; // Set initial index to 1 for ExploreContent
-  bool isPlaying = false; // Track whether audio is playing
+// class _HomePageState extends State<HomePage> {
+//   int currentIndex = 1; // Set initial index to 1 for ExploreContent
+//   bool isPlaying = false; // Track whether audio is playing
 
-  final List<Widget> screens = [
-    const HomePageContent(),
-    const ExploreContent(),
-    ProfileContent(isPersonal: true),
-  ];
+//   final List<Widget> screens = [
+//     const HomePageContent(),
+//     const ExploreContent(),
+//     ProfileContent(isPersonal: true),
+//   ];
 
-  @override
-  void initState() {
-    super.initState();
-    // Start listening to track playing status when the widget initializes
-    _startListeningToTrackPlaying();
-  }
+//   @override
+//   void initState() {
+//     super.initState();
+//     // Start listening to track playing status when the widget initializes
+//     _startListeningToTrackPlaying();
+//   }
 
-  void _startListeningToTrackPlaying() {
-    // Periodically check the playing status and update UI
-    Timer.periodic(Duration(seconds: 1), (timer) {
-      _updateIsPlaying();
-    });
-  }
+//   void _startListeningToTrackPlaying() {
+//     // Periodically check the playing status and update UI
+//     Timer.periodic(Duration(seconds: 1), (timer) {
+//       _updateIsPlaying();
+//     });
+//   }
 
-  Future<void> _updateIsPlaying() async {
-    bool playing = await trackIsPlaying();
-    setState(() {
-      isPlaying = playing;
-    });
-  }
+//   Future<void> _updateIsPlaying() async {
+//     bool playing = await trackIsPlaying();
+//     setState(() {
+//       isPlaying = playing;
+//     });
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: screens[currentIndex], // Current tab content
-      floatingActionButton: isPlaying ? NowPlayingFloatingButtonWidget() : null,
-      bottomNavigationBar: GNav(
-        backgroundColor: Colors.black,
-        color: Colors.white,
-        activeColor: Colors.green,
-        onTabChange: (index) {
-          setState(() {
-            currentIndex = index;
-          });
-          // print(currentIndex);
-        },
-        tabs: const [
-          GButton(icon: Icons.home),
-          GButton(icon: Icons.search),
-          GButton(icon: Icons.person),
-        ],
-        selectedIndex: currentIndex, // Set the selected index
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: screens[currentIndex], // Current tab content
+//       floatingActionButton: isPlaying ? NowPlayingFloatingButtonWidget() : null,
+//       bottomNavigationBar: GNav(
+//         backgroundColor: Colors.black,
+//         color: Colors.white,
+//         activeColor: Colors.green,
+//         onTabChange: (index) {
+//           setState(() {
+//             currentIndex = index;
+//           });
+//           // print(currentIndex);
+//         },
+//         tabs: const [
+//           GButton(icon: Icons.home),
+//           GButton(icon: Icons.search),
+//           GButton(icon: Icons.person),
+//         ],
+//         selectedIndex: currentIndex, // Set the selected index
+//       ),
+//     );
+//   }
+// }
 
 
 class NowPlayingFloatingButtonWidget extends StatelessWidget {
@@ -125,5 +125,70 @@ class NowPlayingFloatingButtonWidget extends StatelessWidget {
           ),
         ],
       );
+  }
+}
+class _HomePageState extends State<HomePage> {
+  int currentIndex = 1; // Set initial index to 1 for ExploreContent
+  bool isPlaying = false; // Track whether audio is playing
+  Timer? _timer; // Store a reference to the timer
+
+  final List<Widget> screens = [
+    const HomePageContent(),
+    const ExploreContent(),
+    ProfileContent(isPersonal: true),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    // Start listening to track playing status when the widget initializes
+    _startListeningToTrackPlaying();
+  }
+
+  void _startListeningToTrackPlaying() {
+    // Periodically check the playing status and update UI
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      _updateIsPlaying();
+    });
+  }
+
+  Future<void> _updateIsPlaying() async {
+    bool playing = await trackIsPlaying();
+    if (mounted) { // Check if the widget is still mounted before calling setState
+      setState(() {
+        isPlaying = playing;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel(); // Cancel the timer when the widget is disposed
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: screens[currentIndex], // Current tab content
+      floatingActionButton: isPlaying ? NowPlayingFloatingButtonWidget() : null,
+      bottomNavigationBar: GNav(
+        backgroundColor: Colors.black,
+        color: Colors.white,
+        activeColor: Colors.green,
+        onTabChange: (index) {
+          setState(() {
+            currentIndex = index;
+          });
+          // print(currentIndex);
+        },
+        tabs: const [
+          GButton(icon: Icons.home),
+          GButton(icon: Icons.search),
+          GButton(icon: Icons.person),
+        ],
+        selectedIndex: currentIndex, // Set the selected index
+      ),
+    );
   }
 }

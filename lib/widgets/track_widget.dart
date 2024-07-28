@@ -37,87 +37,38 @@ class TrackWidget extends StatelessWidget {
           future: QawlUser.getQawlUser(track.userId),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator(color: Colors.green); // Placeholder while loading
+              return const CircularProgressIndicator(
+                  color: Colors.green); // Placeholder while loading
             } else if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
             } else {
               final user = snapshot.data;
               if (user != null) {
                 return Card(
-                  child: Stack(
-                    children: [
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ListTile(
-                            leading: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: AspectRatio(
-                                aspectRatio: 1,
-                                child: Image.network(
-                                  user.imagePath.isNotEmpty
-                                      ? user.imagePath
-                                      : 'https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3',
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                            selectedTileColor: Colors.green,
-                            title: Text(SurahMapper.getSurahNameByNumber(
-                                track.surahNumber)),
-                            subtitle: Text(user.name),
-                          ),
-                        ],
-                      ),
-                      if (isPersonal)
-                        Positioned(
-                          top: 10,
-                          right: 0,
-                          child: IconButton(
-                            icon: const Icon(Icons.delete_outline_rounded,
-                                color: Colors.green),
-                            onPressed: () {
-                              showCupertinoDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return CupertinoAlertDialog(
-                                    title: const Text("Confirm Deletion"),
-                                    content: const Text(
-                                        "Are you sure you want to delete?"),
-                                    actions: <Widget>[
-                                      CupertinoDialogAction(
-                                        child: const Text(
-                                          "No",
-                                          style: TextStyle(color: Colors.green),
-                                        ),
-                                        onPressed: () {
-                                          Navigator.of(context)
-                                              .pop(); // Close the dialog
-                                        },
-                                      ),
-                                      CupertinoDialogAction(
-                                        child: const Text(
-                                          "Yes",
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                        onPressed: () {
-                                          // Handle delete action here
-                                          // For example:
-                                          Track.deleteTrack(
-                                              track); // Assuming you have a deleteTrack method
-                                          Navigator.of(context)
-                                              .pop(); // Close the dialog
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                            splashColor: Colors.transparent,
-                          ),
+                  child: ListTile(
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: AspectRatio(
+                        aspectRatio: 1,
+                        child: Image.network(
+                          user.imagePath.isNotEmpty
+                              ? user.imagePath
+                              : 'https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3',
+                          fit: BoxFit.cover,
                         ),
-                    ],
+                      ),
+                    ),
+                    title: Text(
+                      SurahMapper.getSurahNameByNumber(track.surahNumber),
+                      style: const TextStyle(
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    subtitle: Text(user.name),
+                    trailing:
+                        isPersonal ? TrashButtonWidget(track: track) : null,
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16.0), // Adjust padding as needed
                   ),
                 );
               } else {
@@ -159,6 +110,58 @@ class TrackWidget extends StatelessWidget {
   }
 
   //boolean input not count
+}
+
+class TrashButtonWidget extends StatelessWidget {
+  const TrashButtonWidget({
+    super.key,
+    required this.track,
+  });
+
+  final Track track;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.delete_outline_rounded, color: Colors.green),
+      onPressed: () {
+        showCupertinoDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CupertinoAlertDialog(
+              title: const Text("Confirm Deletion"),
+              content: const Text("Are you sure you want to delete?"),
+              actions: <Widget>[
+                CupertinoDialogAction(
+                  child: const Text(
+                    "No",
+                    style: TextStyle(color: Colors.green),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the dialog
+                  },
+                ),
+                CupertinoDialogAction(
+                  child: const Text(
+                    "Yes",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onPressed: () {
+                    // Handle delete action here
+                    // For example:
+                    Track.deleteTrack(
+                        track); // Assuming you have a deleteTrack method
+                    Navigator.of(context).pop(); // Close the dialog
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
+      splashColor: Colors.transparent,
+    );
+  }
 }
 
 //potentially a better track widget visually?

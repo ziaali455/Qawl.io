@@ -5,6 +5,7 @@ import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:first_project/model/player.dart';
 import 'package:first_project/model/playlist.dart';
 import 'package:first_project/model/track.dart';
+import 'package:first_project/screens/danger_zone_widget.dart';
 import 'package:first_project/screens/now_playing_content.dart';
 import 'package:first_project/widgets/playlist_preview_widget.dart';
 import 'package:first_project/widgets/profile_picture_widget.dart';
@@ -119,7 +120,7 @@ class _ProfileContentState extends State<ProfileContent> {
                     padding: const EdgeInsets.all(8.0),
                     child: buildPersonalName(),
                   ),
-                
+
                 if (!isPersonal)
                   Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -133,7 +134,8 @@ class _ProfileContentState extends State<ProfileContent> {
                 ),
                 if (isPersonal)
                   Padding(
-                    padding: const EdgeInsets.only(top: 10, bottom: 10, left: 80, right:80),
+                    padding: const EdgeInsets.only(
+                        top: 10, bottom: 10, left: 80, right: 80),
                     child: GestureDetector(
                       onTap: () {
                         Navigator.push(
@@ -258,8 +260,10 @@ class _ProfileContentState extends State<ProfileContent> {
                 ),
               ],
             ),
-            if(isPersonal) Positioned(top: 40, right: 30,child: QawlRecordButton()),
-
+            if (isPersonal)
+              Positioned(top: 40, right: 30, child: QawlRecordButton()),
+            if (!isPersonal)
+              Positioned(top: 40, right: 30, child: DangerZone(user: user)),
             if (!isPersonal) const QawlBackButton(),
           ],
         ),
@@ -325,7 +329,6 @@ class _ProfileContentState extends State<ProfileContent> {
   }
 }
 
-
 class QawlRecordButton extends StatelessWidget {
   const QawlRecordButton({
     Key? key,
@@ -341,7 +344,8 @@ class QawlRecordButton extends StatelessWidget {
             context: context,
             builder: (context) => SingleChildScrollView(
               controller: ModalScrollController.of(context),
-              child: const UploadPopupWidget(), // Replace with your content widget
+              child:
+                  const UploadPopupWidget(), // Replace with your content widget
             ),
           );
         },
@@ -362,7 +366,8 @@ class QawlRecordButton extends StatelessWidget {
                 ],
               ).createShader(bounds);
             },
-            blendMode: BlendMode.srcATop, // Ensures gradient only affects the icon
+            blendMode:
+                BlendMode.srcATop, // Ensures gradient only affects the icon
             child: Row(
               children: [
                 Center(
