@@ -65,6 +65,8 @@ dependencies:
   provider: ^6.0.5
   flutter_svg: ^2.0.10+1
   widget_and_text_animator: ^1.1.5
+  translator: ^1.0.0
+  speech_to_text: ^6.6.0
 
 dev_dependencies:
   flutter_test:
