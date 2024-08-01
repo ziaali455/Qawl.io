@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
+import 'package:first_project/screens/quiz_screen.dart';
 import 'package:first_project/screens/record_audio_content.dart';
 import 'package:first_project/screens/track_info_content.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +29,8 @@ class UploadPopupWidget extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => RecordAudioContent(),
+                      // builder: (context) => RecordAudioContent(),
+                      builder: (context) => QuizPage(),
                     ));
               }),
           ListTile(

@@ -19,6 +19,7 @@ class QawlUser {
   Set<String> privateLibrary;
   Set<String> uploads;
   String gender;
+  bool canRecord;
 
   QawlUser(
       {required this.imagePath,
@@ -31,7 +32,8 @@ class QawlUser {
       required this.following,
       required this.privateLibrary,
       required this.uploads,
-      this.gender = 'm'
+      this.gender = 'm',
+      this.canRecord = false // false by default
       });
 
   static String? getCurrentUserUid() {
@@ -52,7 +54,8 @@ class QawlUser {
       following: Set<String>.from(data['following'] ?? []),
       privateLibrary: Set<String>.from(data['privateLibrary'] ?? []),
       uploads: Set<String>.from(data['publicLibrary'] ?? []),
-      gender: data['gender'] ?? '',
+      gender: data['gender'] ?? '', 
+      canRecord: data['canRecord'] ?? false,
     );
   }
 
@@ -516,7 +519,8 @@ class QawlUser {
             following: Set<String>(),
             privateLibrary: Set<String>(),
             uploads: Set<String>(),
-            gender: 'm', //needs to be set later
+            gender: 'm', 
+            canRecord: false, // false by default until quiz taken
           )
         : null;
     DocumentReference docRef = FirebaseFirestore.instance
@@ -534,14 +538,14 @@ class QawlUser {
         'email': firebaseUser.email,
         'timestamp': DateTime.now(),
         'imagePath': "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3",
-
         'name': "",
         'about': "",
         'country': "",
         'followers': 0,
         'following': [],
         'privateLibrary': [],
-        'gender': "m"
+        'gender': "m",
+        'canRecord': false
         // 'publicLibrary': [uploads],
       });
     }
