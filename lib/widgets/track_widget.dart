@@ -46,6 +46,7 @@ class TrackWidget extends StatelessWidget {
               if (user != null) {
                 return Card(
                   child: ListTile(
+                    
                     leading: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: AspectRatio(

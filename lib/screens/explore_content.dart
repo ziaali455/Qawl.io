@@ -78,7 +78,7 @@ class _ExploreContentState extends State<ExploreContent> {
                   } else {
                     return ExploreTrackWidgetRow(
                       title: "Top 100",
-                      playlist: snapshot.data!,
+                      playlist: snapshot.data!, isPersonal: false,
                     );
                   }
                 },
@@ -95,7 +95,7 @@ class _ExploreContentState extends State<ExploreContent> {
                   } else {
                     return ExploreTrackWidgetRow(
                       title: "New Releases",
-                      playlist: snapshot.data!,
+                      playlist: snapshot.data!, isPersonal: false,
                     );
                   }
                 },

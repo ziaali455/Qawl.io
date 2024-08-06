@@ -11,21 +11,23 @@ import '../neu_box.dart';
 class PlaylistScreenContent extends StatefulWidget {
   //final String playlistTitle;
   final QawlPlaylist playlist;
+  final bool isPersonal; // Added this flag
 
   //refactor playlistTitle
 
-  const PlaylistScreenContent({Key? key, required this.playlist})
+  const PlaylistScreenContent({Key? key, required this.playlist, required this.isPersonal})
       : super(key: key);
 
-  @override
-  // ignore: no_logic_in_create_state
+   @override
   State<PlaylistScreenContent> createState() =>
-      _PlaylistScreenContentState(playlist);
+      _PlaylistScreenContentState(playlist, isPersonal); // Pass flag to state
 }
 
 class _PlaylistScreenContentState extends State<PlaylistScreenContent> {
   late QawlPlaylist playlist;
-  _PlaylistScreenContentState(QawlPlaylist playlist) {
+    final bool isPersonal; // Store this flag
+
+  _PlaylistScreenContentState(QawlPlaylist playlist, this.isPersonal) {
     this.playlist = playlist;
   }
   @override
@@ -57,7 +59,7 @@ class _PlaylistScreenContentState extends State<PlaylistScreenContent> {
                   padding: const EdgeInsets.all(1.0),
                   child: TrackWidget(
                     track: track,
-                    isPersonal: false,
+                    isPersonal: isPersonal,
                     playlist: playlist,
                   ),
                 ),

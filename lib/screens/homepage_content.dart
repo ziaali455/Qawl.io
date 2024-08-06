@@ -111,7 +111,7 @@ class _HomePageContentState extends State<HomePageContent> {
                   if (snapshot.data != null) {
                     // If playlist is not null, display it
                     return PlaylistListWidget(
-                        playlists_List: [favoritesPlaylist!]);
+                        playlists_List: [favoritesPlaylist!], isPersonal: false,);
                   } else {
                     // If playlist is null, display a message indicating no favorites playlist found
                     return WidgetAnimator(
